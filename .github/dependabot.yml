@@ -1,0 +1,6 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule: live
+  open-pull-requests-limit: 10
