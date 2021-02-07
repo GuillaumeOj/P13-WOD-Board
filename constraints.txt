@@ -3,6 +3,7 @@ alembic==1.5.2
 aniso8601==7.0.0
 async-exit-stack==1.0.1
 async-generator==1.10
+bcrypt==3.2.0
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
@@ -19,10 +20,11 @@ h11==0.12.0
 httptools==0.1.1
 idna==2.10
 itsdangerous==1.1.0
-Jinja2==2.11.3
+Jinja2==2.11.2
 Mako==1.1.4
 MarkupSafe==1.1.1
 orjson==3.4.8
+passlib==1.7.4
 promise==2.3
 psycopg2==2.8.6
 pyasn1==0.4.8
