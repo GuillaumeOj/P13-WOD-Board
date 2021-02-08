@@ -17,7 +17,7 @@ idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
-orjson==3.4.7
+orjson==3.4.8
 promise==2.3
 psycopg2==2.8.6
 pydantic==1.7.3
