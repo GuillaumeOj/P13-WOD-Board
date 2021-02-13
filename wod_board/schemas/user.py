@@ -15,7 +15,7 @@ class UserCreate(UserBase):
     password: str
 
 
-class UserGet(UserBase):
+class User(UserBase):
     id: int
 
     class Config:
