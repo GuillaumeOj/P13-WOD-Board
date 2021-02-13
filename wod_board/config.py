@@ -12,3 +12,4 @@ DATABASE_URL: str = os.getenv(
 )
 HASH_SCHEMES: typing.List[str] = ["bcrypt"]
 SECRET_KEY: str = os.getenv("SECRET_KEY", "foo_key_for_testing_purpose")
+TOKEN_URL: str = os.getenv("TOKEN_URL", "token")
