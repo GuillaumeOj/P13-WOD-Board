@@ -25,6 +25,15 @@ engine = sqlalchemy.create_engine(config.DATABASE_URL)
 
 Session = sqlalchemy.orm.sessionmaker(bind=engine, class_=SessionContext)
 
+
+def get_db():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 # Import each model fo Alembic
 from wod_board.models.user import User  # noqa
 
