@@ -4,6 +4,15 @@ from pydantic import BaseModel
 from pydantic import EmailStr
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(Token):
+    email: typing.Optional[str] = None
+
+
 class UserBase(BaseModel):
     email: EmailStr
     username: typing.Optional[str] = None
