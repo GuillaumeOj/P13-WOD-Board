@@ -3,12 +3,14 @@ import typing
 
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from jose import jwt
+from jose.exceptions import JWTError
 from passlib.context import CryptContext
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board.crud import user as user_crud
 from wod_board.models import user as user_models
+from wod_board.schemas import user as user_schemas
 
 
 PASSWORD_CTXT = CryptContext(schemes=config.HASH_SCHEMES, deprecated="auto")
@@ -36,6 +38,35 @@ def create_access_token(
     )
 
     return encoded_jwt
+
+
+def get_user_with_token(
+    db: sqlalchemy.orm.Session, token: str
+) -> typing.Optional[user_schemas.User]:
+    try:
+        payload = jwt.decode(
+            token, config.SECRET_KEY, algorithms=[config.ACCESS_TOKEN_ALGORITHM]
+        )
+    except JWTError:
+        return None
+
+    username: str = payload.get("sub")
+    if username is None:
+        return None
+
+    db_user = user_crud.get_user_by_email(db, user_email=username)
+    if db_user is None:
+        return None
+
+    user = user_schemas.User(
+        id=db_user.id,
+        email=db_user.email,
+        username=db_user.username,
+        first_name=db_user.first_name,
+        last_name=db_user.last_name,
+    )
+
+    return user
 
 
 def authenticate_user(
