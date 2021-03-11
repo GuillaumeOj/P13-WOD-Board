@@ -12,10 +12,11 @@ from wod_board.schemas import user as user_schemas
 from wod_board.utils import user as user_utils
 
 
-router = APIRouter(prefix="/user", tags=["user"])
+router_token = APIRouter(tags=["user"])
+router_user = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.post("/register", response_model=user_schemas.User)
+@router_user.post("/register", response_model=user_schemas.User)
 async def register(
     user: user_schemas.UserCreate, db: sqlalchemy.orm.Session = Depends(get_db)
 ) -> user_schemas.User:
@@ -39,7 +40,7 @@ async def register(
     )
 
 
-@router.post(f"/{config.ACCESS_TOKEN_URL}", response_model=user_schemas.Token)
+@router_token.post(f"/{config.ACCESS_TOKEN_URL}", response_model=user_schemas.Token)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: sqlalchemy.orm.Session = Depends(get_db),
