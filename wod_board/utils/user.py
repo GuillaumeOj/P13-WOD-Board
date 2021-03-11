@@ -1,12 +1,19 @@
 import datetime
 import typing
 
+from fastapi.security.oauth2 import OAuth2PasswordBearer
 from jose import jwt
+from passlib.context import CryptContext
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board.crud import user as user_crud
 from wod_board.models import user as user_models
+
+
+PASSWORD_CTXT = CryptContext(schemes=config.HASH_SCHEMES, deprecated="auto")
+
+OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl=config.ACCESS_TOKEN_URL)
 
 
 def create_access_token(
@@ -39,7 +46,7 @@ def authenticate_user(
     if not user:
         return None
 
-    if not config.PASSWORD_CTXT.verify(password, user.hashed_password):
+    if not PASSWORD_CTXT.verify(password, user.hashed_password):
         return None
 
     return user

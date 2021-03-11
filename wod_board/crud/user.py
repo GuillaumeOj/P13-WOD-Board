@@ -3,9 +3,9 @@ import typing
 import sqlalchemy.exc
 import sqlalchemy.orm
 
-from wod_board import config
 from wod_board.models import user
 from wod_board.schemas import user as user_schemas
+from wod_board.utils import user as user_utils
 
 
 class DuplicatedEmail(Exception):
@@ -29,7 +29,7 @@ def get_user_by_email(
 def create_user(
     db: sqlalchemy.orm.Session, new_user: user_schemas.UserCreate
 ) -> user.User:
-    hashed_password = config.PASSWORD_CTXT.hash(new_user.password)
+    hashed_password = user_utils.PASSWORD_CTXT.hash(new_user.password)
 
     db_user = user.User(
         email=new_user.email,
