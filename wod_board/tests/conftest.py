@@ -1,6 +1,8 @@
+from fastapi.testclient import TestClient
 import pytest
 
 from wod_board import models
+from wod_board import web
 
 
 @pytest.fixture()
@@ -11,3 +13,8 @@ def db():
             yield session
     finally:
         models.drop_all()
+
+
+@pytest.fixture()
+def client():
+    yield TestClient(web.app)
