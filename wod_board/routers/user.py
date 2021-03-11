@@ -57,3 +57,21 @@ async def login(
     access_token = user_utils.create_access_token(data={"sub": user.email})
 
     return user_schemas.Token(access_token=access_token, token_type="bearer")
+
+
+@router_user.get("/current", response_model=user_schemas.User)
+async def get_current_user(
+    db: sqlalchemy.orm.Session = Depends(get_db),
+    token: str = Depends(user_utils.OAUTH2_SCHEME),
+) -> user_schemas.User:
+
+    user = user_utils.get_user_with_token(db, token)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return user
