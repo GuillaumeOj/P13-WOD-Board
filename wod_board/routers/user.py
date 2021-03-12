@@ -8,6 +8,7 @@ import sqlalchemy.orm
 from wod_board import config
 from wod_board.crud import user as user_crud
 from wod_board.models import get_db
+from wod_board.models import user as user_models
 from wod_board.schemas import user as user_schemas
 from wod_board.utils import user as user_utils
 
@@ -18,10 +19,10 @@ router_user = APIRouter(prefix="/user", tags=["user"])
 
 @router_user.post("/register", response_model=user_schemas.User)
 async def register(
-    user: user_schemas.UserCreate, db: sqlalchemy.orm.Session = Depends(get_db)
-) -> user_schemas.User:
+    user_data: user_schemas.UserCreate, db: sqlalchemy.orm.Session = Depends(get_db)
+) -> user_models.User:
     try:
-        new_user = user_crud.create_user(db, user)
+        user = user_crud.create_user(db, user_data)
     except user_crud.DuplicatedEmail:
         raise HTTPException(status_code=400, detail="Email already registered")
     except user_crud.DuplicatedUsername:
@@ -31,13 +32,7 @@ async def register(
             status_code=400, detail="Unexcpected error, please try again"
         )
 
-    return user_schemas.User(
-        id=new_user.id,
-        email=new_user.email,
-        username=new_user.username,
-        first_name=new_user.first_name,
-        last_name=new_user.last_name,
-    )
+    return user
 
 
 @router_token.post(f"/{config.ACCESS_TOKEN_URL}", response_model=user_schemas.Token)
@@ -63,7 +58,7 @@ async def login(
 async def get_current_user(
     db: sqlalchemy.orm.Session = Depends(get_db),
     token: str = Depends(user_utils.OAUTH2_SCHEME),
-) -> user_schemas.User:
+) -> user_models.User:
 
     user = user_utils.get_user_with_token(db, token)
 
