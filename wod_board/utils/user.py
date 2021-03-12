@@ -10,6 +10,7 @@ import sqlalchemy.orm
 from wod_board import config
 from wod_board.crud import user as user_crud
 from wod_board.models import user as user_models
+from wod_board.schemas import user as user_schemas
 
 
 PASSWORD_CTXT = CryptContext(schemes=config.HASH_SCHEMES, deprecated="auto")
@@ -17,12 +18,12 @@ PASSWORD_CTXT = CryptContext(schemes=config.HASH_SCHEMES, deprecated="auto")
 OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl=config.ACCESS_TOKEN_URL)
 
 
+# NOTE: https://github.com/mpdavis/python-jose/issues/215
+# Jose does not provide type hints.
 def create_access_token(
-    data: typing.Dict[str, typing.Any],
+    user: user_models.User,
     expires_delta: typing.Optional[datetime.timedelta] = None,
-) -> jwt.encode:
-    to_encode = data.copy()
-
+) -> user_schemas.Token:
     if expires_delta:
         expire = datetime.datetime.utcnow() + expires_delta
     else:
@@ -30,13 +31,13 @@ def create_access_token(
             minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
-    to_encode.update({"exp": expire})
+    to_encode = {"sub": user.email, "exp": expire}
 
     encoded_jwt = jwt.encode(
         to_encode, config.SECRET_KEY, algorithm=config.ACCESS_TOKEN_ALGORITHM
     )
 
-    return encoded_jwt
+    return user_schemas.Token(access_token=encoded_jwt, token_type="bearer")
 
 
 def get_user_with_token(
