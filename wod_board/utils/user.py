@@ -41,20 +41,20 @@ def create_access_token(
 
 
 def get_user_with_token(
-    db: sqlalchemy.orm.Session, token: str
+    db: sqlalchemy.orm.Session, token: user_schemas.Token
 ) -> typing.Optional[user_models.User]:
     try:
         payload = jwt.decode(
-            token, config.SECRET_KEY, algorithms=[config.ACCESS_TOKEN_ALGORITHM]
+            token.access_token,
+            config.SECRET_KEY,
+            algorithms=[config.ACCESS_TOKEN_ALGORITHM],
         )
     except JWTError:
         return None
 
-    username: str = payload.get("sub")
-    if username is None:
-        return None
+    email: str = payload.get("sub")
 
-    user = user_crud.get_user_by_email(db, user_email=username)
+    user = user_crud.get_user_by_email(db, user_email=email)
     if user is None:
         return None
 
