@@ -1,3 +1,8 @@
+[![Coverage Status][coverage-badge]][coverage-link]
+
+[coverage-link]: https://coveralls.io/github/GuillaumeOj/P13-WOD-Board?branch=main
+[coverage-badge]: https://coveralls.io/repos/github/GuillaumeOj/P13-WOD-Board/badge.svg?branch=main
+
 # Contents Page
 
 - [I. Presentation](#i-presentation)
