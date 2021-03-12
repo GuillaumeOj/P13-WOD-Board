@@ -49,9 +49,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token = user_utils.create_access_token(data={"sub": user.email})
-
-    return user_schemas.Token(access_token=access_token, token_type="bearer")
+    return user_utils.create_access_token(user=user)
 
 
 @router_user.get("/current", response_model=user_schemas.User)
