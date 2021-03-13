@@ -55,8 +55,9 @@ async def login(
 @router_user.get("/current", response_model=user_schemas.User)
 async def get_current_user(
     db: sqlalchemy.orm.Session = Depends(get_db),
-    token: str = Depends(user_utils.OAUTH2_SCHEME),
+    user_token: str = Depends(user_utils.OAUTH2_SCHEME),
 ) -> user_models.User:
+    token = user_schemas.Token(access_token=user_token)
 
     user = user_utils.get_user_with_token(db, token)
 
