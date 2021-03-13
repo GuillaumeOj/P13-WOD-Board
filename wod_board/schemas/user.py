@@ -6,7 +6,7 @@ from pydantic import EmailStr
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
+    token_type: typing.Optional[str] = "bearer"
 
 
 class TokenData(Token):
