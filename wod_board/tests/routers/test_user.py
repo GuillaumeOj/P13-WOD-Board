@@ -1,4 +1,7 @@
+import pytest
+
 from wod_board.models import user as user_models
+from wod_board.utils import user as user_utils
 
 
 def test_register(db, client):
@@ -52,3 +55,33 @@ def test_register(db, client):
 
     users = db.query(user_models.User).all()
     assert len(users) == 1
+
+
+@pytest.mark.asyncio
+async def test_login(db, client):
+    password = "strong-password"
+    hashed_password = user_utils.PASSWORD_CTXT.hash(password)
+    user = user_models.User(
+        email="foo@bar.com",
+        username="foo_bar",
+        hashed_password=hashed_password,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    user_data = {
+        "username": user.email,
+        "password": password,
+    }
+
+    foo_token = "foo-token"
+    with mock.patch("jose.jwt.encode") as mocked_encode:
+        mocked_encode.return_value = foo_token
+        response = await client.post(
+            "/user/token",
+            data=user_data,
+        )
+
+    assert response.status_code == 200
+    assert response.json() == {"access_token": foo_token, "token_type": "bearer"}
