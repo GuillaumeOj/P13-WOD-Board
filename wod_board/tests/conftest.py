@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 import pytest
 
 from wod_board import models
@@ -16,5 +16,6 @@ def db():
 
 
 @pytest.fixture()
-def client():
-    yield TestClient(web.app)
+async def client():
+    async with AsyncClient(app=web.app, base_url="http://test") as async_client:
+        yield async_client
