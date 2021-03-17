@@ -1,10 +1,13 @@
+from unittest import mock
+
 import pytest
 
 from wod_board.models import user as user_models
 from wod_board.utils import user as user_utils
 
 
-def test_register(db, client):
+@pytest.mark.asyncio
+async def test_register(db, client):
     user_json = {
         "email": "foo@bar.com",
         "username": "foo_bar",
@@ -12,7 +15,7 @@ def test_register(db, client):
         "last_name": "bar",
         "password": "strong-password",
     }
-    response = client.post(
+    response = await client.post(
         "/user/register",
         headers={"X-Token": "foobar"},
         json=user_json,
@@ -29,7 +32,7 @@ def test_register(db, client):
     users = db.query(user_models.User).all()
     assert len(users) == 1
 
-    response = client.post(
+    response = await client.post(
         "/user/register",
         headers={"X-Token": "foobar"},
         json=user_json,
@@ -44,7 +47,7 @@ def test_register(db, client):
     user_json2 = user_json.copy()
     user_json2["email"] = "foo2@bar.com"
 
-    response = client.post(
+    response = await client.post(
         "/user/register",
         headers={"X-Token": "foobar"},
         json=user_json2,
