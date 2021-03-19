@@ -9,8 +9,6 @@
 - [II. Requirements](#ii-requirements)
 - [III. Run](#iii-run)
 - [IV. Tests](#iv-tests)
-- [V. To-Do List](#v-to-do-list)
-- [VI. Credits](#vi-credits)
 
 # I. Presentation
 [⇧ *Top*](#contents-page)
@@ -62,6 +60,3 @@ Run pep8 tests by typing:
 ```sh
 tox -e pep8
 ```
-
-# VI. Credits
-[⇧ *Top*](#contents-page)
