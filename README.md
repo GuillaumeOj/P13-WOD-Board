@@ -6,10 +6,11 @@
 # Contents Page
 
 - [I. Presentation](#i-presentation)
-- [II. Install](#ii-install)
-- [III. Tests](#iii-tests)
-- [IV. To-Do List](#iv-to-do-list)
-- [V. Credits](#v-credits)
+- [II. Requirements](#ii-requirements)
+- [III. Run](#iii-run)
+- [IV. Tests](#iv-tests)
+- [V. To-Do List](#v-to-do-list)
+- [VI. Credits](#vi-credits)
 
 # I. Presentation
 [⇧ *Top*](#contents-page)
@@ -20,11 +21,14 @@ The application is alive here => https://projet-13.ojardias.io
 
 The roadmap of this project is available here: [Notion](https://www.notion.so/guillaumeoj/8c4537ce16a44754b703d0885754ec1f?v=8e9d19219c2c4c91ae945ff554e63453)
 
-# II. Install 
+# II. Requirements
 [⇧ *Top*](#contents-page)
 
-# III. Tests 
+# III. Run
 [⇧ *Top*](#contents-page)
 
-# V. Credits 
+# IV. Tests
+[⇧ *Top*](#contents-page)
+
+# VI. Credits
 [⇧ *Top*](#contents-page)
