@@ -51,5 +51,17 @@ Then visit:
 # IV. Tests
 [⇧ *Top*](#contents-page)
 
+Run tests by typing:
+
+```sh
+tox -e py39 [-- {optional-args}]
+```
+
+Run pep8 tests by typing:
+
+```sh
+tox -e pep8
+```
+
 # VI. Credits
 [⇧ *Top*](#contents-page)
