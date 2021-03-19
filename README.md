@@ -28,11 +28,11 @@ For running this application you will need:
 - [PostgreSQL](https://www.postgresql.org)
 
 Setup PostgreSQL with those parameters:
-- User: wod_board
-- Password: wod_board
+- User: `wod_board`
+- Password: `wod_board`
 - Databases:
-  - wod_board_test (used for tests)
-  - wod_board_dev (used for running the application)
+  - `wod_board_test` (used for tests)
+  - `wod_board_dev` (used for running the application)
 
 # III. Run
 [⇧ *Top*](#contents-page)
