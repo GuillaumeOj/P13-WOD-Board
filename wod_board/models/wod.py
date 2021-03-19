@@ -2,6 +2,7 @@ import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
+from wod_board.models import wod_round
 
 
 class Wod(models.Base):
@@ -13,6 +14,7 @@ class Wod(models.Base):
     date = sqlalchemy.Column(
         sqlalchemy.DateTime, nullable=False, server_default=sqlalchemy.func.now()
     )
+    rounds = sqlalchemy.orm.relationship(wod_round.Round, cascade="all, delete")
 
     wod_type_id = sqlalchemy.Column(
         sqlalchemy.Integer,

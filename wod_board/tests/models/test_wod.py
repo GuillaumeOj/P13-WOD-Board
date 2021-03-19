@@ -4,6 +4,7 @@ import pytest
 import sqlalchemy.exc
 
 from wod_board.models import wod
+from wod_board.models import wod_round
 
 
 WOD_TYPE = "AMRAP"
@@ -59,3 +60,25 @@ def test_wod(db):
         'null value in column "wod_type_id" of relation "wod_board_wod" violates'
         " not-null constraint" in str(error)
     )
+
+
+def test_wod_with_rounds(db):
+    new_type = wod.WodType(name=WOD_TYPE)
+    db.add(new_type)
+    db.commit()
+    db.refresh(new_type)
+
+    new_wod = wod.Wod(date=NOW, wod_type_id=new_type.id)
+    db.add(new_wod)
+    db.commit()
+
+    db.refresh(new_wod)
+
+    first_round = wod_round.Round(position=1, wod_id=new_wod.id)
+    db.add(first_round)
+    db.commit()
+    db.refresh(first_round)
+    db.refresh(new_wod)
+
+    assert len(new_wod.rounds) == 1
+    assert first_round in new_wod.rounds
