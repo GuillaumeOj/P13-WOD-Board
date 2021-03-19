@@ -39,6 +39,15 @@ Setup PostgreSQL with those parameters:
 # III. Run
 [⇧ *Top*](#contents-page)
 
+In a shell run:
+
+```sh
+tox -e start
+```
+
+Then visit:
+- http://127.0.0.1:8000/docs for reading the back-end documentation
+
 # IV. Tests
 [⇧ *Top*](#contents-page)
 
