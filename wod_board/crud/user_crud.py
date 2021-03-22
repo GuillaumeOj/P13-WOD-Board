@@ -44,14 +44,12 @@ def create_user(
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
-        if (
-            'duplicate key value violates unique constraint "wod_board_user_email_key"'
-            in str(error)
+        if 'duplicate key value violates unique constraint "user_email_key"' in str(
+            error
         ):
             raise DuplicatedEmail
         elif (
-            "duplicate key value violates unique constraint"
-            ' "wod_board_user_username_key"'
+            'duplicate key value violates unique constraint "user_username_key"'
         ) in str(error):
             raise DuplicatedUsername
     else:
