@@ -1,7 +1,7 @@
 import pytest
 
-from wod_board.crud import user as user_crud
-from wod_board.schemas import user as user_schemas
+from wod_board.crud import user_crud
+from wod_board.schemas import user_schemas
 
 
 default_user = user_schemas.UserCreate(
