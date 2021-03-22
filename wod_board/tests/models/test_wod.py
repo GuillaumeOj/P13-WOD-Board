@@ -26,7 +26,7 @@ def test_wod_type(db):
         db.commit()
 
     assert (
-        'null value in column "name" of relation "wod_board_wod_type" violates'
+        'null value in column "name" of relation "wod_type" violates'
         " not-null constraint" in str(error)
     )
 
@@ -56,7 +56,7 @@ def test_wod(db):
         db.commit()
 
     assert (
-        'null value in column "wod_type_id" of relation "wod_board_wod" violates'
+        'null value in column "wod_type_id" of relation "wod" violates'
         " not-null constraint" in str(error)
     )
 
