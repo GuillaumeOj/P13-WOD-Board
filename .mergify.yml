@@ -3,7 +3,6 @@ pull_request_rules:
     conditions:
       - author=GuillaumeOj
       - label!=manual merge
-      - check-success~=^security/snyk
       - check-success=py39
       - check-success=pep8
       - check-success=coverage
@@ -29,11 +28,9 @@ pull_request_rules:
       label:
         remove:
           - conflict
-  - name: Merge Snyk's pull requests
+  - name: Merge Dependabot's pull requests
     conditions:
-      - title~=^\[Snyk\]
-      - head~=^snyk-fix
-      - check-success~=^security/snyk
+      - author~=^dependabot(|-preview)\[bot\]$
       - check-success=py39
       - check-success=pep8
       - check-success=coverage
