@@ -17,13 +17,17 @@ class DuplicatedUsername(Exception):
 
 
 def get_user(db: sqlalchemy.orm.Session, user_id: int) -> typing.Optional[user.User]:
-    return db.query(user.User).filter(user.User.id == user_id).first()
+    return (  # type: ignore[no-any-return]
+        db.query(user.User).filter(user.User.id == user_id).first()
+    )
 
 
 def get_user_by_email(
     db: sqlalchemy.orm.Session, user_email: str
 ) -> typing.Optional[user.User]:
-    return db.query(user.User).filter(user.User.email == user_email).first()
+    return (  # type: ignore[no-any-return]
+        db.query(user.User).filter(user.User.email == user_email).first()
+    )
 
 
 def create_user(
