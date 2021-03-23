@@ -35,7 +35,7 @@ def get_db():
 
 
 # Import each model fo Alembic
-from wod_board.models.user import User  # noqa
+from wod_board.models.user import *  # noqa
 from wod_board.models.wod import *  # noqa
 
 
