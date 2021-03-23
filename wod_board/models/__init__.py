@@ -5,14 +5,6 @@ import sqlalchemy.orm
 from wod_board import config
 
 
-class SessionContext(sqlalchemy.orm.Session):
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type_, value, traceback):
-        self.close()
-
-
 class ModelBase:
     @property
     def session(self) -> sqlalchemy.orm.Session:
@@ -23,7 +15,7 @@ Base = declarative.declarative_base(cls=ModelBase)
 
 engine = sqlalchemy.create_engine(config.DATABASE_URL)
 
-Session = sqlalchemy.orm.sessionmaker(bind=engine, class_=SessionContext)
+Session = sqlalchemy.orm.sessionmaker(bind=engine, class_=sqlalchemy.orm.Session)
 
 
 def get_db():
