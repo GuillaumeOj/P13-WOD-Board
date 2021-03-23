@@ -14,7 +14,7 @@ ecdsa==0.14.1
 email-validator==1.1.2
 fastapi==0.63.0
 graphene==2.1.8
-graphql-core==2.3.2
+graphql-core==3.0.5
 graphql-relay==2.0.1
 h11==0.12.0
 httptools==0.1.1
