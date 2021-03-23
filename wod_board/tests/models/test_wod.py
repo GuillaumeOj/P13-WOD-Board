@@ -79,8 +79,8 @@ def test_wod_with_rounds(db):
     db.refresh(first_round)
     db.refresh(new_wod)
 
-    assert len(new_wod.rounds) == 1
-    assert first_round in new_wod.rounds
+    assert new_wod.rounds.count() == 1
+    assert first_round in new_wod.rounds.all()
 
 
 def test_round(db):
@@ -99,40 +99,21 @@ def test_round(db):
     assert first_round.id == 1
     assert first_round.position == 1
     assert first_round.duration_seconds is None
-    assert first_round.parent_id is None
     assert first_round.wod_id == new_wod.id
 
-    first_sub_round = wod.Round(
+    second_round = wod.Round(
         position=2,
-        parent_id=first_round.id,
         duration_seconds=20,
         wod_id=first_round.wod_id,
     )
-    db.add(first_sub_round)
+    db.add(second_round)
     db.commit()
-    db.refresh(first_sub_round)
+    db.refresh(second_round)
 
-    assert first_sub_round.id == 2
-    assert first_sub_round.position == 2
-    assert first_sub_round.duration_seconds == 20
-    assert first_sub_round.parent_id == first_round.id
-    assert first_sub_round.wod_id == new_wod.id
-
-    second_sub_round = wod.Round(
-        position=3,
-        parent_id=first_round.id,
-        duration_seconds=10,
-        wod_id=first_round.wod_id,
-    )
-    db.add(second_sub_round)
-    db.commit()
-    db.refresh(second_sub_round)
-
-    assert second_sub_round.id == 3
-    assert second_sub_round.position == 3
-    assert second_sub_round.duration_seconds == 10
-    assert second_sub_round.parent_id == first_round.id
-    assert second_sub_round.wod_id == new_wod.id
+    assert second_round.id == 2
+    assert second_round.position == 2
+    assert second_round.duration_seconds == 20
+    assert second_round.wod_id == new_wod.id
 
 
 def test_round_unique_constraint(db):
