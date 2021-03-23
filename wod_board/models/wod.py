@@ -19,6 +19,7 @@ class Wod(models.Base):
         nullable=False,
     )
 
+    wod_type = sqlalchemy.orm.relationship("WodType")
     rounds = sqlalchemy.orm.relationship("Round", cascade="all, delete")
 
 
@@ -26,7 +27,7 @@ class WodType(models.Base):
     __tablename__ = "wod_type"
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String(150), nullable=False)
+    name = sqlalchemy.Column(sqlalchemy.String(150), nullable=False, unique=True)
 
 
 class Round(models.Base):
