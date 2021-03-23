@@ -10,7 +10,7 @@ chardet==4.0.0
 click==7.1.2
 cryptography==3.4.6
 dnspython==2.1.0
-ecdsa==0.14.1
+ecdsa==0.15
 email-validator==1.1.2
 fastapi==0.63.0
 graphene==2.1.8
