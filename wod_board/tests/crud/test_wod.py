@@ -45,9 +45,6 @@ def test_get_or_create_wod_type(db):
 
 def test_create_wod(db):
     wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
-    wod_schema = wod_schemas.WodCreate(
-        description="Foo WOD", note="", wod_type=wod_type_schema
-    )
 
     round_parent = wod_schemas.RoundBase(position=1)
     round_child_1 = wod_schemas.RoundBase(
@@ -57,7 +54,12 @@ def test_create_wod(db):
         position=3, duration_seconds=10, parent=round_parent
     )
 
-    wod_schema.rounds = [round_parent, round_child_1, round_child_2]
+    wod_schema = wod_schemas.WodCreate(
+        description="Foo WOD",
+        note="",
+        wod_type=wod_type_schema,
+        rounds=[round_parent, round_child_1, round_child_2],
+    )
 
     new_wod = wod_crud.create_wod(db, wod_schema)
     assert new_wod.rounds.count() == 3
@@ -68,16 +70,18 @@ def test_create_wod(db):
 
 def test_create_wod_with_duplicated_round_position(db):
     wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
-    wod_schema = wod_schemas.WodCreate(
-        description="Foo WOD", note="", wod_type=wod_type_schema
-    )
 
     round_parent = wod_schemas.RoundBase(position=1)
     round_child_1 = wod_schemas.RoundBase(
         position=1, duration_seconds=20, parent=round_parent
     )
 
-    wod_schema.rounds = [round_parent, round_child_1]
+    wod_schema = wod_schemas.WodCreate(
+        description="Foo WOD",
+        note="",
+        wod_type=wod_type_schema,
+        rounds=[round_parent, round_child_1],
+    )
 
     with pytest.raises(wod_crud.DuplicatedRoundPosition):
         wod_crud.create_wod(db, wod_schema)
