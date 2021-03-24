@@ -71,23 +71,20 @@ def create_wod(db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate) -> w
         wod_type_id=wod_type.id,
     )
 
+    # TODO: It never raise an error if position are the same
     for wod_round in wod_data.rounds:
         new_round = wod.Round(
-            position=wod_round.position, duration_seconds=wod_round.duration_seconds
+            position=wod_round.position,
+            duration_seconds=wod_round.duration_seconds,
         )
         new_wod.rounds.append(new_round)
     db.add(new_wod)
 
     try:
         db.commit()
-    except sqlalchemy.exc.IntegrityError as error:
+    # TODO: We need to be more specific for handling those errors
+    except sqlalchemy.exc.IntegrityError:
         db.rollback()
-        if 'duplicate key value violates unique constraint "wod_id_position"' in str(
-            error
-        ):
-            raise DuplicatedRoundPosition
-        else:
-            raise error
     else:
         db.refresh(new_wod)
 
