@@ -1,15 +1,24 @@
-import typing
-
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
+from wod_board.crud import wod_crud
 from wod_board.models import get_db
+from wod_board.models import wod
+from wod_board.schemas import wod_schemas
 
 
 router = APIRouter(prefix="/wod", tags=["wod"])
 
 
-@router.post("/add")
-async def add(db: sqlalchemy.orm.Session = Depends(get_db)) -> typing.Dict[str, str]:
-    return {"details": "Done"}
+@router.post("/add", response_model=wod_schemas.Wod)
+async def add(
+    wod_data: wod_schemas.WodCreate, db: sqlalchemy.orm.Session = Depends(get_db)
+) -> wod.Wod:
+    try:
+        new_wod = wod_crud.create_wod(db, wod_data)
+    except wod_crud.DuplicatedRoundPosition:
+        raise HTTPException(status_code=400, detail="Rounds have the same position")
+
+    return new_wod
