@@ -5,25 +5,51 @@ from __future__ import annotations
 import datetime
 import typing
 
-from pydantic import BaseModel
+from wod_board.schemas import OrmBase
 
 
-class Wod(BaseModel):
+class WodBase(OrmBase):
     description: typing.Optional[str]
     note: typing.Optional[str]
     date: datetime.datetime = datetime.datetime.utcnow()
 
-    rounds: typing.List[Round] = []
+
+class WodCreate(WodBase):
+    rounds: typing.List[RoundCreate]
+    wod_type: WodTypeCreate
+
+
+class Wod(WodBase):
+    id: int
+    rounds: typing.List[Round]
     wod_type: WodType
 
 
-class WodType(BaseModel):
+class WodTypeBase(OrmBase):
     name: str
 
 
-class Round(BaseModel):
+class WodTypeCreate(WodTypeBase):
+    pass
+
+
+class WodType(WodTypeBase):
+    id: int
+
+
+class RoundBase(OrmBase):
     position: int
-    duration_seconds: typing.Optional[int]
+    duration_seconds: int = 0
 
 
+class RoundCreate(RoundBase):
+    pass
+
+
+class Round(RoundBase):
+    id: int
+    wod_id: int
+
+
+WodCreate.update_forward_refs()
 Wod.update_forward_refs()
