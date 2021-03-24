@@ -29,7 +29,7 @@ promise==2.3
 psycopg2==2.8.6
 pyasn1==0.4.8
 pycparser==2.20
-pydantic==1.7.3
+pydantic==1.8.1
 python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-editor==1.0.4
