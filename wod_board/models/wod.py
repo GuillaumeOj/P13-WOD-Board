@@ -1,5 +1,3 @@
-import typing
-
 import sqlalchemy
 import sqlalchemy.orm
 
@@ -39,7 +37,7 @@ class Wod(models.Base):
         nullable=False,
     )
 
-    wod_type: WodType = sqlalchemy.orm.relationship("WodType")
-    rounds: typing.List[Round] = sqlalchemy.orm.relationship(
+    wod_type = sqlalchemy.orm.relationship("WodType")  # type: ignore[misc]
+    rounds = sqlalchemy.orm.relationship(  # type: ignore[misc]
         "Round", cascade="all, delete", backref="wod", lazy="dynamic"
     )
