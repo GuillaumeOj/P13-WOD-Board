@@ -21,8 +21,9 @@ class WodCreate(WodBase):
 
 class Wod(WodBase):
     id: int
-    rounds: typing.List[Round]
+    wod_type_id: int
     wod_type: WodType
+    rounds: typing.List[Round]
 
 
 class WodTypeBase(OrmBase):
