@@ -64,3 +64,20 @@ def test_create_wod(db):
 
     wods = db.query(wod.Wod).all()
     assert len(wods) == 1
+
+
+def test_create_wod_with_duplicated_round_position(db):
+    wod_type_schema = wod_schemas.WodType(name="AMRAP")
+    wod_schema = wod_schemas.Wod(
+        description="Foo WOD", note="", wod_type=wod_type_schema
+    )
+
+    round_parent = wod_schemas.Round(position=1)
+    round_child_1 = wod_schemas.Round(
+        position=1, duration_seconds=20, parent=round_parent
+    )
+
+    wod_schema.rounds = [round_parent, round_child_1]
+
+    with pytest.raises(wod_crud.DuplicatedRoundPosition):
+        wod_crud.create_wod(db, wod_schema)
