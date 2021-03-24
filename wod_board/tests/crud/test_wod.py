@@ -6,7 +6,7 @@ from wod_board.schemas import wod_schemas
 
 
 def test_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodType(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
 
     created_type = wod_crud._create_wod_type(db, wod_type_schema)
     assert created_type.name == wod_type_schema.name
@@ -19,19 +19,19 @@ def test_create_wod_type(db):
 
 
 def test_get_wod_type_by_name(db):
-    wod_type_schema = wod_schemas.WodType(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
     wod_crud._create_wod_type(db, wod_type_schema)
 
     wod_type = wod_crud._get_wod_type_by_name(db, wod_type_schema)
     assert wod_type.name == wod_type_schema.name
 
-    wod_type_schema = wod_schemas.WodType(name="For Time")
+    wod_type_schema = wod_schemas.WodTypeBase(name="For Time")
     with pytest.raises(wod_crud.UnknownWodType):
         wod_type = wod_crud._get_wod_type_by_name(db, wod_type_schema)
 
 
 def test_get_or_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodType(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
 
     wod_type = wod_crud.get_or_create_wod_type(db, wod_type_schema)
     assert wod_type.name == wod_type_schema.name
@@ -44,16 +44,16 @@ def test_get_or_create_wod_type(db):
 
 
 def test_create_wod(db):
-    wod_type_schema = wod_schemas.WodType(name="AMRAP")
-    wod_schema = wod_schemas.Wod(
+    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_schema = wod_schemas.WodCreate(
         description="Foo WOD", note="", wod_type=wod_type_schema
     )
 
-    round_parent = wod_schemas.Round(position=1)
-    round_child_1 = wod_schemas.Round(
+    round_parent = wod_schemas.RoundBase(position=1)
+    round_child_1 = wod_schemas.RoundBase(
         position=2, duration_seconds=20, parent=round_parent
     )
-    round_child_2 = wod_schemas.Round(
+    round_child_2 = wod_schemas.RoundBase(
         position=3, duration_seconds=10, parent=round_parent
     )
 
@@ -67,13 +67,13 @@ def test_create_wod(db):
 
 
 def test_create_wod_with_duplicated_round_position(db):
-    wod_type_schema = wod_schemas.WodType(name="AMRAP")
-    wod_schema = wod_schemas.Wod(
+    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_schema = wod_schemas.WodCreate(
         description="Foo WOD", note="", wod_type=wod_type_schema
     )
 
-    round_parent = wod_schemas.Round(position=1)
-    round_child_1 = wod_schemas.Round(
+    round_parent = wod_schemas.RoundBase(position=1)
+    round_child_1 = wod_schemas.RoundBase(
         position=1, duration_seconds=20, parent=round_parent
     )
 
