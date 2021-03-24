@@ -13,33 +13,8 @@ class UnknownWodType(Exception):
     pass
 
 
-class DuplicatedPosition(Exception):
+class DuplicatedRoundPosition(Exception):
     pass
-
-
-def create_round(
-    db: sqlalchemy.orm.Session, round_data: wod_schemas.Round
-) -> wod.Round:
-    new_round = wod.Round(
-        position=round_data.position,
-        duration_seconds=round_data.duration_seconds,
-    )
-    db.add(new_round)
-
-    try:
-        db.commit()
-    except sqlalchemy.exc.IntegrityError as error:
-        db.rollback()
-        if 'duplicate key value violates unique constraint "wod_id_position"' in str(
-            error
-        ):
-            raise DuplicatedPosition
-        else:
-            raise error
-    else:
-        db.refresh(new_round)
-
-    return new_round
 
 
 def _create_wod_type(
@@ -105,8 +80,14 @@ def create_wod(db: sqlalchemy.orm.Session, wod_data: wod_schemas.Wod) -> wod.Wod
 
     try:
         db.commit()
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
+        if 'duplicate key value violates unique constraint "wod_id_position"' in str(
+            error
+        ):
+            raise DuplicatedRoundPosition
+        else:
+            raise error
     else:
         db.refresh(new_wod)
 
