@@ -6,6 +6,9 @@ import './scss/App.scss';
 function App() {
   return (
     <div className="App">
+      <Helmet>
+        <title>Welcome to WOD Board!</title>
+      </Helmet>
       <header className="App-header">
         <img src={`${process.env.PUBLIC_URL}logo.png`} className="App-logo" alt="logo" />
         <p>
