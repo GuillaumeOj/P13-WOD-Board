@@ -1,6 +1,8 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "manifest_version": 2,
+  "version": "0.1.0",
+  "short_name": "WOD Board",
+  "name": "A board to keep a track of your efforts",
   "icons": [
     {
       "src": "favicon.ico",
