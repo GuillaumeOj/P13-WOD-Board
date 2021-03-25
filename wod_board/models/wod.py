@@ -19,7 +19,13 @@ class Round(models.Base):
     duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
     wod_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"))
 
-    sqlalchemy.UniqueConstraint(wod_id, position, name="wod_id_position")
+    __tableargs__ = (
+        sqlalchemy.UniqueConstraint(wod_id, position, name="wod_id_position"),
+    )
+
+    def __init__(self, position: int, duration_seconds: int = 0):
+        self.position = position
+        self.duration_seconds = duration_seconds
 
 
 class Wod(models.Base):
