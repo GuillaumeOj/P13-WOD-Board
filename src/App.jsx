@@ -27,6 +27,7 @@ function App() {
           </ol>
         </nav>
       </header>
+      <div id="content" />
     </div>
   );
 }
