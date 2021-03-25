@@ -61,7 +61,7 @@ class Wod(models.Base):
         note: typing.Optional[str] = None,
         date: datetime.datetime = datetime.datetime.utcnow(),
     ):
+        self.wod_type_id = wod_type_id
         self.description = description
         self.note = note
         self.date = date
-        self.wod_type_id = wod_type_id
