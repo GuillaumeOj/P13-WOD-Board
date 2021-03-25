@@ -1,3 +1,4 @@
+import pydantic
 import pytest
 
 from wod_board.crud import wod_crud
@@ -76,12 +77,10 @@ def test_create_wod_with_duplicated_round_position(db):
         position=1, duration_seconds=20, parent=round_parent
     )
 
-    wod_schema = wod_schemas.WodCreate(
-        description="Foo WOD",
-        note="",
-        wod_type=wod_type_schema,
-        rounds=[round_parent, round_child_1],
-    )
-
-    with pytest.raises(wod_crud.DuplicatedRoundPosition):
-        wod_crud.create_wod(db, wod_schema)
+    with pytest.raises(pydantic.ValidationError):
+        wod_schemas.WodCreate(
+            description="Foo WOD",
+            note="",
+            wod_type=wod_type_schema,
+            rounds=[round_parent, round_child_1],
+        )

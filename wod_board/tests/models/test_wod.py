@@ -68,19 +68,12 @@ def test_wod_with_rounds(db):
     db.refresh(new_type)
 
     new_wod = wod.Wod(date=NOW, wod_type_id=new_type.id)
+    new_wod.rounds.append(wod.Round(1))
     db.add(new_wod)
     db.commit()
-
-    db.refresh(new_wod)
-
-    first_round = wod.Round(position=1, wod_id=new_wod.id)
-    db.add(first_round)
-    db.commit()
-    db.refresh(first_round)
     db.refresh(new_wod)
 
     assert new_wod.rounds.count() == 1
-    assert first_round in new_wod.rounds.all()
 
 
 def test_round(db):
@@ -89,23 +82,23 @@ def test_round(db):
     db.add(wod_type)
     db.add(new_wod)
     db.commit()
-    db.refresh(new_wod)
 
-    first_round = wod.Round(position=1, wod_id=new_wod.id)
+    first_round = wod.Round(1)
+    first_round.wod_id = new_wod.id
     db.add(first_round)
     db.commit()
     db.refresh(first_round)
 
     assert first_round.id == 1
     assert first_round.position == 1
-    assert first_round.duration_seconds is None
+    assert first_round.duration_seconds == 0
     assert first_round.wod_id == new_wod.id
 
     second_round = wod.Round(
-        position=2,
-        duration_seconds=20,
-        wod_id=first_round.wod_id,
+        2,
+        20,
     )
+    second_round.wod_id = new_wod.id
     db.add(second_round)
     db.commit()
     db.refresh(second_round)
@@ -124,8 +117,10 @@ def test_round_unique_constraint(db):
     db.commit()
     db.refresh(new_wod)
 
-    first_round = wod.Round(position=1, wod_id=new_wod.id)
-    second_round = wod.Round(position=1, wod_id=new_wod.id)
+    first_round = wod.Round(1)
+    first_round.wod_id = new_wod.id
+    second_round = wod.Round(1)
+    second_round.wod_id = new_wod.id
     db.add(first_round)
     db.add(second_round)
 

@@ -11,7 +11,7 @@ async def test_add(db, client):
             {
                 "position": 0,
                 "duration_seconds": 0,
-            }
+            },
         ],
         "wod_type": {
             "name": "string",
