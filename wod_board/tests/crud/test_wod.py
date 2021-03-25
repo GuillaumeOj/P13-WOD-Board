@@ -6,8 +6,11 @@ from wod_board.models import wod
 from wod_board.schemas import wod_schemas
 
 
+WOD_TYPE = "AMRAP"
+
+
 def test_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
     created_type = wod_crud._create_wod_type(db, wod_type_schema)
     assert created_type.name == wod_type_schema.name
@@ -20,7 +23,7 @@ def test_create_wod_type(db):
 
 
 def test_get_wod_type_by_name(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
     wod_crud._create_wod_type(db, wod_type_schema)
 
     wod_type = wod_crud._get_wod_type_by_name(db, wod_type_schema)
@@ -32,7 +35,7 @@ def test_get_wod_type_by_name(db):
 
 
 def test_get_or_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
     wod_type = wod_crud.get_or_create_wod_type(db, wod_type_schema)
     assert wod_type.name == wod_type_schema.name
@@ -45,7 +48,7 @@ def test_get_or_create_wod_type(db):
 
 
 def test_create_wod(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
     round_parent = wod_schemas.RoundBase(position=1)
     round_child_1 = wod_schemas.RoundBase(
@@ -70,7 +73,7 @@ def test_create_wod(db):
 
 
 def test_create_wod_with_duplicated_round_position(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name="AMRAP")
+    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
     round_parent = wod_schemas.RoundBase(position=1)
     round_child_1 = wod_schemas.RoundBase(
