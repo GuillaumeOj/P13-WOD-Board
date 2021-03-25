@@ -9,11 +9,23 @@ function App() {
       </Helmet>
       <header>
         <div className="logo">
-          <img src={`${process.env.PUBLIC_URL}logo.png`} className="brand_logo" alt="logo" />
-          <h1 className="brand_name">
-            WOD Board
-          </h1>
+          <img
+            src={`${process.env.PUBLIC_URL}logo.png`}
+            className="brand_logo"
+            alt="logo"
+          />
+          <h1 className="brand_name">WOD Board</h1>
         </div>
+        <nav className="navbar">
+          <ol className="crumbs">
+            <li>
+              <a href="/">Register</a>
+            </li>
+            <li>
+              <a href="/">Sign In</a>
+            </li>
+          </ol>
+        </nav>
       </header>
     </div>
   );
