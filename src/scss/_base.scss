@@ -4,24 +4,51 @@ body {
 
 header {
   background-color: $secondary;
-  height: 6rem;
+  height: $header-height;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex-direction: row;
+  color: $primary;
 
   .logo {
-    margin-left: 2rem;
+    margin-left: $spacer;
     display: flex;
+    align-items: center;
     flex-direction: row;
 
     .brand_logo{
-      height: 4rem;
+      height: $logo-height;
     }
 
     .brand_name{
-      margin-left: 2rem;
+      margin-left: $spacer;
       font-weight: bold;
+    }
+  }
+
+  .navbar{
+    margin-right: $spacer;
+
+    .crumbs {
+      display: flex;
+      flex-direction: row;
+
+      li {
+        list-style-type: none;
+        margin-left: 2rem;
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        a {
+          color: $primary;
+          font-weight: bold;
+          font-size: 1.2rem;
+          text-decoration: none;
+        }
+      }
     }
   }
 }
