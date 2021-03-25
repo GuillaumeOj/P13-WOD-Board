@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+}
+
+header {
+  background-color: $secondary;
+  height: 6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+
+  .logo {
+    margin-left: 2rem;
+    display: flex;
+    flex-direction: row;
+
+    .brand_logo{
+      height: 4rem;
+    }
+
+    .brand_name{
+      margin-left: 2rem;
+      font-weight: bold;
+    }
+  }
+}
