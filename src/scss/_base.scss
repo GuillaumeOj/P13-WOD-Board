@@ -52,3 +52,10 @@ header {
     }
   }
 }
+
+#content {
+  background-image: linear-gradient($white-20, $white-20), $main-background;
+  background-size: cover;
+  width: 100vw;
+  min-height: $content-min-height;
+}
