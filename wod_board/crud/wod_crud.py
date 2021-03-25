@@ -73,11 +73,12 @@ def create_wod(db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate) -> w
 
     # TODO: It never raise an error if position are the same
     for wod_round in wod_data.rounds:
-        new_round = wod.Round(
-            position=wod_round.position,
-            duration_seconds=wod_round.duration_seconds,
+        new_wod.rounds.append(
+            wod.Round(
+                wod_round.position,
+                wod_round.duration_seconds,
+            )
         )
-        new_wod.rounds.append(new_round)
     db.add(new_wod)
 
     try:
