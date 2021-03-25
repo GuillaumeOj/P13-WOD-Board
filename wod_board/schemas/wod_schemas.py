@@ -5,6 +5,8 @@ from __future__ import annotations
 import datetime
 import typing
 
+import pydantic
+
 from wod_board.schemas import OrmBase
 
 
@@ -17,6 +19,16 @@ class WodBase(OrmBase):
 class WodCreate(WodBase):
     rounds: typing.List[RoundCreate]
     wod_type: WodTypeCreate
+
+    @pydantic.validator("rounds", always=True)
+    def evaluate_rounds_position(cls, rounds):
+        s = set()
+        for w_round in rounds:
+            if w_round.position in s:
+                raise ValueError("duplicated position")
+            s.add(w_round.position)
+
+        return rounds
 
 
 class Wod(WodBase):
