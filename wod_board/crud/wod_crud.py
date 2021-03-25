@@ -19,7 +19,7 @@ class DuplicatedRoundPosition(Exception):
 
 def _create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
-) -> wod.WodType:
+) -> wod_schemas.WodType:
     new_type = wod.WodType(name=wod_type.name)
     db.add(new_type)
 
@@ -34,12 +34,12 @@ def _create_wod_type(
     else:
         db.refresh(new_type)
 
-    return new_type
+    return wod_schemas.WodType.from_orm(new_type)
 
 
 def _get_wod_type_by_name(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
-) -> wod.WodType:
+) -> wod_schemas.WodType:
     db_wod_type = (
         db.query(wod.WodType).filter(wod.WodType.name == wod_type.name).first()
     )
@@ -47,28 +47,30 @@ def _get_wod_type_by_name(
     if db_wod_type is None:
         raise UnknownWodType
 
-    return db_wod_type  # type: ignore[no-any-return]
+    return wod_schemas.WodType.from_orm(db_wod_type)
 
 
 def get_or_create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
-) -> wod.WodType:
+) -> wod_schemas.WodType:
     try:
         db_wod_type = _get_wod_type_by_name(db, wod_type)
     except UnknownWodType:
         db_wod_type = _create_wod_type(db, wod_type)
 
-    return db_wod_type
+    return wod_schemas.WodType.from_orm(db_wod_type)
 
 
-def create_wod(db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate) -> wod.Wod:
+def create_wod(
+    db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate
+) -> wod_schemas.Wod:
     wod_type = get_or_create_wod_type(db, wod_data.wod_type)
 
     new_wod = wod.Wod(
-        description=wod_data.description,
-        note=wod_data.note,
-        date=wod_data.date,
-        wod_type_id=wod_type.id,
+        wod_type.id,
+        wod_data.description,
+        wod_data.note,
+        wod_data.date,
     )
 
     # TODO: It never raise an error if position are the same
@@ -89,4 +91,4 @@ def create_wod(db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate) -> w
     else:
         db.refresh(new_wod)
 
-    return new_wod
+    return wod_schemas.Wod.from_orm(new_wod)

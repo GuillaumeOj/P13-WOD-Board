@@ -66,7 +66,7 @@ def test_create_wod(db):
     )
 
     new_wod = wod_crud.create_wod(db, wod_schema)
-    assert new_wod.rounds.count() == 3
+    assert len(new_wod.rounds) == 3
 
     wods = db.query(wod.Wod).all()
     assert len(wods) == 1

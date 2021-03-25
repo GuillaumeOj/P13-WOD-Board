@@ -5,7 +5,6 @@ import sqlalchemy.orm
 
 from wod_board.crud import wod_crud
 from wod_board.models import get_db
-from wod_board.models import wod
 from wod_board.schemas import wod_schemas
 
 
@@ -15,7 +14,7 @@ router = APIRouter(prefix="/wod", tags=["wod"])
 @router.post("/add", response_model=wod_schemas.Wod)
 async def add(
     wod_data: wod_schemas.WodCreate, db: sqlalchemy.orm.Session = Depends(get_db)
-) -> wod.Wod:
+) -> wod_schemas.Wod:
     try:
         new_wod = wod_crud.create_wod(db, wod_data)
     except wod_crud.DuplicatedRoundPosition:
