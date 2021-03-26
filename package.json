@@ -22,6 +22,9 @@
     ]
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
@@ -31,9 +34,6 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
     "@yarnpkg/pnpify": "^2.4.0",
     "eslint": "^7.22.0",
     "eslint-config-airbnb": "^18.2.1",
