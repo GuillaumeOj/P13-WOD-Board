@@ -2,6 +2,13 @@ body {
   margin: 0;
 }
 
+a {
+  color: $primary;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
 header {
   background-color: $secondary;
   height: $header-height;
@@ -13,21 +20,23 @@ header {
 
   .logo {
     margin-left: $spacer;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
+    a {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
 
-    .brand_logo{
-      height: $logo-height;
-    }
+      .brand_logo {
+        height: $logo-height;
+      }
 
-    .brand_name{
-      margin-left: $spacer;
-      font-weight: bold;
+      .brand_name {
+        margin-left: $spacer;
+        font-weight: bold;
+      }
     }
   }
 
-  .navbar{
+  .navbar {
     margin-right: $spacer;
 
     .crumbs {
@@ -41,13 +50,6 @@ header {
         &:first-child {
           margin-left: 0;
         }
-
-        a {
-          color: $primary;
-          font-weight: bold;
-          font-size: 1.2rem;
-          text-decoration: none;
-        }
       }
     }
   }
@@ -58,4 +60,32 @@ header {
   background-size: cover;
   width: 100vw;
   min-height: $content-min-height;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.title {
+  font-size: 4rem;
+}
+
+.lead {
+  font-size: 2rem;
+}
+
+.button {
+  background-color: $secondary;
+  border-radius: 0.3rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  color: $primary;
+  font-weight: normal;
+  text-transform: uppercase;
 }
