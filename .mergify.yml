@@ -6,6 +6,8 @@ pull_request_rules:
       - check-success=py39
       - check-success=pep8
       - check-success=coverage
+      - check-success=eslint
+      - check-success=front-build
     actions:
       merge:
         strict: "smart"
@@ -34,6 +36,8 @@ pull_request_rules:
       - check-success=py39
       - check-success=pep8
       - check-success=coverage
+      - check-success=eslint
+      - check-success=front-build
     actions:
       merge:
         strict: "smart"
