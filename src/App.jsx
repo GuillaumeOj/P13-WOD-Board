@@ -1,5 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { NavLink, Route, Switch } from 'react-router-dom';
+
+import Home from './Home';
 
 function App() {
   return (
@@ -9,25 +12,42 @@ function App() {
       </Helmet>
       <header>
         <div className="logo">
-          <img
-            src={`${process.env.PUBLIC_URL}logo.svg`}
-            className="brand_logo"
-            alt="logo"
-          />
-          <h1 className="brand_name">WOD Board</h1>
+          <NavLink to="/">
+            <img
+              src={`${process.env.PUBLIC_URL}logo.svg`}
+              className="brand_logo"
+              alt="logo"
+            />
+            <h1 className="brand_name">WOD Board</h1>
+          </NavLink>
         </div>
         <nav className="navbar">
           <ol className="crumbs">
             <li>
-              <a href="/">Register</a>
+              <NavLink to="/">Home</NavLink>
             </li>
             <li>
-              <a href="/">Sign In</a>
+              <NavLink to="/register">Register</NavLink>
+            </li>
+            <li>
+              <NavLink to="/signin">Sign In</NavLink>
             </li>
           </ol>
         </nav>
       </header>
-      <div id="content" />
+      <div id="content">
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/register">
+            <Home />
+          </Route>
+          <Route path="/signin">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
     </div>
   );
 }
