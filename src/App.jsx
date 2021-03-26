@@ -10,7 +10,7 @@ function App() {
       <header>
         <div className="logo">
           <img
-            src={`${process.env.PUBLIC_URL}logo.png`}
+            src={`${process.env.PUBLIC_URL}logo.svg`}
             className="brand_logo"
             alt="logo"
           />
