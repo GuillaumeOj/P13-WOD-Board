@@ -55,11 +55,18 @@ header {
   }
 }
 
-#content {
-  background-image: linear-gradient($white-20, $white-20), $main-background;
-  background-size: cover;
+#content, #background {
   width: 100vw;
   min-height: $content-min-height;
+}
+#background {
+  background-image: $main-background;
+  background-size: cover;
+  filter: blur(3px) opacity(0.5);
+}
+#content {
+  position: absolute;
+  top: $header-height;
 }
 
 h1,
