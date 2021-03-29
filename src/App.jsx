@@ -14,18 +14,16 @@ function App() {
       <header>
         <div className="logo">
           <NavLink exact to="/">
-            <img
-              src={`${process.env.PUBLIC_URL}logo.svg`}
-              className="brand_logo"
-              alt="logo"
-            />
+            <img src={`${process.env.PUBLIC_URL}logo.svg`} className="brand_logo" alt="logo" />
             <h1 className="brand_name">WOD Board</h1>
           </NavLink>
         </div>
         <nav className="navbar">
           <ol className="crumbs">
             <li>
-              <NavLink exact to="/">Home</NavLink>
+              <NavLink exact to="/">
+                Home
+              </NavLink>
             </li>
             <li>
               <NavLink to="/register">Register</NavLink>
