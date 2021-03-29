@@ -13,7 +13,7 @@ function App() {
       </Helmet>
       <header>
         <div className="logo">
-          <NavLink to="/">
+          <NavLink exact to="/">
             <img
               src={`${process.env.PUBLIC_URL}logo.svg`}
               className="brand_logo"
@@ -25,7 +25,7 @@ function App() {
         <nav className="navbar">
           <ol className="crumbs">
             <li>
-              <NavLink to="/">Home</NavLink>
+              <NavLink exact to="/">Home</NavLink>
             </li>
             <li>
               <NavLink to="/register">Register</NavLink>
