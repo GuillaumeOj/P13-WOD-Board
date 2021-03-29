@@ -138,3 +138,36 @@ p {
     color: $sandy-brown;
   }
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 90vw;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-bottom: $spacer;
+
+    label {
+      font-size: 1.2em;
+      margin-bottom: calc(0.5 * #{$spacer});
+    }
+  }
+
+  .group {
+    display: flex;
+    .field {
+      margin-left: $spacer;
+      &:first-of-type {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .button {
+    margin-top: $spacer;
+  }
+}
