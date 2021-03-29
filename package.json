@@ -2,6 +2,7 @@
   "name": "p13-wod-board",
   "version": "0.1.0",
   "private": false,
+  "proxy": "http://localhost:8500",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
