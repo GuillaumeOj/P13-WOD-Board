@@ -13,8 +13,8 @@ from wod_board.schemas import user_schemas
 from wod_board.utils import user_utils
 
 
-router_token = APIRouter(tags=["user"])
-router_user = APIRouter(prefix="/user", tags=["user"])
+router_token = APIRouter(prefix=f"{config.API_URL}", tags=["user"])
+router_user = APIRouter(prefix=f"{config.API_URL}/user", tags=["user"])
 
 
 @router_user.post("/register", response_model=user_schemas.UserSchema)
