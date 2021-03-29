@@ -11,6 +11,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  color: $sandy-brown;
+}
+
 header {
   height: $header-height;
   display: flex;
@@ -127,5 +131,9 @@ p {
   &.primary {
     background-color: $primary;
     color: $secondary;
+  }
+
+  &:hover {
+    color: $sandy-brown;
   }
 }
