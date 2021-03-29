@@ -58,6 +58,37 @@ header {
 #content, #background {
   width: 100vw;
   min-height: $content-min-height;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: $content-min-height;
+
+    .subHeader {
+      min-height: $subHeader-min-height;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+
+      .lead {
+        color: $secondary;
+        font-weight: 700;
+      }
+    }
+
+    .subContent {
+      min-width: 60vw;
+      display: flex;
+      justify-content: space-around;
+
+      article {
+        margin-top: 1rem;
+      }
+    }
+  }
 }
 #background {
   background-image: $main-background;
@@ -76,6 +107,7 @@ h4,
 h5,
 h6,
 p {
+  color: $primary;
   margin: 0;
   padding: 0;
 }
