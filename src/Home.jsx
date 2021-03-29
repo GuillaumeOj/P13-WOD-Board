@@ -32,10 +32,10 @@ function Home() {
           </div>
         </div>
         <div className="subscribe">
-          <NavLink to="/register" className="button">
+          <NavLink to="/register" className="button primary">
             Register
           </NavLink>
-          <NavLink to="/signin" className="button primary">
+          <NavLink to="/signin" className="button">
             Sign In
           </NavLink>
         </div>
