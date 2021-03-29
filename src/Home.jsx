@@ -35,7 +35,7 @@ function Home() {
           <NavLink to="/register" className="button">
             Register
           </NavLink>
-          <NavLink to="/signin" className="button">
+          <NavLink to="/signin" className="button primary">
             Sign In
           </NavLink>
         </div>
