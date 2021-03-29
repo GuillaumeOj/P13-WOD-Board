@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  background-color: $secondary;
 }
 
 a {
@@ -10,7 +11,6 @@ a {
 }
 
 header {
-  background-color: $secondary;
   height: $header-height;
   display: flex;
   flex-direction: row;
@@ -55,26 +55,25 @@ header {
   }
 }
 
-#content, #background {
+#content {
   width: 100vw;
   min-height: $content-min-height;
 
   section {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     min-height: $content-min-height;
 
     .subHeader {
-      min-height: $subHeader-min-height;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      padding-bottom: calc(2 * #{$spacer});
 
       .lead {
-        color: $secondary;
         font-weight: 700;
       }
     }
@@ -89,15 +88,6 @@ header {
       }
     }
   }
-}
-#background {
-  background-image: $main-background;
-  background-size: cover;
-  filter: blur(3px) opacity(0.5);
-}
-#content {
-  position: absolute;
-  top: $header-height;
 }
 
 h1,

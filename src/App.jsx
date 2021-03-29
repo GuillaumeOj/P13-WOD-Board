@@ -36,7 +36,6 @@ function App() {
           </ol>
         </nav>
       </header>
-      <div id="background" />
       <div id="content">
         <Switch>
           <Route exact path="/">
