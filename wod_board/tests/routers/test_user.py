@@ -16,7 +16,7 @@ async def test_register(db, client):
         "password": "strong-password",
     }
     response = await client.post(
-        "/user/register",
+        "/api/user/register",
         headers={"X-Token": "foobar"},
         json=user_json,
     )
@@ -33,7 +33,7 @@ async def test_register(db, client):
     assert len(users) == 1
 
     response = await client.post(
-        "/user/register",
+        "/api/user/register",
         headers={"X-Token": "foobar"},
         json=user_json,
     )
@@ -48,7 +48,7 @@ async def test_register(db, client):
     user_json2["email"] = "foo2@bar.com"
 
     response = await client.post(
-        "/user/register",
+        "/api/user/register",
         headers={"X-Token": "foobar"},
         json=user_json2,
     )
@@ -82,7 +82,7 @@ async def test_login(db, client):
     with mock.patch("jose.jwt.encode") as mocked_encode:
         mocked_encode.return_value = foo_token
         response = await client.post(
-            "/user/token",
+            "/api/user/token",
             data=user_data,
         )
 
