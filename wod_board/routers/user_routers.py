@@ -19,7 +19,8 @@ router_user = APIRouter(prefix=f"{config.API_URL}/user", tags=["user"])
 
 @router_user.post("/register", response_model=user_schemas.UserSchema)
 async def register(
-    user_data: user_schemas.UserCreate, db: sqlalchemy.orm.Session = Depends(get_db)
+    user_data: user_schemas.UserCreate = Depends(user_schemas.UserCreate.as_form),
+    db: sqlalchemy.orm.Session = Depends(get_db),
 ) -> user.User:
     try:
         new_user = user_crud.create_user(db, user_data)

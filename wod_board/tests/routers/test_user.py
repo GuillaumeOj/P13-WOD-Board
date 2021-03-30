@@ -18,7 +18,7 @@ async def test_register(db, client):
     response = await client.post(
         "/api/user/register",
         headers={"X-Token": "foobar"},
-        json=user_json,
+        data=user_json,
     )
 
     assert response.status_code == 200
@@ -35,7 +35,7 @@ async def test_register(db, client):
     response = await client.post(
         "/api/user/register",
         headers={"X-Token": "foobar"},
-        json=user_json,
+        data=user_json,
     )
 
     assert response.status_code == 400
@@ -50,7 +50,7 @@ async def test_register(db, client):
     response = await client.post(
         "/api/user/register",
         headers={"X-Token": "foobar"},
-        json=user_json2,
+        data=user_json2,
     )
 
     assert response.status_code == 400
