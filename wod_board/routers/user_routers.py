@@ -25,13 +25,20 @@ async def register(
     try:
         new_user = user_crud.create_user(db, user_data)
     except user_crud.DuplicatedEmail:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        error = [
+            {"msg": "Email already used"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
     except user_crud.DuplicatedUsername:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        error = [
+            {"msg": "Username already used"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
     except RuntimeError:
-        raise HTTPException(
-            status_code=400, detail="Unexcpected error, please try again"
-        )
+        error = [
+            {"msg": "Unexcpected error, please try again"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
 
     return new_user
 
