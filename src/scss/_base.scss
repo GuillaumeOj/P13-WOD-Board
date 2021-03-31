@@ -1,16 +1,25 @@
 body {
   margin: 0;
+  background-color: $secondary;
+  color: $primary;
 }
 
-a {
+a,
+p {
   color: $primary;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-size: $default-font-size;
   text-decoration: none;
 }
 
+a {
+  font-weight: bold;
+}
+
+a:hover {
+  color: $sandy-brown;
+}
+
 header {
-  background-color: $secondary;
   height: $header-height;
   display: flex;
   flex-direction: row;
@@ -50,23 +59,48 @@ header {
         &:first-child {
           margin-left: 0;
         }
+
+        .active {
+          text-decoration: underline;
+        }
       }
     }
   }
 }
 
-#content, #background {
+#content {
   width: 100vw;
   min-height: $content-min-height;
-}
-#background {
-  background-image: $main-background;
-  background-size: cover;
-  filter: blur(3px) opacity(0.5);
-}
-#content {
-  position: absolute;
-  top: $header-height;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: $content-min-height;
+
+    .subHeader {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: calc(2 * #{$spacer});
+
+      .lead {
+        font-weight: 700;
+      }
+    }
+
+    .subContent {
+      min-width: 60vw;
+      display: flex;
+      justify-content: space-around;
+
+      article {
+        margin-top: 1rem;
+      }
+    }
+  }
 }
 
 h1,
@@ -76,6 +110,7 @@ h4,
 h5,
 h6,
 p {
+  color: $primary;
   margin: 0;
   padding: 0;
 }
@@ -90,6 +125,7 @@ p {
 
 .button {
   background-color: $secondary;
+  border-style: none;
   border-radius: 0.3rem;
   padding: 0.3rem 0.6rem 0.3rem 0.6rem;
   color: $primary;
@@ -100,5 +136,61 @@ p {
   &.primary {
     background-color: $primary;
     color: $secondary;
+  }
+
+  &:hover {
+    color: $sandy-brown;
+  }
+}
+
+.alert {
+  margin-top: $spacer;
+  margin-bottom: $spacer;
+  padding: calc(0.5 * #{$spacer});
+  min-height: $default-font-size;
+  background-color: $secondary;
+  border-radius: 0.3rem;
+
+  li {
+    list-style-type: none;
+  }
+
+  &.error {
+    background-color: $yellow-orange-crayola;
+    color: $burnt-sienna;
+    font-weight: 700;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 90vw;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-bottom: $spacer;
+
+    label {
+      font-size: 1.2em;
+      margin-bottom: calc(0.5 * #{$spacer});
+    }
+  }
+
+  .group {
+    display: flex;
+    .field {
+      margin-left: $spacer;
+      &:first-of-type {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .button {
+    margin-top: $spacer;
   }
 }

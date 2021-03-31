@@ -1,33 +1,4 @@
 #home {
-  color: $primary;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  min-height: $content-min-height;
-
-  .subHeader {
-    background-color: transparent;
-    min-height: $subHeader-min-height;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    .lead {
-      color: $secondary;
-      font-weight: 700;
-    }
-  }
-
-  .subContent {
-    min-width: 60vw;
-    display: flex;
-    justify-content: space-around;
-
-    article {
-      margin-top: 1rem;
-    }
-  }
-
   .subscribe {
     display: flex;
     justify-content: space-around;

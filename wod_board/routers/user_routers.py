@@ -13,24 +13,32 @@ from wod_board.schemas import user_schemas
 from wod_board.utils import user_utils
 
 
-router_token = APIRouter(tags=["user"])
-router_user = APIRouter(prefix="/user", tags=["user"])
+router_token = APIRouter(prefix=f"{config.API_URL}", tags=["user"])
+router_user = APIRouter(prefix=f"{config.API_URL}/user", tags=["user"])
 
 
 @router_user.post("/register", response_model=user_schemas.UserSchema)
 async def register(
-    user_data: user_schemas.UserCreate, db: sqlalchemy.orm.Session = Depends(get_db)
+    user_data: user_schemas.UserCreate = Depends(user_schemas.UserCreate.as_form),
+    db: sqlalchemy.orm.Session = Depends(get_db),
 ) -> user.User:
     try:
         new_user = user_crud.create_user(db, user_data)
     except user_crud.DuplicatedEmail:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        error = [
+            {"msg": "Email already used"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
     except user_crud.DuplicatedUsername:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        error = [
+            {"msg": "Username already used"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
     except RuntimeError:
-        raise HTTPException(
-            status_code=400, detail="Unexcpected error, please try again"
-        )
+        error = [
+            {"msg": "Unexcpected error, please try again"},
+        ]
+        raise HTTPException(status_code=400, detail=error)
 
     return new_user
 

@@ -3,12 +3,13 @@ from fastapi import Depends
 from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
+from wod_board import config
 from wod_board.crud import wod_crud
 from wod_board.models import get_db
 from wod_board.schemas import wod_schemas
 
 
-router = APIRouter(prefix="/wod", tags=["wod"])
+router = APIRouter(prefix=f"{config.API_URL}/wod", tags=["wod"])
 
 
 @router.post("/add", response_model=wod_schemas.Wod)
