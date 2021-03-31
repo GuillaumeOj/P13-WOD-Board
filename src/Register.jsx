@@ -1,15 +1,37 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 
 import useInput from './Utils';
 
 function Register() {
+  const [email, setEmail] = useInput('');
   const [username, setUsername] = useInput('');
   const [password, setPassword] = useInput('');
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
 
-  function handleSubmit(event) {
+  const [messages, setMessages] = useState({ content: [], type: '' });
+
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('first_name', firstName);
+    formData.append('last_name', lastName);
+
+    axios
+      .post('/api/user/register', formData)
+      .then(() => {
+        setMessages({ content: ['You are now registered'], type: 'success' });
+      })
+      .catch((error) => {
+        if (error.response) {
+          setMessages({ content: error.response.data.detail, type: 'error' });
+        }
+      });
   }
 
   return (
@@ -20,12 +42,30 @@ function Register() {
       </div>
       <div className="subContent">
         <form onSubmit={handleSubmit}>
+          <ul className={`alert ${messages.type}`}>
+            {messages.content.map((item) => (
+              <li key={item.msg}>{item.msg}</li>
+            ))}
+          </ul>
           <div className="field">
-            <label htmlFor="username">Username*:&nbsp;</label>
+            <label htmlFor="username">Email*:&nbsp;</label>
+            {/* The field is named username
+            because we use the 'email' as an 'username' */}
             <input
               type="text"
               name="username"
               id="username"
+              value={email}
+              onChange={setEmail}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="username2">Username*:&nbsp;</label>
+            <input
+              type="text"
+              name="username2"
+              id="username2"
               value={username}
               onChange={setUsername}
               required

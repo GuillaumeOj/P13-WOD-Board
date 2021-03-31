@@ -1,5 +1,6 @@
 $header-height: 6rem;
 $spacer: 1.5rem;
+$default-font-size: 1.2rem;
 $logo-height: calc(#{$header-height} - #{$spacer} * 2);
 $content-min-height: calc(100vh - #{$header-height});
 $subHeader-min-height: calc(#{$content-min-height} * 0.3);

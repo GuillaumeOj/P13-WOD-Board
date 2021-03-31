@@ -4,11 +4,15 @@ body {
   color: $primary;
 }
 
-a {
+a,
+p {
   color: $primary;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-size: $default-font-size;
   text-decoration: none;
+}
+
+a {
+  font-weight: bold;
 }
 
 a:hover {
@@ -136,6 +140,25 @@ p {
 
   &:hover {
     color: $sandy-brown;
+  }
+}
+
+.alert {
+  margin-top: $spacer;
+  margin-bottom: $spacer;
+  padding: calc(0.5 * #{$spacer});
+  min-height: $default-font-size;
+  background-color: $secondary;
+  border-radius: 0.3rem;
+
+  li {
+    list-style-type: none;
+  }
+
+  &.error {
+    background-color: $yellow-orange-crayola;
+    color: $burnt-sienna;
+    font-weight: 700;
   }
 }
 
