@@ -39,7 +39,7 @@ async def test_register(db, client):
     )
 
     assert response.status_code == 400
-    assert response.json() == {"detail": "Email already registered"}
+    assert response.json() == {"detail": [{"msg": "Email already used"}]}
 
     users = db.query(user.User).all()
     assert len(users) == 1
@@ -54,7 +54,7 @@ async def test_register(db, client):
     )
 
     assert response.status_code == 400
-    assert response.json() == {"detail": "Username already registered"}
+    assert response.json() == {"detail": [{"msg": "Username already used"}]}
 
     users = db.query(user.User).all()
     assert len(users) == 1
