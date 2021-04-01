@@ -2,25 +2,24 @@ name: CD
 
 on:
   push:
-    branches:
-      main
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Configure SSH
-      run: |
-        mkdir -p ~/.ssh
-        chmod 777 ~/.ssh
-        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/github
-        chmod 600 ~/.ssh/github
-    - name: Deploy to production
-      run: |
-        ssh -i ~/.ssh/github -tto StrictHostKeyChecking=no guillaume@167.172.169.38 \
-        "cd /home/guillaume/wod-board"\
-        " && git pull --rebase"\
-        " && yarn install"\
-        " && yarn build"\
-        " && exit"
+      - uses: actions/checkout@v2
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 777 ~/.ssh
+          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/github
+          chmod 600 ~/.ssh/github
+      - name: Deploy to production
+        run: |
+          ssh -i ~/.ssh/github -tto StrictHostKeyChecking=no guillaume@167.172.169.38 \
+          "cd /home/guillaume/wod-board"\
+          " && git pull --rebase"\
+          " && yarn install"\
+          " && yarn build"\
+          " && exit"
