@@ -20,6 +20,7 @@ jobs:
           ssh -i ~/.ssh/github -tto StrictHostKeyChecking=no guillaume@167.172.169.38 \
           "cd /home/guillaume/wod-board"\
           " && git pull --rebase"\
+          " && /home/guillaume/.pyenv/shims/tox -e prod"\
           " && yarn install"\
           " && yarn build"\
           " && exit"
