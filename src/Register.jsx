@@ -7,6 +7,7 @@ function Register() {
   const [email, setEmail] = useInput('');
   const [username, setUsername] = useInput('');
   const [password, setPassword] = useInput('');
+  const [password2, setPassword2] = useInput('');
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
 
@@ -14,6 +15,11 @@ function Register() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (password !== password2) {
+      setMessages({ content: [{ msg: "Passwords don't match." }], type: 'error' });
+      return;
+    }
 
     const formData = new FormData();
     formData.append('email', email);
@@ -114,6 +120,17 @@ function Register() {
               id="password"
               value={password}
               onChange={setPassword}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="password2">Verify Password*:&nbsp;</label>
+            <input
+              type="password"
+              name="password2"
+              id="password2"
+              value={password2}
+              onChange={setPassword2}
               required
             />
           </div>
