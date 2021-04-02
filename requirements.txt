@@ -41,7 +41,7 @@ requests==2.25.1
 rsa==4.7.2
 Rx==1.6.1
 six==1.15.0
-SQLAlchemy==1.4.3
+SQLAlchemy==1.4.4
 starlette==0.13.6
 typing-extensions==3.7.4.3
 ujson==3.2.0
