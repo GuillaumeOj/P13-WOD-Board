@@ -4,6 +4,7 @@ import { NavLink, Route, Switch } from 'react-router-dom';
 
 import Home from './Home';
 import Register from './Register';
+import SignIn from './SignIn';
 import { NotFound } from './Utils';
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
             <Register />
           </Route>
           <Route path="/signin">
-            <Home />
+            <SignIn />
           </Route>
           <Route path="*">
             <NotFound />
