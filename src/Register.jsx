@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import { useInput, Alert } from './Utils';
 
@@ -126,6 +127,9 @@ function Register() {
           </div>
           <p>All fields marked with * are required.</p>
           <input type="submit" value="Register" className="button primary" />
+          <p>
+            Have any account already? <NavLink to="/signin">Sign In</NavLink> now.
+          </p>
         </form>
       </div>
     </section>
