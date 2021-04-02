@@ -1,7 +1,9 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-function Home() {
+import { TokenPropType } from './Type';
+
+function Home({ user }) {
   return (
     <>
       <section id="home">
@@ -31,17 +33,29 @@ function Home() {
             </article>
           </div>
         </div>
-        <div className="subscribe">
-          <NavLink to="/register" className="button primary">
-            Register
-          </NavLink>
-          <NavLink to="/signin" className="button">
-            Sign In
-          </NavLink>
-        </div>
+        {user && user.access_token ? (
+          ''
+        ) : (
+          <div className="subscribe">
+            <NavLink to="/register" className="button primary">
+              Register
+            </NavLink>
+            <NavLink to="/signin" className="button">
+              Sign In
+            </NavLink>
+          </div>
+        )}
       </section>
     </>
   );
 }
+
+Home.propTypes = {
+  user: TokenPropType,
+};
+
+Home.defaultProps = {
+  user: '',
+};
 
 export default Home;
