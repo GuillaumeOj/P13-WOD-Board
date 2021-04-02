@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
-import useInput from './Utils';
+import { useInput, Alert } from './Utils';
 
 function Register() {
   const [email, setEmail] = useInput('');
@@ -11,13 +11,13 @@ function Register() {
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
 
-  const [messages, setMessages] = useState({});
+  const [alert, setAlert] = useState({ content: '', type: '' });
 
   async function handleSubmit(event) {
     event.preventDefault();
 
     if (password !== password2) {
-      setMessages({ content: [{ msg: "Passwords don't match." }], type: 'error' });
+      setAlert({ content: 'Passwords don&apos;t match.', type: 'error' });
       return;
     }
 
@@ -31,16 +31,16 @@ function Register() {
     axios
       .post('/api/user/register', formData)
       .then(() => {
-        setMessages({ content: [{ msg: 'You are now registered!' }], type: 'success' });
+        setAlert({ content: 'You are now registered!', type: 'success' });
       })
       .catch((error) => {
         if (error.response) {
-          setMessages({ content: error.response.data.detail, type: 'error' });
+          setAlert({ content: error.response.data.detail[0].msg, type: 'error' });
         } else if (error.message) {
-          setMessages({ content: [{ msg: error.message }], type: 'error' });
+          setAlert({ content: error.message, type: 'error' });
         } else {
-          setMessages({
-            content: [{ msg: 'An error occured, please try again or contact an administrator.' }],
+          setAlert({
+            content: 'An error occured, please try again or contact an administrator.',
             type: 'error',
           });
         }
@@ -55,17 +55,7 @@ function Register() {
       </div>
       <div className="subContent">
         <form onSubmit={handleSubmit}>
-          {messages ? (
-            <>
-              <ul className={`alert ${messages.type ? messages.type : ''}`}>
-                {messages.content
-                  ? messages.content.map((item) => <li key={item.msg}>{item.msg}</li>)
-                  : ''}
-              </ul>
-            </>
-          ) : (
-            ''
-          )}
+          <Alert message={alert.content} type={alert.type} />
           <div className="field">
             <label htmlFor="username">Email*:&nbsp;</label>
             {/* The field is named username
