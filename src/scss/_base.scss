@@ -148,17 +148,30 @@ p {
   margin-bottom: $spacer;
   padding: calc(0.5 * #{$spacer});
   min-height: $default-font-size;
-  background-color: $secondary;
   border-radius: 0.3rem;
+  font-weight: 700;
+  border: 1px solid transparent;
 
   li {
     list-style-type: none;
   }
 
+  &.success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+    color: #0f5132;
+  }
+
   &.error {
-    background-color: $yellow-orange-crayola;
-    color: $burnt-sienna;
-    font-weight: 700;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+  }
+
+  &.warning {
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    color: #664d03;
   }
 }
 
