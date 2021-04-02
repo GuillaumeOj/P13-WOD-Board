@@ -10,7 +10,7 @@ function Register() {
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
 
-  const [messages, setMessages] = useState({ content: [], type: '' });
+  const [messages, setMessages] = useState({});
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -25,11 +25,18 @@ function Register() {
     axios
       .post('/api/user/register', formData)
       .then(() => {
-        setMessages({ content: ['You are now registered'], type: 'success' });
+        setMessages({ content: [{ msg: 'You are now registered!' }], type: 'success' });
       })
       .catch((error) => {
         if (error.response) {
           setMessages({ content: error.response.data.detail, type: 'error' });
+        } else if (error.message) {
+          setMessages({ content: [{ msg: error.message }], type: 'error' });
+        } else {
+          setMessages({
+            content: [{ msg: 'An error occured, please try again or contact an administrator.' }],
+            type: 'error',
+          });
         }
       });
   }
@@ -42,11 +49,17 @@ function Register() {
       </div>
       <div className="subContent">
         <form onSubmit={handleSubmit}>
-          <ul className={`alert ${messages.type}`}>
-            {messages.content.map((item) => (
-              <li key={item.msg}>{item.msg}</li>
-            ))}
-          </ul>
+          {messages ? (
+            <>
+              <ul className={`alert ${messages.type ? messages.type : ''}`}>
+                {messages.content
+                  ? messages.content.map((item) => <li key={item.msg}>{item.msg}</li>)
+                  : ''}
+              </ul>
+            </>
+          ) : (
+            ''
+          )}
           <div className="field">
             <label htmlFor="username">Email*:&nbsp;</label>
             {/* The field is named username
