@@ -2,9 +2,11 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
+import { useAuth } from './Auth';
 import { useInput, Alert } from './Utils';
 
-function SignIn() {
+export default function SignIn() {
+  const auth = useAuth();
   const [email, setEmail] = useInput('');
   const [password, setPassword] = useInput('');
 
@@ -19,8 +21,9 @@ function SignIn() {
 
     axios
       .post('/api/user/token', formData)
-      .then(() => {
+      .then((response) => {
         setAlert({ content: 'You are now logged in!', type: 'success' });
+        auth.signIn(response.data);
       })
       .catch((error) => {
         if (error.response) {
@@ -77,5 +80,3 @@ function SignIn() {
     </section>
   );
 }
-
-export default SignIn;
