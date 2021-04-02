@@ -10,10 +10,6 @@ class Token(BaseModel):
     token_type: typing.Optional[str] = "bearer"
 
 
-class TokenData(Token):
-    email: typing.Optional[str] = None
-
-
 class UserBase(BaseModel):
     email: EmailStr
     username: typing.Optional[str]
