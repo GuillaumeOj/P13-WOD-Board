@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-function useInput(initialValue) {
+export function useInput(initialValue) {
   const [value, setValue] = useState(initialValue);
 
   function handleChange(event) {
@@ -10,7 +11,20 @@ function useInput(initialValue) {
   return [value, handleChange];
 }
 
-export default useInput;
+export function Alert({ message, type }) {
+  return <p className={`alert ${type}`}>{message}</p>;
+}
+
+Alert.propTypes = {
+  message: PropTypes.string,
+  type: PropTypes.string,
+};
+
+Alert.defaultProps = {
+  message: '',
+  type: '',
+};
+
 export function NotFound() {
   return (
     <section id="notFound">
