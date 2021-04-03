@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
 import { useAuth } from './Auth';
@@ -40,43 +41,48 @@ export default function SignIn() {
   }
 
   return (
-    <section id="signIn">
-      <div className="subHeader">
-        <h2 className="title">Sign In!</h2>
-      </div>
-      <div className="subContent">
-        <form onSubmit={handleSubmit}>
-          <Alert message={alert.content} type={alert.type} />
-          <div className="field">
-            <label htmlFor="username">Email:&nbsp;</label>
-            {/* The field is named username
+    <>
+      <Helmet>
+        <title>WOD Board - Sign In</title>
+      </Helmet>
+      <section id="signIn">
+        <div className="subHeader">
+          <h2 className="title">Sign In!</h2>
+        </div>
+        <div className="subContent">
+          <form onSubmit={handleSubmit}>
+            <Alert message={alert.content} type={alert.type} />
+            <div className="field">
+              <label htmlFor="username">Email:&nbsp;</label>
+              {/* The field is named username
             because we use the 'email' as an 'username' */}
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={email}
-              onChange={setEmail}
-              required
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="password">Password:&nbsp;</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={password}
-              onChange={setPassword}
-              required
-            />
-          </div>
-          <input type="submit" value="Sign In" className="button primary" />
-          <p>
-            Don&apos;t have any account? <NavLink to="/register">Register</NavLink> now.
-          </p>
-        </form>
-      </div>
-    </section>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                value={email}
+                onChange={setEmail}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="password">Password:&nbsp;</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                value={password}
+                onChange={setPassword}
+                required
+              />
+            </div>
+            <input type="submit" value="Sign In" className="button primary" />
+            <p>
+              Don&apos;t have any account? <NavLink to="/register">Register</NavLink> now.
+            </p>
+          </form>
+        </div>
+      </section>
+    </>
   );
 }
