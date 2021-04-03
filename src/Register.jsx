@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
 import { useInput, Alert } from './Utils';
@@ -49,90 +50,95 @@ function Register() {
   }
 
   return (
-    <section id="register">
-      <div className="subHeader">
-        <h2 className="title">Join Us!</h2>
-        <p className="lead">Join our community for free!</p>
-      </div>
-      <div className="subContent">
-        <form onSubmit={handleSubmit}>
-          <Alert message={alert.content} type={alert.type} />
-          <div className="field">
-            <label htmlFor="username">Email*:&nbsp;</label>
-            {/* The field is named username
+    <>
+      <Helmet>
+        <title>WOD Board - Register</title>
+      </Helmet>
+      <section id="register">
+        <div className="subHeader">
+          <h2 className="title">Register an account</h2>
+          <p className="lead">Join our community for free!</p>
+        </div>
+        <div className="subContent">
+          <form onSubmit={handleSubmit}>
+            <Alert message={alert.content} type={alert.type} />
+            <div className="field">
+              <label htmlFor="username">Email*:&nbsp;</label>
+              {/* The field is named username
             because we use the 'email' as an 'username' */}
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={email}
-              onChange={setEmail}
-              required
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="username2">Username*:&nbsp;</label>
-            <input
-              type="text"
-              name="username2"
-              id="username2"
-              value={username}
-              onChange={setUsername}
-              required
-            />
-          </div>
-          <div className="group">
-            <div className="field">
-              <label htmlFor="firstName">First Name:&nbsp;</label>
               <input
                 type="text"
-                name="firstName"
-                id="firstName"
-                value={firstName}
-                onChange={setFirstName}
+                name="username"
+                id="username"
+                value={email}
+                onChange={setEmail}
+                required
               />
             </div>
             <div className="field">
-              <label htmlFor="lastName">Last Name:&nbsp;</label>
+              <label htmlFor="username2">Username*:&nbsp;</label>
               <input
                 type="text"
-                name="lastName"
-                id="lastName"
-                value={lastName}
-                onChange={setLastName}
+                name="username2"
+                id="username2"
+                value={username}
+                onChange={setUsername}
+                required
               />
             </div>
-          </div>
-          <div className="field">
-            <label htmlFor="password">Password*:&nbsp;</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={password}
-              onChange={setPassword}
-              required
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="password2">Verify Password*:&nbsp;</label>
-            <input
-              type="password"
-              name="password2"
-              id="password2"
-              value={password2}
-              onChange={setPassword2}
-              required
-            />
-          </div>
-          <p>All fields marked with * are required.</p>
-          <input type="submit" value="Register" className="button primary" />
-          <p>
-            Have any account already? <NavLink to="/signin">Sign In</NavLink> now.
-          </p>
-        </form>
-      </div>
-    </section>
+            <div className="group">
+              <div className="field">
+                <label htmlFor="firstName">First Name:&nbsp;</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  id="firstName"
+                  value={firstName}
+                  onChange={setFirstName}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="lastName">Last Name:&nbsp;</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  id="lastName"
+                  value={lastName}
+                  onChange={setLastName}
+                />
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="password">Password*:&nbsp;</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                value={password}
+                onChange={setPassword}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="password2">Verify Password*:&nbsp;</label>
+              <input
+                type="password"
+                name="password2"
+                id="password2"
+                value={password2}
+                onChange={setPassword2}
+                required
+              />
+            </div>
+            <p>All fields marked with * are required.</p>
+            <input type="submit" value="Register" className="button primary" />
+            <p>
+              Have any account already? <NavLink to="/signin">Sign In</NavLink> now.
+            </p>
+          </form>
+        </div>
+      </section>
+    </>
   );
 }
 
