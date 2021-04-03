@@ -23,4 +23,5 @@ jobs:
           " && /home/guillaume/.pyenv/shims/tox -e prod"\
           " && yarn install"\
           " && yarn build"\
+          " && supervisorctl restart wod-board"\
           " && exit"
