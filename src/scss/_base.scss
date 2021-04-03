@@ -5,7 +5,9 @@ body {
 }
 
 a,
-p {
+p,
+input {
+  font-family: "Roboto", "Open Sans", sans-serif;
   color: $primary;
   font-size: $default-font-size;
   text-decoration: none;
@@ -55,6 +57,21 @@ header {
       li {
         list-style-type: none;
         margin-left: 2rem;
+
+        a {
+          font-size: $default-font-size;
+        }
+
+        input {
+          background-color: transparent;
+          border: none;
+          font-size: $default-font-size;
+          font-weight: bold;
+          color: $primary;
+          &:hover {
+            color: $sandy-brown;
+          }
+        }
 
         &:first-child {
           margin-left: 0;
