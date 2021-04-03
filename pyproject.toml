@@ -1,2 +1,27 @@
 [tool.black]
 target-version = ["py38"]
+
+[tool.poetry]
+name = "wod_board"
+version = "0.1.0"
+description = "An application for savings all your performances"
+authors = ["Guillaume <7831777+GuillaumeOj@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+alembic = "^1.5.8"
+fastapi = {extras = ["all"], version = "^0.63.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-dotenv = "^0.17.0"
+python-jose = {extras = ["cryptography"], version = "^3.2.0"}
+python-multipart = "^0.0.5"
+sentry-sdk = "^1.0.0"
+SQLAlchemy = {extras = ["postgresql"], version = "^1.4.5"}
+uvicorn = {extras = ["standard"], version = "^0.13.4"}
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
