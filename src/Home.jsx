@@ -1,11 +1,17 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
-import { TokenPropType } from './Type';
+import { useAuth } from './Auth';
 
-function Home({ user }) {
+export default function Home() {
+  const auth = useAuth();
+
   return (
     <>
+      <Helmet>
+        <title>Welcome to WOD Board!</title>
+      </Helmet>
       <section id="home">
         <div className="subHeader">
           <h2 className="title">Track your WODs</h2>
@@ -33,7 +39,7 @@ function Home({ user }) {
             </article>
           </div>
         </div>
-        {user && user.access_token ? (
+        {auth.user ? (
           ''
         ) : (
           <div className="subscribe">
@@ -49,13 +55,3 @@ function Home({ user }) {
     </>
   );
 }
-
-Home.propTypes = {
-  user: TokenPropType,
-};
-
-Home.defaultProps = {
-  user: '',
-};
-
-export default Home;
