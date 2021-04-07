@@ -75,15 +75,13 @@ def test_create_wod(db):
 def test_create_wod_with_duplicated_round_position(db):
     wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
-    round_parent = wod_schemas.RoundBase(position=1)
-    round_child_1 = wod_schemas.RoundBase(
-        position=1, duration_seconds=20, parent=round_parent
-    )
+    first_round = wod_schemas.RoundBase(position=1)
+    second_round = wod_schemas.RoundBase(position=1, duration_seconds=20)
 
     with pytest.raises(pydantic.ValidationError):
         wod_schemas.WodCreate(
             description="Foo WOD",
             note="",
             wod_type=wod_type_schema,
-            rounds=[round_parent, round_child_1],
+            rounds=[first_round, second_round],
         )
