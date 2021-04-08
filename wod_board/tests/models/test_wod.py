@@ -42,24 +42,6 @@ def test_wod(db):
     assert new_wod.wod_type_id == new_type.id
 
 
-def test_wod_with_rounds(db):
-    new_type = wod.WodType(WOD_TYPE)
-    db.add(new_type)
-    db.commit()
-    db.refresh(new_type)
-
-    new_wod = wod.Wod(
-        new_type.id,
-        date=NOW,
-    )
-    new_wod.rounds.append(wod.Round(1))
-    db.add(new_wod)
-    db.commit()
-    db.refresh(new_wod)
-
-    assert new_wod.rounds.count() == 1
-
-
 def test_round(db):
     wod_type = wod.WodType(WOD_TYPE)
     new_wod = wod.Wod(1)
@@ -67,8 +49,7 @@ def test_round(db):
     db.add(new_wod)
     db.commit()
 
-    first_round = wod.Round(1)
-    first_round.wod_id = new_wod.id
+    first_round = wod.Round(1, wod_id=new_wod.id)
     db.add(first_round)
     db.commit()
     db.refresh(first_round)
@@ -77,12 +58,13 @@ def test_round(db):
     assert first_round.position == 1
     assert first_round.duration_seconds == 0
     assert first_round.wod_id == new_wod.id
+    assert first_round.parent_id is None
 
     second_round = wod.Round(
         2,
-        20,
+        duration_seconds=20,
+        wod_id=new_wod.id,
     )
-    second_round.wod_id = new_wod.id
     db.add(second_round)
     db.commit()
     db.refresh(second_round)
@@ -91,6 +73,23 @@ def test_round(db):
     assert second_round.position == 2
     assert second_round.duration_seconds == 20
     assert second_round.wod_id == new_wod.id
+    assert second_round.parent_id is None
+
+    third_round = wod.Round(
+        3,
+        duration_seconds=20,
+        wod_id=new_wod.id,
+        parent_id=first_round.id,
+    )
+    db.add(third_round)
+    db.commit()
+    db.refresh(third_round)
+
+    assert third_round.id == 3
+    assert third_round.position == 3
+    assert third_round.duration_seconds == 20
+    assert third_round.wod_id == new_wod.id
+    assert third_round.parent_id == first_round.id
 
 
 def test_round_unique_constraint(db):
@@ -101,10 +100,8 @@ def test_round_unique_constraint(db):
     db.commit()
     db.refresh(new_wod)
 
-    first_round = wod.Round(1)
-    first_round.wod_id = new_wod.id
-    second_round = wod.Round(1)
-    second_round.wod_id = new_wod.id
+    first_round = wod.Round(1, wod_id=new_wod.id)
+    second_round = wod.Round(1, wod_id=new_wod.id)
     db.add(first_round)
     db.add(second_round)
 
