@@ -62,8 +62,10 @@ def get_or_create_wod_type(
 
 
 def create_wod(
-    db: sqlalchemy.orm.Session, wod_data: wod_schemas.WodCreate
+    db: sqlalchemy.orm.Session,
+    wod_data: wod_schemas.WodCreate,
 ) -> wod_schemas.Wod:
+
     wod_type = get_or_create_wod_type(db, wod_data.wod_type)
 
     new_wod = wod.Wod(
@@ -73,21 +75,13 @@ def create_wod(
         wod_data.date,
     )
 
-    # TODO: It never raise an error if position are the same
-    for wod_round in wod_data.rounds:
-        new_wod.rounds.append(
-            wod.Round(
-                wod_round.position,
-                wod_round.duration_seconds,
-            )
-        )
     db.add(new_wod)
 
     try:
         db.commit()
-    # TODO: We need to be more specific for handling those errors
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
+        raise error
     else:
         db.refresh(new_wod)
 

@@ -1,4 +1,3 @@
-import pydantic
 import pytest
 
 from wod_board.crud import wod_crud
@@ -48,40 +47,17 @@ def test_get_or_create_wod_type(db):
 
 
 def test_create_wod(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
-
-    round_parent = wod_schemas.RoundBase(position=1)
-    round_child_1 = wod_schemas.RoundBase(
-        position=2, duration_seconds=20, parent=round_parent
-    )
-    round_child_2 = wod_schemas.RoundBase(
-        position=3, duration_seconds=10, parent=round_parent
-    )
+    wod_type_schema = wod_schemas.WodTypeCreate(name=WOD_TYPE)
 
     wod_schema = wod_schemas.WodCreate(
-        description="Foo WOD",
-        note="",
-        wod_type=wod_type_schema,
-        rounds=[round_parent, round_child_1, round_child_2],
+        description="Foo WOD", note="", wod_type=wod_type_schema
     )
 
     new_wod = wod_crud.create_wod(db, wod_schema)
-    assert len(new_wod.rounds) == 3
 
-    wods = db.query(wod.Wod).all()
-    assert len(wods) == 1
-
-
-def test_create_wod_with_duplicated_round_position(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
-
-    first_round = wod_schemas.RoundBase(position=1)
-    second_round = wod_schemas.RoundBase(position=1, duration_seconds=20)
-
-    with pytest.raises(pydantic.ValidationError):
-        wod_schemas.WodCreate(
-            description="Foo WOD",
-            note="",
-            wod_type=wod_type_schema,
-            rounds=[first_round, second_round],
-        )
+    db_wod = db.query(wod.Wod).first()
+    assert db_wod.id == new_wod.id
+    assert db_wod.description == new_wod.description
+    assert db_wod.note == new_wod.note
+    assert db_wod.date == new_wod.date
+    assert db_wod.rounds.all() == new_wod.rounds

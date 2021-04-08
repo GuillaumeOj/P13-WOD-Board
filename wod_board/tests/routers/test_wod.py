@@ -7,12 +7,6 @@ async def test_add(db, client):
         "description": "string",
         "note": "string",
         "date": "2021-03-24T14:42:46.580110",
-        "rounds": [
-            {
-                "position": 0,
-                "duration_seconds": 0,
-            },
-        ],
         "wod_type": {
             "name": "string",
         },
@@ -24,14 +18,7 @@ async def test_add(db, client):
         "description": "string",
         "note": "string",
         "date": "2021-03-24T14:42:46.580110",
-        "rounds": [
-            {
-                "id": 1,
-                "wod_id": 1,
-                "position": 0,
-                "duration_seconds": 0,
-            }
-        ],
+        "rounds": [],
         "wod_type_id": 1,
         "wod_type": {
             "id": 1,
