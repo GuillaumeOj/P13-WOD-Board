@@ -1,3 +1,5 @@
+import typing
+
 import sqlalchemy.exc
 import sqlalchemy.orm
 
@@ -59,6 +61,39 @@ def get_or_create_wod_type(
         db_wod_type = _create_wod_type(db, wod_type)
 
     return wod_schemas.WodType.from_orm(db_wod_type)
+
+
+def create_rounds(
+    db: sqlalchemy.orm.Session,
+    rounds: typing.List[wod_schemas.RoundCreate],
+) -> typing.List[wod_schemas.Round]:
+    new_rounds = []
+    for wod_round in rounds:
+        sub_rounds = []
+        if wod_round.children:
+            sub_rounds = create_rounds(db, wod_round.children)
+
+        new_round = wod.Round(**wod_round.dict())
+        new_round.children.append(sub_rounds)
+
+        db.add(new_round)
+        try:
+            db.commit()
+        except sqlalchemy.exc.IntegrityError as error:
+            db.rollback()
+            if (
+                'duplicate key value violates unique constraint "wod_id_position"'
+                in str(error)
+            ):
+                raise DuplicatedRoundPosition
+
+            raise error
+        else:
+            db.refresh(new_round)
+
+        new_rounds.append(wod_schemas.Round.from_orm(new_round))
+
+    return new_rounds
 
 
 def create_wod(

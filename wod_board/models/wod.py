@@ -23,15 +23,33 @@ class Round(models.Base):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     position = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
-    wod_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"))
+    wod_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"), nullable=False
+    )
+    parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
+
+    children = sqlalchemy.orm.relationship(  # type: ignore[misc]
+        "Round",
+        cascade="all, delete",
+        backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
+        lazy="dynamic",
+    )
 
     __tableargs__ = (
         sqlalchemy.UniqueConstraint(wod_id, position, name="wod_id_position"),
     )
 
-    def __init__(self, position: int, duration_seconds: int = 0):
+    def __init__(
+        self,
+        position: int,
+        wod_id: int,
+        duration_seconds: int = 0,
+        parent_id: typing.Optional[int] = None,
+    ):
         self.position = position
         self.duration_seconds = duration_seconds
+        self.wod_id = wod_id
+        self.parent_id = parent_id
 
 
 class Wod(models.Base):

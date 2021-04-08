@@ -40,16 +40,21 @@ class WodType(WodTypeBase):
 class RoundBase(OrmBase):
     position: int
     duration_seconds: int = 0
+    wod_id: int
 
 
 class RoundCreate(RoundBase):
-    pass
+    children: typing.Optional[typing.List[RoundCreate]]
 
 
 class Round(RoundBase):
     id: int
-    wod_id: int
+    parent_id: typing.Optional[int]
+
+    children: typing.Optional[typing.List[Round]]
 
 
 WodCreate.update_forward_refs()
 Wod.update_forward_refs()
+RoundCreate.update_forward_refs()
+Round.update_forward_refs()
