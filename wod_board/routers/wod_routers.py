@@ -19,15 +19,7 @@ async def add_wod(
     wod_data: wod_schemas.WodCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> wod_schemas.Wod:
-    try:
-        new_wod = wod_crud.create_wod(db, wod_data)
-    except sqlalchemy.exc.IntegrityError:
-        raise HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Something went wrong. Please contact the site administrator.",
-        )
-
-    return new_wod
+    return wod_crud.create_wod(db, wod_data)
 
 
 @router.post("/add/rounds", response_model=typing.List[wod_schemas.Round])
