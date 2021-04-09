@@ -25,16 +25,8 @@ def _create_wod_type(
     new_type = wod.WodType(name=wod_type.name)
     db.add(new_type)
 
-    try:
-        db.commit()
-    except sqlalchemy.exc.IntegrityError as error:
-        db.rollback()
-        if 'duplicate key value violates unique constraint "wod_type_name_key"' in str(
-            error
-        ):
-            raise DuplicatedWodType
-    else:
-        db.refresh(new_type)
+    db.commit()
+    db.refresh(new_type)
 
     return wod_schemas.WodType.from_orm(new_type)
 
@@ -112,12 +104,7 @@ def create_wod(
 
     db.add(new_wod)
 
-    try:
-        db.commit()
-    except sqlalchemy.exc.IntegrityError as error:
-        db.rollback()
-        raise error
-    else:
-        db.refresh(new_wod)
+    db.commit()
+    db.refresh(new_wod)
 
     return wod_schemas.Wod.from_orm(new_wod)

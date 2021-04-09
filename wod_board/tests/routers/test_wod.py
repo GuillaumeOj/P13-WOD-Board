@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_add(db, client):
+async def test_add_wod(db, client):
     wod_json = {
         "description": "string",
         "note": "string",
