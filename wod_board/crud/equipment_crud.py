@@ -1,3 +1,5 @@
+import typing
+
 import sqlalchemy.orm
 
 from wod_board.models import equipment
@@ -40,10 +42,20 @@ def _get_equipment_by_exact_name(
 def get_or_create_equipment(
     db: sqlalchemy.orm.Session,
     wanted_equipment: equipment_schemas.EquipmentCreate,
-) -> equipment_schemas.Equipment:
+) -> equipment.Equipment:
     try:
         db_equiment = _get_equipment_by_exact_name(db, wanted_equipment)
     except UnknownEquipment:
         db_equiment = _create_equipment(db, wanted_equipment)
 
-    return equipment_schemas.Equipment.from_orm(db_equiment)
+    return db_equiment
+
+
+def get_or_create_equipments(
+    db: sqlalchemy.orm.Session,
+    wanted_equipments: typing.List[equipment_schemas.EquipmentCreate],
+) -> typing.List[equipment.Equipment]:
+    return [
+        get_or_create_equipment(db, wanted_equipment)
+        for wanted_equipment in wanted_equipments
+    ]
