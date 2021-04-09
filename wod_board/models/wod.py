@@ -39,18 +39,6 @@ class Round(models.Base):
         sqlalchemy.UniqueConstraint(wod_id, position, name="wod_id_position"),
     )
 
-    def __init__(
-        self,
-        position: int,
-        wod_id: int,
-        duration_seconds: int = 0,
-        parent_id: typing.Optional[int] = None,
-    ):
-        self.position = position
-        self.duration_seconds = duration_seconds
-        self.wod_id = wod_id
-        self.parent_id = parent_id
-
 
 class Wod(models.Base):
     __tablename__ = "wod"
