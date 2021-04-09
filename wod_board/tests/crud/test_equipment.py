@@ -40,3 +40,13 @@ def test_get_or_create_equipment(db):
 
     equipments = db.query(equipment.Equipment)
     assert equipments.count() == 1
+
+
+def test_get_or_create_equipments(db):
+    dumbbel_schema = equipment_schemas.EquipmentCreate(name="Dumbbel")
+    barbell_schema = equipment_schemas.EquipmentCreate(name="Barbell")
+
+    equipments = equipment_crud.get_or_create_equipments(
+        db, [dumbbel_schema, barbell_schema]
+    )
+    assert len(equipments) == 2
