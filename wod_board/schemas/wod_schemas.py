@@ -44,14 +44,14 @@ class RoundBase(OrmBase):
 
 
 class RoundCreate(RoundBase):
-    children: typing.Optional[typing.List[RoundCreate]]
+    children: typing.Optional[typing.List[RoundCreate]] = None
 
 
 class Round(RoundBase):
     id: int
     parent_id: typing.Optional[int]
 
-    children: typing.Optional[typing.List[Round]]
+    children: typing.Optional[typing.List[Round]] = None
 
 
 WodCreate.update_forward_refs()

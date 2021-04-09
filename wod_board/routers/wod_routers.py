@@ -34,5 +34,10 @@ async def add_rounds(
             status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Rounds have the same position",
         )
+    except wod_crud.WrongWodId:
+        raise HTTPException(
+            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="The WOD may be created first",
+        )
 
     return new_rounds

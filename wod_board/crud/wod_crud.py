@@ -7,15 +7,15 @@ from wod_board.models import wod
 from wod_board.schemas import wod_schemas
 
 
-class DuplicatedWodType(Exception):
-    pass
-
-
 class UnknownWodType(Exception):
     pass
 
 
 class DuplicatedRoundPosition(Exception):
+    pass
+
+
+class WrongWodId(Exception):
     pass
 
 
@@ -58,15 +58,16 @@ def get_or_create_wod_type(
 def create_rounds(
     db: sqlalchemy.orm.Session,
     rounds: typing.List[wod_schemas.RoundCreate],
+    parent_id: typing.Optional[int] = None,
 ) -> typing.List[wod_schemas.Round]:
     new_rounds = []
     for wod_round in rounds:
-        sub_rounds = []
-        if wod_round.children:
-            sub_rounds = create_rounds(db, wod_round.children)
-
-        new_round = wod.Round(**wod_round.dict())
-        new_round.children.append(sub_rounds)
+        new_round = wod.Round(
+            position=wod_round.position,
+            duration_seconds=wod_round.duration_seconds,
+            wod_id=wod_round.wod_id,
+            parent_id=parent_id,
+        )
 
         db.add(new_round)
         try:
@@ -78,10 +79,18 @@ def create_rounds(
                 in str(error)
             ):
                 raise DuplicatedRoundPosition
+            if (
+                'insert or update on table "round" violates foreign '
+                'key constraint "round_wod_id_fkey"'
+            ) in str(error):
+                raise WrongWodId
 
             raise error
         else:
             db.refresh(new_round)
+
+        if wod_round.children:
+            create_rounds(db, wod_round.children, parent_id=new_round.id)
 
         new_rounds.append(wod_schemas.Round.from_orm(new_round))
 
