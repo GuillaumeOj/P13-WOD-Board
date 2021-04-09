@@ -19,12 +19,12 @@ def test_get_wod_type_by_name(db):
     wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
     wod_crud._create_wod_type(db, wod_type_schema)
 
-    wod_type = wod_crud._get_wod_type_by_name(db, wod_type_schema)
+    wod_type = wod_crud._get_wod_type_by_exact_name(db, wod_type_schema)
     assert wod_type.name == wod_type_schema.name
 
     wod_type_schema = wod_schemas.WodTypeBase(name="For Time")
     with pytest.raises(wod_crud.UnknownWodType):
-        wod_type = wod_crud._get_wod_type_by_name(db, wod_type_schema)
+        wod_type = wod_crud._get_wod_type_by_exact_name(db, wod_type_schema)
 
 
 def test_get_or_create_wod_type(db):

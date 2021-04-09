@@ -31,7 +31,7 @@ def _create_wod_type(
     return wod_schemas.WodType.from_orm(new_type)
 
 
-def _get_wod_type_by_name(
+def _get_wod_type_by_exact_name(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
 ) -> wod_schemas.WodType:
     db_wod_type = (
@@ -48,7 +48,7 @@ def get_or_create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
 ) -> wod_schemas.WodType:
     try:
-        db_wod_type = _get_wod_type_by_name(db, wod_type)
+        db_wod_type = _get_wod_type_by_exact_name(db, wod_type)
     except UnknownWodType:
         db_wod_type = _create_wod_type(db, wod_type)
 
