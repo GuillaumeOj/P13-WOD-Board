@@ -9,7 +9,7 @@ from wod_board.models import get_db
 from wod_board.schemas import unit_schemas
 
 
-router = fastapi.APIRouter(prefix=f"{config.API_URL}/unit", tags=["movement"])
+router = fastapi.APIRouter(prefix=f"{config.API_URL}/unit", tags=["unit"])
 
 
 @router.post("/", response_model=unit_schemas.Unit)
