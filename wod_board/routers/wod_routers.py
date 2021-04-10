@@ -10,7 +10,7 @@ from wod_board.schemas import wod_schemas
 router = fastapi.APIRouter(prefix=f"{config.API_URL}/wod", tags=["wod"])
 
 
-@router.post("/add", response_model=wod_schemas.Wod)
+@router.post("/", response_model=wod_schemas.Wod)
 async def add_wod(
     wod_data: wod_schemas.WodCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
