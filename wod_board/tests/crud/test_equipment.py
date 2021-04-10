@@ -21,12 +21,13 @@ def test_get_equipment_by_exact_name(db):
     db.add(equipment.Equipment(**equipment_schema.dict()))
     db.commit()
 
-    wanted_equipment = equipment_crud._get_equipment_by_exact_name(db, equipment_schema)
+    wanted_equipment = equipment_crud.get_equipment_by_exact_name(
+        db, equipment_schema.name
+    )
     assert wanted_equipment.name == equipment_schema.name
 
-    equipment_schema = equipment_schemas.EquipmentCreate(name="Barbell")
     with pytest.raises(equipment_crud.UnknownEquipment):
-        equipment_crud._get_equipment_by_exact_name(db, equipment_schema)
+        equipment_crud.get_equipment_by_exact_name(db, "Barbell")
 
 
 def test_get_or_create_equipment(db):
