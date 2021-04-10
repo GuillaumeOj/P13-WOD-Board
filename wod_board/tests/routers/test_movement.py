@@ -5,8 +5,8 @@ from wod_board.models import movement
 
 @pytest.mark.asyncio
 async def test_add(db, client):
-    wod_json = {"name": "Devil Press", "unit_id": None, "equipments": []}
-    response = await client.post("/api/movement/", json=wod_json)
+    movement_json = {"name": "Devil Press", "unit_id": None, "equipments": []}
+    response = await client.post("/api/movement/", json=movement_json)
 
     expected_response = {
         "id": 1,
