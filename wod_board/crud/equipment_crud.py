@@ -23,14 +23,12 @@ def _create_equipment(
     return new_equipment
 
 
-def _get_equipment_by_exact_name(
+def get_equipment_by_exact_name(
     db: sqlalchemy.orm.Session,
-    wanted_equipment: equipment_schemas.EquipmentCreate,
+    name: str,
 ) -> equipment.Equipment:
     db_equiment: equipment.Equipment = (
-        db.query(equipment.Equipment)
-        .filter(equipment.Equipment.name == wanted_equipment.name)
-        .first()
+        db.query(equipment.Equipment).filter(equipment.Equipment.name == name).first()
     )
 
     if db_equiment is None:
@@ -44,7 +42,7 @@ def get_or_create_equipment(
     wanted_equipment: equipment_schemas.EquipmentCreate,
 ) -> equipment.Equipment:
     try:
-        db_equiment = _get_equipment_by_exact_name(db, wanted_equipment)
+        db_equiment = get_equipment_by_exact_name(db, wanted_equipment.name)
     except UnknownEquipment:
         db_equiment = _create_equipment(db, wanted_equipment)
 
