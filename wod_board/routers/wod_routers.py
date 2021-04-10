@@ -1,8 +1,4 @@
-import typing
-
 import fastapi
-from fastapi.exceptions import HTTPException
-import sqlalchemy.exc
 import sqlalchemy.orm
 
 from wod_board import config
@@ -20,24 +16,3 @@ async def add_wod(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> wod_schemas.Wod:
     return wod_crud.create_wod(db, wod_data)
-
-
-@router.post("/add/rounds", response_model=typing.List[wod_schemas.Round])
-async def add_rounds(
-    rounds: typing.List[wod_schemas.RoundCreate],
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> typing.List[wod_schemas.Round]:
-    try:
-        new_rounds = wod_crud.create_rounds(db, rounds)
-    except wod_crud.DuplicatedRoundPosition:
-        raise HTTPException(
-            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Rounds have the same position",
-        )
-    except wod_crud.WrongWodId:
-        raise HTTPException(
-            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The WOD may be created first",
-        )
-
-    return new_rounds
