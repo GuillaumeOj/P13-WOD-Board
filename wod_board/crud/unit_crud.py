@@ -21,13 +21,11 @@ def _create_unit(
     return new_unit
 
 
-def _get_unit_by_exact_name(
+def get_unit_by_exact_name(
     db: sqlalchemy.orm.Session,
-    wanted_unit: unit_schemas.UnitCreate,
+    name: str,
 ) -> unit.Unit:
-    db_unit: unit.Unit = (
-        db.query(unit.Unit).filter(unit.Unit.name == wanted_unit.name).first()
-    )
+    db_unit: unit.Unit = db.query(unit.Unit).filter(unit.Unit.name == name).first()
 
     if db_unit is None:
         raise UnknownUnit
@@ -40,7 +38,7 @@ def get_or_create_unit(
     wanted_unit: unit_schemas.UnitCreate,
 ) -> unit_schemas.Unit:
     try:
-        db_unit = _get_unit_by_exact_name(db, wanted_unit)
+        db_unit = get_unit_by_exact_name(db, wanted_unit.name)
     except UnknownUnit:
         db_unit = _create_unit(db, wanted_unit)
 

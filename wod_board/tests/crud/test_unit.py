@@ -17,22 +17,21 @@ def test_create_unit(db):
     assert created_unit.symbol == unit_schema.symbol
 
 
-def test_get_wod_type_by_name(db):
+def test_get_unit_by_exact_name(db):
     unit_schema = unit_schemas.UnitCreate(name=UNIT_NAME, symbol=UNIT_SYMBOL)
 
     db.add(unit.Unit(**unit_schema.dict()))
     db.commit()
 
-    wanted_unit = unit_crud._get_unit_by_exact_name(db, unit_schema)
+    wanted_unit = unit_crud.get_unit_by_exact_name(db, unit_schema.name)
     assert wanted_unit.name == unit_schema.name
     assert wanted_unit.symbol == unit_schema.symbol
 
-    unit_schema = unit_schemas.UnitCreate(name="Unit", symbol="u")
     with pytest.raises(unit_crud.UnknownUnit):
-        unit_crud._get_unit_by_exact_name(db, unit_schema)
+        unit_crud.get_unit_by_exact_name(db, "Unit")
 
 
-def test_get_or_create_wod_type(db):
+def test_get_or_create_unit(db):
     unit_schema = unit_schemas.UnitCreate(name=UNIT_NAME, symbol=UNIT_SYMBOL)
 
     new_unit = unit_crud.get_or_create_unit(db, unit_schema)
