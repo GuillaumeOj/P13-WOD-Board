@@ -2,6 +2,7 @@ import typing
 
 import sqlalchemy.orm
 
+from wod_board.crud import equipment_crud
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
 
@@ -15,6 +16,14 @@ def _create_movement(
     movement_schema: movement_schemas.MovementCreate,
 ) -> movement.Movement:
     new_movement = movement.Movement(**movement_schema.dict())
+
+    if movement_schema.equipments:
+        new_movement.equipments = (
+            equipment_crud.get_or_create_equipments(  # type: ignore[assignment]
+                db, movement_schema.equipments
+            )
+        )
+
     db.add(new_movement)
 
     db.commit()
