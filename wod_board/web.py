@@ -3,12 +3,14 @@ import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 from wod_board.routers import movement_routers
+from wod_board.routers import unit_routers
 from wod_board.routers import user_routers
 from wod_board.routers import wod_routers
 
 
 app = FastAPI()
 app.include_router(movement_routers.router)
+app.include_router(unit_routers.router)
 app.include_router(user_routers.router_user)
 app.include_router(user_routers.router_token)
 app.include_router(wod_routers.router)
