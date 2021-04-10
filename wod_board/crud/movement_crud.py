@@ -1,5 +1,6 @@
 import typing
 
+import pydantic
 import sqlalchemy.orm
 
 from wod_board.crud import equipment_crud
@@ -32,14 +33,12 @@ def _create_movement(
     return new_movement
 
 
-def _get_movement_by_exact_name(
+def get_movement_by_exact_name(
     db: sqlalchemy.orm.Session,
-    wanted_movement: movement_schemas.MovementCreate,
+    name: str = pydantic.Field(..., max_length=250),
 ) -> movement.Movement:
     db_movement: typing.Optional[movement.Movement] = (
-        db.query(movement.Movement)
-        .filter(movement.Movement.name == wanted_movement.name)
-        .first()
+        db.query(movement.Movement).filter(movement.Movement.name == name).first()
     )
 
     if db_movement is None:
@@ -53,7 +52,7 @@ def get_or_create_movement(
     wanted_movement: movement_schemas.MovementCreate,
 ) -> movement_schemas.Movement:
     try:
-        db_movement = _get_movement_by_exact_name(db, wanted_movement)
+        db_movement = get_movement_by_exact_name(db, wanted_movement.name)
     except UnknownMovement:
         db_movement = _create_movement(db, wanted_movement)
 
