@@ -11,7 +11,7 @@ async def test_add_wod(db, client):
             "name": "string",
         },
     }
-    response = await client.post("/api/wod/add", json=wod_json)
+    response = await client.post("/api/wod", json=wod_json)
 
     expected_response = {
         "id": 1,
