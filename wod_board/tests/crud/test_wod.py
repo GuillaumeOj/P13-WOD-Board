@@ -55,3 +55,19 @@ def test_create_wod(db):
     assert db_wod.note == new_wod.note
     assert db_wod.date == new_wod.date
     assert db_wod.rounds.count() == new_wod.rounds.count()
+
+
+def test_get_wod_by_id(db):
+    with pytest.raises(wod_crud.UnknownWod):
+        wod_crud.get_wod_by_id(db, 1)
+
+    wod_type = wod.WodType(name="AMRAP")
+    db.add(wod_type)
+    db.commit()
+    db.refresh(wod_type)
+    wanted_wod = wod.Wod(wod_type_id=wod_type.id)
+    db.add(wanted_wod)
+    db.commit()
+
+    wanted_wod = wod_crud.get_wod_by_id(db, 1)
+    assert wanted_wod.id == 1

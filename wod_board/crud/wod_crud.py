@@ -9,7 +9,7 @@ class UnknownWodType(Exception):
     pass
 
 
-class DuplicatedRoundPosition(Exception):
+class UnknownWod(Exception):
     pass
 
 
@@ -51,6 +51,15 @@ def get_or_create_wod_type(
         db_wod_type = _create_wod_type(db, wod_type)
 
     return db_wod_type
+
+
+def get_wod_by_id(db: sqlalchemy.orm.Session, id: int) -> wod.Wod:
+    db_wod: wod.Wod = db.get(wod.Wod, id)
+
+    if db_wod is None:
+        raise UnknownWod
+
+    return db_wod
 
 
 def create_wod(
