@@ -18,12 +18,12 @@ async def test_add_round(db, client):
         "position": 1,
         "duration_seconds": 0,
         "wod_id": new_wod.id,
-        "children": [
+        "sub_rounds": [
             {
                 "position": 2,
                 "duration_seconds": 0,
                 "wod_id": new_wod.id,
-                "children": [],
+                "sub_rounds": [],
             },
         ],
     }
@@ -35,15 +35,15 @@ async def test_add_round(db, client):
         "position": 1,
         "duration_seconds": 0,
         "wod_id": new_wod.id,
-        "parent_id": None,
-        "children": [
+        "parent_round_id": None,
+        "sub_rounds": [
             {
                 "id": 2,
                 "position": 2,
                 "duration_seconds": 0,
                 "wod_id": new_wod.id,
-                "parent_id": 1,
-                "children": [],
+                "parent_round_id": 1,
+                "sub_rounds": [],
             },
         ],
     }
@@ -58,7 +58,7 @@ async def test_add_round_with_wrong_wod_id(db, client):
         "position": 1,
         "duration_seconds": 0,
         "wod_id": 0,
-        "children": [],
+        "sub_rounds": [],
     }
 
     response = await client.post("/api/round", json=round_json)
@@ -82,12 +82,12 @@ async def test_add_rounds_with_same_position(db, client):
         "position": 1,
         "duration_seconds": 0,
         "wod_id": new_wod.id,
-        "children": [
+        "sub_rounds": [
             {
                 "position": 1,
                 "duration_seconds": 0,
                 "wod_id": new_wod.id,
-                "children": [],
+                "sub_rounds": [],
             },
         ],
     }

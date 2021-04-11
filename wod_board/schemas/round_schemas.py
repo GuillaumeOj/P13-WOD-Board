@@ -14,14 +14,14 @@ class RoundBase(OrmBase):
 
 
 class RoundCreate(RoundBase):
-    children: typing.Optional[typing.List[RoundCreate]] = None
+    sub_rounds: typing.Optional[typing.List[RoundCreate]] = None
 
 
 class Round(RoundBase):
     id: int
-    parent_id: typing.Optional[int]
+    parent_round_id: typing.Optional[int]
 
-    children: typing.Optional[typing.List[Round]] = None
+    sub_rounds: typing.Optional[typing.List[Round]] = None
 
 
 RoundCreate.update_forward_refs()

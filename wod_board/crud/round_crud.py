@@ -34,13 +34,13 @@ def get_round_by_id(
 def create_round(
     db: sqlalchemy.orm.Session,
     round_data: round_schemas.RoundCreate,
-    parent_id: typing.Optional[int] = None,
+    parent_round_id: typing.Optional[int] = None,
 ) -> wod_round.Round:
     new_round = wod_round.Round(
         position=round_data.position,
         duration_seconds=round_data.duration_seconds,
         wod_id=round_data.wod_id,
-        parent_id=parent_id,
+        parent_round_id=parent_round_id,
     )
 
     db.add(new_round)
@@ -63,9 +63,9 @@ def create_round(
 
     db.refresh(new_round)
 
-    if round_data.children:
-        for child in round_data.children:
-            create_round(db, child, parent_id=new_round.id)
+    if round_data.sub_rounds:
+        for sub_round in round_data.sub_rounds:
+            create_round(db, sub_round, parent_round_id=new_round.id)
 
     db.refresh(new_round)
 
