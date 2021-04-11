@@ -15,4 +15,4 @@ async def add_wod(
     wod_data: wod_schemas.WodCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> wod_schemas.Wod:
-    return wod_crud.create_wod(db, wod_data)
+    return wod_schemas.Wod.from_orm(wod_crud.create_wod(db, wod_data))
