@@ -32,6 +32,7 @@ from wod_board.models.movement import *  # noqa
 from wod_board.models.unit import *  # noqa
 from wod_board.models.user import *  # noqa
 from wod_board.models.wod import *  # noqa
+from wod_board.models.wod_round import *  # noqa
 
 
 def create_all() -> None:

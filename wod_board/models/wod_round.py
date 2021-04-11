@@ -13,9 +13,11 @@ class Round(models.Base):
     wod_id = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"), nullable=False
     )
-    parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
+    parent_round_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id")
+    )
 
-    children = sqlalchemy.orm.relationship(  # type: ignore[misc]
+    sub_rounds = sqlalchemy.orm.relationship(  # type: ignore[misc]
         "Round",
         cascade="all, delete",
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),

@@ -27,13 +27,13 @@ def test_round(db):
     assert first_round.position == 1
     assert first_round.duration_seconds is None
     assert first_round.wod_id == new_wod.id
-    assert first_round.parent_id is None
+    assert first_round.parent_round_id is None
 
     second_round = wod_round.Round(
         position=3,
         duration_seconds=20,
         wod_id=new_wod.id,
-        parent_id=first_round.id,
+        parent_round_id=first_round.id,
     )
     db.add(second_round)
     db.commit()
@@ -43,7 +43,7 @@ def test_round(db):
     assert second_round.position == 3
     assert second_round.duration_seconds == 20
     assert second_round.wod_id == new_wod.id
-    assert second_round.parent_id == first_round.id
+    assert second_round.parent_round_id == first_round.id
 
 
 def test_round_unique_constraint(db):
