@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
+from wod_board import config
 from wod_board.routers import equipment_routers
 from wod_board.routers import movement_routers
 from wod_board.routers import round_routers
@@ -10,7 +11,7 @@ from wod_board.routers import user_routers
 from wod_board.routers import wod_routers
 
 
-app = FastAPI()
+app = FastAPI(docs_url=f"{config.API_URL}/docs", redoc_url=None)
 app.include_router(equipment_routers.router)
 app.include_router(movement_routers.router)
 app.include_router(round_routers.router)
