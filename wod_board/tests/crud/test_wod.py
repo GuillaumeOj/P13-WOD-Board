@@ -54,4 +54,4 @@ def test_create_wod(db):
     assert db_wod.description == new_wod.description
     assert db_wod.note == new_wod.note
     assert db_wod.date == new_wod.date
-    assert db_wod.rounds.all() == new_wod.rounds
+    assert db_wod.rounds.count() == new_wod.rounds.count()
