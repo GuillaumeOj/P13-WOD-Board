@@ -3,6 +3,8 @@ import datetime
 import pytest
 import sqlalchemy.exc
 
+from wod_board.models import movement
+from wod_board.models import unit
 from wod_board.models import wod
 from wod_board.models import wod_round
 
@@ -68,3 +70,30 @@ def test_round_unique_constraint(db):
         error
     )
     assert db.query(wod_round.Round).count() == 0
+
+
+def test_round_with_equipment(db):
+    simple_unit = unit.Unit(name="unit", symbol="u")
+    db.add(simple_unit)
+    db.commit()
+    db.refresh(simple_unit)
+    devil_press = movement.Movement(name="Devil Press", unit_id=simple_unit.id)
+
+    wod_type = wod.WodType(WOD_TYPE)
+    new_wod = wod.Wod(wod_type_id=1)
+    db.add(wod_type)
+    db.add(new_wod)
+    db.commit()
+    db.refresh(new_wod)
+
+    first_round = wod_round.Round(wod_id=new_wod.id, position=1)
+    first_round.movements.append(devil_press)
+
+    db.add(first_round)
+    db.commit()
+
+    rounds = db.query(wod_round.Round)
+
+    assert rounds.count() == 1
+    assert rounds.first().position == first_round.position
+    assert rounds.first().movements.count() == 1

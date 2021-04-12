@@ -2,6 +2,23 @@ import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
+from wod_board.models.equipment import Equipment
+from wod_board.models.movement import Movement
+
+
+class RoundMovement(models.Base):
+    __tablename__ = "round_movement"
+
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
+    movement_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id")
+    )
+    equipment_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id")
+    )
+
+    equipment: Equipment = sqlalchemy.orm.relationship(Equipment)
 
 
 class Round(models.Base):
@@ -21,6 +38,11 @@ class Round(models.Base):
         "Round",
         cascade="all, delete",
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
+        lazy="dynamic",
+    )
+    movements: sqlalchemy.orm.Mapped[Movement] = sqlalchemy.orm.relationship(
+        Movement,
+        secondary="round_movement",
         lazy="dynamic",
     )
 
