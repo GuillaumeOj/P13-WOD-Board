@@ -33,6 +33,18 @@ def _create_movement(
     return new_movement
 
 
+def get_movement_by_id(
+    db: sqlalchemy.orm.Session,
+    id: int,
+) -> movement.Movement:
+    db_movement: typing.Optional[movement.Movement] = db.get(movement.Movement, id)
+
+    if db_movement is None:
+        raise UnknownMovement
+
+    return db_movement
+
+
 def get_movement_by_exact_name(
     db: sqlalchemy.orm.Session,
     name: str = pydantic.Field(..., max_length=250),
@@ -50,10 +62,10 @@ def get_movement_by_exact_name(
 def get_or_create_movement(
     db: sqlalchemy.orm.Session,
     wanted_movement: movement_schemas.MovementCreate,
-) -> movement_schemas.Movement:
+) -> movement.Movement:
     try:
         db_movement = get_movement_by_exact_name(db, wanted_movement.name)
     except UnknownMovement:
         db_movement = _create_movement(db, wanted_movement)
 
-    return movement_schemas.Movement.from_orm(db_movement)
+    return db_movement

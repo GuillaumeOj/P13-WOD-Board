@@ -14,6 +14,20 @@ def test_create_movement(db):
     assert created_movement.name == movement_schema.name
 
 
+def test_get_movement_by_id(db):
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.get_movement_by_id(db, 1)
+
+    movement_schema = movement_schemas.MovementCreate(name="Devil Press")
+
+    db.add(movement.Movement(**movement_schema.dict()))
+    db.commit()
+
+    db_movement = movement_crud.get_movement_by_id(db, 1)
+
+    assert db_movement.name == movement_schema.name
+
+
 def test_get_movement_by_exact_name(db):
     movement_schema = movement_schemas.MovementCreate(name="Devil Press")
 
