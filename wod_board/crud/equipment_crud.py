@@ -1,7 +1,6 @@
-import typing
-
 import sqlalchemy.orm
 
+from wod_board.crud import unit_crud
 from wod_board.models import equipment
 from wod_board.schemas import equipment_schemas
 
@@ -10,13 +9,16 @@ class UnknownEquipment(Exception):
     pass
 
 
-def _create_equipment(
+def create_equipment(
     db: sqlalchemy.orm.Session,
-    equiment_schema: equipment_schemas.EquipmentCreate,
+    equiment_data: equipment_schemas.EquipmentCreate,
 ) -> equipment.Equipment:
-    new_equipment = equipment.Equipment(**equiment_schema.dict())
-    db.add(new_equipment)
+    new_equipment = equipment.Equipment(name=equiment_data.name)
 
+    if equiment_data.unit:
+        new_equipment.unit = unit_crud.get_or_create_unit(db, equiment_data.unit)
+
+    db.add(new_equipment)
     db.commit()
     db.refresh(new_equipment)
 
@@ -39,21 +41,11 @@ def get_equipment_by_exact_name(
 
 def get_or_create_equipment(
     db: sqlalchemy.orm.Session,
-    wanted_equipment: equipment_schemas.EquipmentCreate,
+    equipment_data: equipment_schemas.EquipmentCreate,
 ) -> equipment.Equipment:
     try:
-        db_equiment = get_equipment_by_exact_name(db, wanted_equipment.name)
+        db_equiment = get_equipment_by_exact_name(db, equipment_data.name)
     except UnknownEquipment:
-        db_equiment = _create_equipment(db, wanted_equipment)
+        db_equiment = create_equipment(db, equipment_data)
 
     return db_equiment
-
-
-def get_or_create_equipments(
-    db: sqlalchemy.orm.Session,
-    wanted_equipments: typing.List[equipment_schemas.EquipmentCreate],
-) -> typing.List[equipment.Equipment]:
-    return [
-        get_or_create_equipment(db, wanted_equipment)
-        for wanted_equipment in wanted_equipments
-    ]
