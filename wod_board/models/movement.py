@@ -1,7 +1,14 @@
+import typing
+
 import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
+
+
+if typing.TYPE_CHECKING:
+    from wod_board.models.equipment import Equipment
+    from wod_board.models.unit import Unit
 
 
 class MovementEquipment(models.Base):
@@ -23,7 +30,8 @@ class Movement(models.Base):
     name = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
     unit_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id"))
 
-    equipments = sqlalchemy.orm.relationship(  # type: ignore[misc]
+    unit: "Unit" = sqlalchemy.orm.relationship("Unit")
+    equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(
         "Equipment",
         secondary="movement_equipment",
         lazy="dynamic",
