@@ -12,6 +12,7 @@ async def test_add(db, client):
         "id": 1,
         "name": "Devil Press",
         "unit_id": None,
+        "unit": None,
         "equipments": [],
     }
 
@@ -39,6 +40,7 @@ async def test_get_movement_by_exact_name(db, client):
         "id": 1,
         "name": "Devil Press",
         "unit_id": None,
+        "unit": None,
         "equipments": [],
     }
 
