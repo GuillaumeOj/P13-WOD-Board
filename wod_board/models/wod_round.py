@@ -1,9 +1,14 @@
+import typing
+
 import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
 from wod_board.models.equipment import Equipment
-from wod_board.models.movement import Movement
+
+
+if typing.TYPE_CHECKING:
+    from wod_board.models.movement import Movement
 
 
 class RoundMovement(models.Base):
@@ -40,8 +45,8 @@ class Round(models.Base):
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
         lazy="dynamic",
     )
-    movements: sqlalchemy.orm.Mapped[Movement] = sqlalchemy.orm.relationship(
-        Movement,
+    movements: typing.List["Movement"] = sqlalchemy.orm.relationship(
+        "Movement",
         secondary="round_movement",
         lazy="dynamic",
     )

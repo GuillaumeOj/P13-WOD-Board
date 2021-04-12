@@ -40,10 +40,7 @@ def test_get_or_create_movement(db):
     assert wanted_movement.name == movement_schema.name
 
     db_equipments = db.query(equipment.Equipment).all()
-    assert wanted_movement.equipments == [
-        equipment_schemas.Equipment.from_orm(db_equipment)
-        for db_equipment in db_equipments
-    ]
+    assert wanted_movement.equipments.all() == db_equipments
 
     wanted_movement = movement_crud.get_or_create_movement(db, movement_schema)
     assert wanted_movement.name == movement_schema.name
