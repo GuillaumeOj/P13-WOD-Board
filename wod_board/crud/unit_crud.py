@@ -36,10 +36,10 @@ def get_unit_by_exact_name(
 def get_or_create_unit(
     db: sqlalchemy.orm.Session,
     wanted_unit: unit_schemas.UnitCreate,
-) -> unit_schemas.Unit:
+) -> unit.Unit:
     try:
         db_unit = get_unit_by_exact_name(db, wanted_unit.name)
     except UnknownUnit:
         db_unit = _create_unit(db, wanted_unit)
 
-    return unit_schemas.Unit.from_orm(db_unit)
+    return db_unit
