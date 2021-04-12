@@ -5,13 +5,14 @@ from wod_board.models import equipment
 
 @pytest.mark.asyncio
 async def test_add(db, client):
-    equipment_json = {"name": "Dumbbel", "unit_id": None}
+    equipment_json = {"name": "Dumbbel"}
     response = await client.post("/api/equipment/", json=equipment_json)
 
     expected_response = {
         "id": 1,
         "name": "Dumbbel",
         "unit_id": None,
+        "unit": None,
     }
 
     assert response.status_code == 200
@@ -38,6 +39,7 @@ async def test_get_unit_by_exact_name(db, client):
         "id": 1,
         "name": "Dumbbel",
         "unit_id": None,
+        "unit": None,
     }
 
     assert response.status_code == 200
