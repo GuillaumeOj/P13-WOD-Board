@@ -65,14 +65,19 @@ def test_get_or_create_movement(db):
 
 
 def test_create_movement_goal(db):
-    dumbbel = equipment_schemas.EquipmentCreate(name="Dumbbel")
-    kettelbell = equipment_schemas.EquipmentCreate(name="Kettlebell")
-    barbell = equipment_schemas.EquipmentCreate(name="Barbell")
+    dumbbel = equipment.Equipment(name="Dumbbel")
+    kettelbell = equipment.Equipment(name="Kettlebell")
+    barbell = equipment.Equipment(name="Barbell")
     equipments = [dumbbel, kettelbell, barbell]
 
-    deadlift = movement_schemas.MovementCreate(name="Dead Lift", equipments=equipments)
+    deadlift = movement.Movement(name="Dead Lift", equipments=equipments)
+    db.add(deadlift)
+    db.commit()
+
+    deadlift_schema = movement_schemas.MovementCreate.from_orm(deadlift)
+
     deadlift_goal = movement_schemas.MovementGoalCreate(
-        movement=deadlift, repetition=5, equipments=[dumbbel, kettelbell]
+        movement=deadlift_schema, repetition=5, equipments=[dumbbel, kettelbell]
     )
 
     goal = movement_crud.create_movement_goal(db, deadlift_goal)
@@ -97,19 +102,3 @@ def test_get_movement_goal_by_id(db):
 
     db_devil_press_goal = movement_crud.get_movement_goal_by_id(db, 1)
     assert db_devil_press_goal.movement.name == devil_press.name
-
-
-def test_get_or_create_movement_goal(db):
-    devil_press = movement_schemas.MovementCreate(name="Devil Press")
-    goal_schema = movement_schemas.MovementGoalCreate(movement=devil_press)
-
-    goal = movement_crud.get_or_create_movement_goal(db, goal_schema)
-    db_movement_goal = db.query(movement.MovementGoal)
-    assert goal.movement.name == devil_press.name
-    assert db_movement_goal.count() == 1
-
-    goal_schema = movement_schemas.MovementGoalCreate(id=1, movement=devil_press)
-
-    goal = movement_crud.get_or_create_movement_goal(db, goal_schema)
-    db_movement_goal = db.query(movement.MovementGoal)
-    assert db_movement_goal.count() == 1

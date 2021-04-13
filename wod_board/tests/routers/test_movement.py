@@ -54,6 +54,9 @@ async def test_get_movement_by_exact_name(db, client):
 
 @pytest.mark.asyncio
 async def test_add_goal(db, client):
+    db.add(movement.Movement(name="Devil Press"))
+    db.commit()
+
     movement_json = {
         "movement": {
             "name": "Devil Press",

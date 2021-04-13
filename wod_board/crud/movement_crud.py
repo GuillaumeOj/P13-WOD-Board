@@ -1,4 +1,3 @@
-import pydantic
 import sqlalchemy.orm
 
 from wod_board.crud import equipment_crud
@@ -48,7 +47,7 @@ def get_movement_by_id(
 
 def get_movement_by_exact_name(
     db: sqlalchemy.orm.Session,
-    name: str = pydantic.Field(..., max_length=250),
+    name: str,
 ) -> movement.Movement:
     db_movement: movement.Movement = (
         db.query(movement.Movement).filter(movement.Movement.name == name).first()
@@ -75,7 +74,7 @@ def get_or_create_movement(
 def create_movement_goal(
     db: sqlalchemy.orm.Session, goal: movement_schemas.MovementGoalCreate
 ) -> movement.MovementGoal:
-    base_movement = get_or_create_movement(db, goal.movement)
+    base_movement = get_movement_by_exact_name(db, goal.movement.name)
 
     new_movement = movement.MovementGoal(
         movement=base_movement,
@@ -105,17 +104,3 @@ def get_movement_goal_by_id(
         raise UnknownMovement
 
     return db_movement
-
-
-def get_or_create_movement_goal(
-    db: sqlalchemy.orm.Session, movement_data: movement_schemas.MovementGoalCreate
-) -> movement.MovementGoal:
-    try:
-        if not movement_data.id:
-            raise UnknownMovement
-
-        goal = get_movement_goal_by_id(db, movement_data.id)
-    except UnknownMovement:
-        goal = create_movement_goal(db, movement_data)
-
-    return goal
