@@ -62,3 +62,54 @@ def test_get_or_create_movement(db):
     movements = db.query(movement.Movement)
     assert wanted_movement.name == devil_press.name
     assert movements.count() == 1
+
+
+def test_create_movement_goal(db):
+    dumbbel = equipment_schemas.EquipmentCreate(name="Dumbbel")
+    kettelbell = equipment_schemas.EquipmentCreate(name="Kettlebell")
+    barbell = equipment_schemas.EquipmentCreate(name="Barbell")
+    equipments = [dumbbel, kettelbell, barbell]
+
+    deadlift = movement_schemas.MovementCreate(name="Dead Lift", equipments=equipments)
+    deadlift_goal = movement_schemas.MovementGoalCreate(
+        movement=deadlift, repetition=5, equipments=[dumbbel, kettelbell]
+    )
+
+    goal = movement_crud.create_movement_goal(db, deadlift_goal)
+    db_unit = db.query(unit.Unit).first()
+    assert goal.movement.name == deadlift.name
+    assert goal.movement.unit == db_unit
+    assert goal.equipments.count() == 2
+
+
+def test_get_movement_goal_by_id(db):
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.get_movement_goal_by_id(db, 1)
+
+    devil_press = movement_schemas.MovementCreate(name="Devil Press")
+    db_devil_press = movement.Movement(name=devil_press.name)
+    db.add(db_devil_press)
+    db.commit()
+    db.refresh(db_devil_press)
+
+    db.add(movement.MovementGoal(movement=db_devil_press))
+    db.commit()
+
+    db_devil_press_goal = movement_crud.get_movement_goal_by_id(db, 1)
+    assert db_devil_press_goal.movement.name == devil_press.name
+
+
+def test_get_or_create_movement_goal(db):
+    devil_press = movement_schemas.MovementCreate(name="Devil Press")
+    goal_schema = movement_schemas.MovementGoalCreate(movement=devil_press)
+
+    goal = movement_crud.get_or_create_movement_goal(db, goal_schema)
+    db_movement_goal = db.query(movement.MovementGoal)
+    assert goal.movement.name == devil_press.name
+    assert db_movement_goal.count() == 1
+
+    goal_schema = movement_schemas.MovementGoalCreate(id=1, movement=devil_press)
+
+    goal = movement_crud.get_or_create_movement_goal(db, goal_schema)
+    db_movement_goal = db.query(movement.MovementGoal)
+    assert db_movement_goal.count() == 1
