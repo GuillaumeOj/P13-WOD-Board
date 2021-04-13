@@ -1,29 +1,27 @@
+import daiquiri
 import pytest
 
 from wod_board.models import wod
 
 
+LOG = daiquiri.getLogger(__name__)
+
+
 @pytest.mark.asyncio
 async def test_add_round(db, client):
-    wod_type = wod.WodType("foo")
-    db.add(wod_type)
-    db.commit()
-    db.refresh(wod_type)
-    new_wod = wod.Wod(wod_type_id=wod_type.id)
+    wod_type = wod.WodType(name="AMRAP")
+    new_wod = wod.Wod(wod_type=wod_type)
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)
 
     round_json = {
         "position": 1,
-        "duration_seconds": 0,
         "wod_id": new_wod.id,
         "sub_rounds": [
             {
                 "position": 2,
-                "duration_seconds": 0,
                 "wod_id": new_wod.id,
-                "sub_rounds": [],
             },
         ],
     }
@@ -35,17 +33,19 @@ async def test_add_round(db, client):
         "position": 1,
         "duration_seconds": 0,
         "wod_id": new_wod.id,
-        "parent_round_id": None,
+        "parent_id": None,
         "sub_rounds": [
             {
                 "id": 2,
                 "position": 2,
                 "duration_seconds": 0,
                 "wod_id": new_wod.id,
-                "parent_round_id": 1,
+                "parent_id": 1,
                 "sub_rounds": [],
+                "movements": [],
             },
         ],
+        "movements": [],
     }
 
     assert response.status_code == 200
@@ -59,6 +59,7 @@ async def test_add_round_with_wrong_wod_id(db, client):
         "duration_seconds": 0,
         "wod_id": 0,
         "sub_rounds": [],
+        "movements": [],
     }
 
     response = await client.post("/api/round", json=round_json)
@@ -69,11 +70,8 @@ async def test_add_round_with_wrong_wod_id(db, client):
 
 @pytest.mark.asyncio
 async def test_add_rounds_with_same_position(db, client):
-    wod_type = wod.WodType("foo")
-    db.add(wod_type)
-    db.commit()
-    db.refresh(wod_type)
-    new_wod = wod.Wod(wod_type_id=wod_type.id)
+    wod_type = wod.WodType(name="AMRAP")
+    new_wod = wod.Wod(wod_type=wod_type)
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)
@@ -90,6 +88,7 @@ async def test_add_rounds_with_same_position(db, client):
                 "sub_rounds": [],
             },
         ],
+        "movements": [],
     }
 
     response = await client.post("/api/round", json=round_json)

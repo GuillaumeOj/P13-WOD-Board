@@ -5,6 +5,7 @@ from __future__ import annotations
 import typing
 
 from wod_board.schemas import OrmBase
+from wod_board.schemas import movement_schemas
 
 
 class RoundBase(OrmBase):
@@ -14,14 +15,16 @@ class RoundBase(OrmBase):
 
 
 class RoundCreate(RoundBase):
-    sub_rounds: typing.Optional[typing.List[RoundCreate]] = None
+    sub_rounds: typing.Optional[typing.List[RoundCreate]]
+    movements: typing.Optional[typing.List[movement_schemas.MovementGoalCreate]]
 
 
 class Round(RoundBase):
     id: int
-    parent_round_id: typing.Optional[int]
+    parent_id: typing.Optional[int]
 
-    sub_rounds: typing.Optional[typing.List[Round]] = None
+    sub_rounds: typing.Optional[typing.List[Round]]
+    movements: typing.Optional[typing.List[movement_schemas.MovementGoal]]
 
 
 RoundCreate.update_forward_refs()

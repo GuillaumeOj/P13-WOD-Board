@@ -4,26 +4,20 @@ import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
-from wod_board.models.equipment import Equipment
 
 
 if typing.TYPE_CHECKING:
-    from wod_board.models.movement import Movement
+    from wod_board.models.movement import MovementGoal
 
 
 class RoundMovement(models.Base):
-    __tablename__ = "round_movement"
+    __tablename__ = "round_movement_goal"
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
-    movement_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id")
+    movement_goal_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement_goal.id")
     )
-    equipment_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id")
-    )
-
-    equipment: Equipment = sqlalchemy.orm.relationship(Equipment)
 
 
 class Round(models.Base):
@@ -32,22 +26,18 @@ class Round(models.Base):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     position = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
-    wod_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"), nullable=False
-    )
-    parent_round_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id")
-    )
+    wod_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"))
+    parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
 
-    sub_rounds = sqlalchemy.orm.relationship(  # type: ignore[misc]
+    sub_rounds: typing.List["Round"] = sqlalchemy.orm.relationship(
         "Round",
         cascade="all, delete",
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
         lazy="dynamic",
     )
-    movements: typing.List["Movement"] = sqlalchemy.orm.relationship(
-        "Movement",
-        secondary="round_movement",
+    movements: typing.List["MovementGoal"] = sqlalchemy.orm.relationship(
+        "MovementGoal",
+        secondary="round_movement_goal",
         lazy="dynamic",
     )
 
