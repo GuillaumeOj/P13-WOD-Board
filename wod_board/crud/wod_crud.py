@@ -17,7 +17,7 @@ class WrongWodId(Exception):
     pass
 
 
-def _create_wod_type(
+def create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
 ) -> wod.WodType:
     new_type = wod.WodType(name=wod_type.name)
@@ -29,11 +29,9 @@ def _create_wod_type(
     return new_type
 
 
-def _get_wod_type_by_exact_name(
-    db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
-) -> wod.WodType:
+def get_wod_type_by_exact_name(db: sqlalchemy.orm.Session, name: str) -> wod.WodType:
     db_wod_type: wod.WodType = (
-        db.query(wod.WodType).filter(wod.WodType.name == wod_type.name).first()
+        db.query(wod.WodType).filter(wod.WodType.name == name).first()
     )
 
     if db_wod_type is None:
@@ -46,9 +44,9 @@ def get_or_create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
 ) -> wod.WodType:
     try:
-        db_wod_type = _get_wod_type_by_exact_name(db, wod_type)
+        db_wod_type = get_wod_type_by_exact_name(db, wod_type.name)
     except UnknownWodType:
-        db_wod_type = _create_wod_type(db, wod_type)
+        db_wod_type = create_wod_type(db, wod_type)
 
     return db_wod_type
 
@@ -67,19 +65,16 @@ def create_wod(
     wod_data: wod_schemas.WodCreate,
 ) -> wod.Wod:
 
-    wod_type = wod_schemas.WodType.from_orm(
-        get_or_create_wod_type(db, wod_data.wod_type)
-    )
+    wod_type = get_or_create_wod_type(db, wod_data.wod_type)
 
     new_wod = wod.Wod(
-        wod_type_id=wod_type.id,
         description=wod_data.description,
         note=wod_data.note,
         date=wod_data.date,
+        wod_type=wod_type,
     )
 
     db.add(new_wod)
-
     db.commit()
     db.refresh(new_wod)
 

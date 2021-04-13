@@ -6,13 +6,13 @@ import datetime
 import typing
 
 from wod_board.schemas import OrmBase
-from wod_board.schemas import round_schemas
 
 
 class WodBase(OrmBase):
     description: typing.Optional[str]
     note: typing.Optional[str]
     date: datetime.datetime = datetime.datetime.utcnow()
+    wod_type_id: typing.Optional[int]
 
 
 class WodCreate(WodBase):
@@ -21,9 +21,8 @@ class WodCreate(WodBase):
 
 class Wod(WodBase):
     id: int
-    wod_type_id: int
     wod_type: WodType
-    rounds: typing.List[round_schemas.Round]
+    rounds: "typing.List[Round]"
 
 
 class WodTypeBase(OrmBase):
@@ -36,6 +35,9 @@ class WodTypeCreate(WodTypeBase):
 
 class WodType(WodTypeBase):
     id: int
+
+
+from wod_board.schemas.round_schemas import Round  # noqa
 
 
 WodCreate.update_forward_refs()

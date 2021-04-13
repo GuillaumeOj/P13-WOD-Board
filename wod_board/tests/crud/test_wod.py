@@ -11,44 +11,38 @@ WOD_TYPE = "AMRAP"
 def test_create_wod_type(db):
     wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
-    created_type = wod_crud._create_wod_type(db, wod_type_schema)
-    assert created_type.name == wod_type_schema.name
+    wod_type = wod_crud.create_wod_type(db, wod_type_schema)
+    assert wod_type.name == wod_type_schema.name
 
 
 def test_get_wod_type_by_name(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
-    wod_crud._create_wod_type(db, wod_type_schema)
-
-    wod_type = wod_crud._get_wod_type_by_exact_name(db, wod_type_schema)
-    assert wod_type.name == wod_type_schema.name
-
-    wod_type_schema = wod_schemas.WodTypeBase(name="For Time")
     with pytest.raises(wod_crud.UnknownWodType):
-        wod_type = wod_crud._get_wod_type_by_exact_name(db, wod_type_schema)
+        wod_crud.get_wod_type_by_exact_name(db, WOD_TYPE)
+
+    db.add(wod.WodType(name=WOD_TYPE))
+    db.commit()
+
+    wod_type = wod_crud.get_wod_type_by_exact_name(db, WOD_TYPE)
+    assert wod_type.name == WOD_TYPE
 
 
 def test_get_or_create_wod_type(db):
     wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 
     wod_type = wod_crud.get_or_create_wod_type(db, wod_type_schema)
-    assert wod_type.name == wod_type_schema.name
+    assert wod_type.name == WOD_TYPE
 
     wod_type = wod_crud.get_or_create_wod_type(db, wod_type_schema)
-    assert wod_type.name == wod_type_schema.name
-
-    wod_types = db.query(wod.WodType).all()
-    assert len(wod_types) == 1
+    assert wod_type.name == WOD_TYPE
+    assert db.query(wod.WodType).count() == 1
 
 
 def test_create_wod(db):
     wod_type_schema = wod_schemas.WodTypeCreate(name=WOD_TYPE)
 
-    wod_schema = wod_schemas.WodCreate(
-        description="Foo WOD", note="", wod_type=wod_type_schema
-    )
+    wod_schema = wod_schemas.WodCreate(wod_type=wod_type_schema)
 
     new_wod = wod_crud.create_wod(db, wod_schema)
-
     db_wod = db.query(wod.Wod).first()
     assert db_wod.id == new_wod.id
     assert db_wod.description == new_wod.description
@@ -61,11 +55,7 @@ def test_get_wod_by_id(db):
     with pytest.raises(wod_crud.UnknownWod):
         wod_crud.get_wod_by_id(db, 1)
 
-    wod_type = wod.WodType(name="AMRAP")
-    db.add(wod_type)
-    db.commit()
-    db.refresh(wod_type)
-    wanted_wod = wod.Wod(wod_type_id=wod_type.id)
+    wanted_wod = wod.Wod()
     db.add(wanted_wod)
     db.commit()
 
