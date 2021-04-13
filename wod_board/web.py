@@ -1,3 +1,4 @@
+import daiquiri
 from fastapi import FastAPI
 import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
@@ -25,3 +26,5 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
 )
 app.add_middleware(SentryAsgiMiddleware)
+
+daiquiri.setup(level=config.LOGGING_LEVEL)

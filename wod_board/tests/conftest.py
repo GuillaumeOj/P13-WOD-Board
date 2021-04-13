@@ -1,8 +1,19 @@
+import daiquiri
 from httpx import AsyncClient
 import pytest
 
+from wod_board import config
 from wod_board import models
 from wod_board import web
+
+
+@pytest.fixture(autouse=True)
+def logs(caplog):
+    daiquiri.setup(
+        level=config.LOGGING_LEVEL,
+    )
+    caplog.set_level(config.LOGGING_LEVEL)
+    yield caplog
 
 
 @pytest.fixture()
