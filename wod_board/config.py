@@ -1,3 +1,4 @@
+import logging
 import os
 import typing
 
@@ -25,3 +26,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 ACCESS_TOKEN_URL: str = "user/token"
 
 API_URL: str = os.getenv("API_URL", "/api")
+
+if WOD_BOARD_ENV == "test":
+    LOGGING_LEVEL = logging.INFO
+else:
+    LOGGING_LEVEL = logging.WARNING
