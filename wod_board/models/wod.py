@@ -33,5 +33,5 @@ class Wod(models.Base):
 
     wod_type: WodType = sqlalchemy.orm.relationship("WodType")
     rounds: typing.List["Round"] = sqlalchemy.orm.relationship(
-        "Round", cascade="all, delete", back_populates="wod", lazy="dynamic"
+        "Round", cascade="all, delete", backref="wod", lazy="dynamic"
     )
