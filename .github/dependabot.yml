@@ -6,7 +6,7 @@ updates:
       interval: "daily"
       time: "09:00"
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/front"
     schedule:
       interval: "daily"
       time: "09:00"
