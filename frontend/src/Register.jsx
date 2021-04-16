@@ -136,7 +136,8 @@ function Register() {
             <p>All fields marked with * are required.</p>
             <input type="submit" value="Register" className="button primary" />
             <p>
-              Have any account already? <NavLink to="/signin">Sign In</NavLink> now.
+              Have any account already? <NavLink to="/signin">Sign In</NavLink>{' '}
+              now.
             </p>
           </form>
         </div>
