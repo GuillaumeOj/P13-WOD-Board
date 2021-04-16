@@ -2,11 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
-import { useAuth } from './Auth';
-
 export default function Home() {
-  const auth = useAuth();
-
   return (
     <>
       <Helmet>
@@ -39,18 +35,14 @@ export default function Home() {
             </article>
           </div>
         </div>
-        {auth.user ? (
-          ''
-        ) : (
-          <div className="subscribe">
-            <NavLink to="/register" className="button primary">
-              Register
-            </NavLink>
-            <NavLink to="/signin" className="button">
-              Sign In
-            </NavLink>
-          </div>
-        )}
+        <div className="subscribe">
+          <NavLink to="/register" className="button primary">
+            Register
+          </NavLink>
+          <NavLink to="/signin" className="button">
+            Sign In
+          </NavLink>
+        </div>
       </section>
     </>
   );
