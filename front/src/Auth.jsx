@@ -3,15 +3,19 @@ import React, {
 } from 'react';
 import { useCookies } from 'react-cookie';
 
+import { useAlert } from './Alert';
+
 const authContext = createContext();
 
 function useProvideAuth() {
+  const { addAlert } = useAlert();
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const [user, setUser] = useState(null);
 
   const signOut = () => {
     removeCookie('user');
     setUser(null);
+    addAlert({ message: 'You are logged out.', alertType: 'success' });
     return user;
   };
 
