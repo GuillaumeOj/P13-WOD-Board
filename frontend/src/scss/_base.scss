@@ -13,6 +13,18 @@ input {
   text-decoration: none;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  color: $primary;
+  margin: 0;
+  padding: 0;
+}
+
 a {
   font-weight: bold;
 }
@@ -20,67 +32,16 @@ a {
 a:hover {
   color: $sandy-brown;
 }
+.navbar {
+  li {
+    list-style-type: none;
 
-header {
-  height: $header-height;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  color: $primary;
-
-  .logo {
-    margin-left: $spacer;
     a {
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-
-      .brand_logo {
-        height: $logo-height;
-      }
-
-      .brand_name {
-        margin-left: $spacer;
-        font-weight: bold;
-      }
+      font-size: $default-font-size;
     }
-  }
 
-  .navbar {
-    margin-right: $spacer;
-
-    .crumbs {
-      display: flex;
-      flex-direction: row;
-
-      li {
-        list-style-type: none;
-        margin-left: 2rem;
-
-        a {
-          font-size: $default-font-size;
-        }
-
-        input {
-          background-color: transparent;
-          border: none;
-          font-size: $default-font-size;
-          font-weight: bold;
-          color: $primary;
-          &:hover {
-            color: $sandy-brown;
-          }
-        }
-
-        &:first-child {
-          margin-left: 0;
-        }
-
-        .active {
-          text-decoration: underline;
-        }
-      }
+    .active {
+      text-decoration: underline;
     }
   }
 }
@@ -89,7 +50,9 @@ header {
   width: 100vw;
   min-height: $content-min-height;
 
-  section {
+  #home,
+  #signIn,
+  #register {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -118,18 +81,6 @@ header {
       }
     }
   }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  color: $primary;
-  margin: 0;
-  padding: 0;
 }
 
 .title {
@@ -167,6 +118,7 @@ p {
   height: $default-font-size;
   width: $default-font-size;
 }
+
 .alerts {
   position: absolute;
   width: 90vw;

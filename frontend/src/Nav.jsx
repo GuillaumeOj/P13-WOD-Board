@@ -5,19 +5,23 @@ import { useAuth } from './Auth';
 
 export default function NavBar() {
   const auth = useAuth();
-
+  const home = auth.user ? '/dashboard' : '/';
   return (
     <header>
       <div className="logo">
-        <NavLink exact to="/">
-          <img src={`${process.env.PUBLIC_URL}logo.svg`} className="brand_logo" alt="logo" />
+        <NavLink exact to={home}>
+          <img
+            src={`${process.env.PUBLIC_URL}logo.svg`}
+            className="brand_logo"
+            alt="logo"
+          />
           <h1 className="brand_name">WOD Board</h1>
         </NavLink>
       </div>
       <nav className="navbar">
         <ol className="crumbs">
           <li>
-            <NavLink exact to="/">
+            <NavLink exact to={home}>
               Home
             </NavLink>
           </li>
@@ -27,7 +31,11 @@ export default function NavBar() {
                 <NavLink to="/profile">My Account</NavLink>
               </li>
               <li>
-                <input type="button" onClick={() => auth.signOut()} value="Sign Out" />
+                <input
+                  type="button"
+                  onClick={() => auth.signOut()}
+                  value="Sign Out"
+                />
               </li>
             </>
           ) : (

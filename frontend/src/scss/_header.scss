@@ -1,0 +1,54 @@
+header {
+  height: $header-height;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: $primary;
+
+  .logo {
+    margin-left: $spacer;
+    a {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+
+      .brand_logo {
+        height: $logo-height;
+      }
+
+      .brand_name {
+        margin-left: $spacer;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .navbar {
+    margin-right: $spacer;
+
+    .crumbs {
+      display: flex;
+      flex-direction: row;
+
+      li {
+        margin-left: 2rem;
+
+        input {
+          background-color: transparent;
+          border: none;
+          font-size: $default-font-size;
+          font-weight: bold;
+          color: $primary;
+          &:hover {
+            color: $sandy-brown;
+          }
+        }
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
