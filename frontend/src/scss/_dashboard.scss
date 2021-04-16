@@ -1,0 +1,22 @@
+#dashboard {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: $spacer;
+
+  .navbar {
+    min-width: 20vw;
+
+    li {
+      list-style-type: none;
+
+      a {
+        font-size: 1.5em;
+      }
+    }
+  }
+
+  .subContent {
+  }
+}
