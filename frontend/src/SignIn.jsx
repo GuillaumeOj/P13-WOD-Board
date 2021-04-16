@@ -81,7 +81,8 @@ export default function SignIn() {
             </div>
             <input type="submit" value="Sign In" className="button primary" />
             <p>
-              Don&apos;t have any account? <NavLink to="/register">Register</NavLink> now.
+              Don&apos;t have any account?{' '}
+              <NavLink to="/register">Register</NavLink> now.
             </p>
           </form>
         </div>

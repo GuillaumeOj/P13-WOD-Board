@@ -33,7 +33,9 @@ function useProvideAlert() {
 // eslint-disable-next-line react/prop-types
 export function AlertProvider({ children }) {
   const alert = useProvideAlert();
-  return <alertContext.Provider value={alert}>{children}</alertContext.Provider>;
+  return (
+    <alertContext.Provider value={alert}>{children}</alertContext.Provider>
+  );
 }
 
 export const useAlert = () => useContext(alertContext);
