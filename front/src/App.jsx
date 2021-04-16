@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+import { DisplayAlerts } from './Alert';
 import Home from './Home';
 import NavBar from './Nav';
 import Register from './Register';
@@ -11,6 +12,7 @@ function App() {
   return (
     <div className="App">
       <NavBar />
+      <DisplayAlerts />
       <div id="content">
         <Switch>
           <Route exact path="/">

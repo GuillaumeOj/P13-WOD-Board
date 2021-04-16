@@ -5,6 +5,7 @@ import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
+import { AlertProvider } from './Alert';
 import App from './App';
 import { ProvideAuth } from './Auth';
 
@@ -22,13 +23,15 @@ Sentry.init({
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <CookiesProvider>
-        <ProvideAuth>
-          <App />
-        </ProvideAuth>
-      </CookiesProvider>
-    </BrowserRouter>
+    <AlertProvider>
+      <BrowserRouter>
+        <CookiesProvider>
+          <ProvideAuth>
+            <App />
+          </ProvideAuth>
+        </CookiesProvider>
+      </BrowserRouter>
+    </AlertProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

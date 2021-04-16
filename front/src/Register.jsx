@@ -1,11 +1,14 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { NavLink } from 'react-router-dom';
 
-import { useInput, Alert } from './Utils';
+import { useAlert } from './Alert';
+import { useInput } from './Utils';
 
 function Register() {
+  const { addAlert } = useAlert();
+
   const [email, setEmail] = useInput('');
   const [username, setUsername] = useInput('');
   const [password, setPassword] = useInput('');
@@ -13,13 +16,11 @@ function Register() {
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
 
-  const [alert, setAlert] = useState({ content: '', type: '' });
-
   async function handleSubmit(event) {
     event.preventDefault();
 
     if (password !== password2) {
-      setAlert({ content: 'Passwords don&apos;t match.', type: 'error' });
+      addAlert({ message: 'Passwords don&apos;t match.', alertType: 'error' });
       return;
     }
 
@@ -33,18 +34,21 @@ function Register() {
     axios
       .post('/api/user/register', formData)
       .then(() => {
-        setAlert({ content: 'You are now registered!', type: 'success' });
+        addAlert({ message: 'You are now registered!', alertType: 'success' });
       })
       .catch((error) => {
         if (error.response) {
-          setAlert({ content: error.response.data.detail[0].msg, type: 'error' });
-        } else if (error.message) {
-          setAlert({ content: error.message, type: 'error' });
+          if (error.response.data) {
+            const { detail } = error.response.data;
+
+            if (typeof detail === 'string') {
+              addAlert({ message: detail, alertType: 'error' });
+            } else {
+              detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
+            }
+          }
         } else {
-          setAlert({
-            content: 'An error occured, please try again or contact an administrator.',
-            type: 'error',
-          });
+          addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
   }
@@ -61,7 +65,6 @@ function Register() {
         </div>
         <div className="subContent">
           <form onSubmit={handleSubmit}>
-            <Alert message={alert.content} type={alert.type} />
             <div className="field">
               <label htmlFor="username">Email*:&nbsp;</label>
               {/* The field is named username
