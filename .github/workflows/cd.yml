@@ -22,7 +22,7 @@ jobs:
           " && git pull --rebase"\
           " && cd /home/guillaume/wod-board/backend"\
           " && /home/guillaume/.pyenv/shims/tox -e prod"\
-          " && cd /home/guillaume/wod-board/front"\
+          " && cd /home/guillaume/wod-board/frontend"\
           " && yarn install"\
           " && yarn build"\
           " && supervisorctl restart wod-board"\
