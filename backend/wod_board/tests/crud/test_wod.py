@@ -26,6 +26,17 @@ def test_get_wod_type_by_name(db):
     assert wod_type.name == WOD_TYPE
 
 
+def test_get_wod_type_all(db):
+    wod_types = wod_crud.get_wod_type_all(db)
+    assert len(wod_types) == 0
+
+    db.add(wod.WodType(name=WOD_TYPE))
+    db.commit()
+
+    wod_types = wod_crud.get_wod_type_all(db)
+    assert len(wod_types) == 1
+
+
 def test_get_or_create_wod_type(db):
     wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
 

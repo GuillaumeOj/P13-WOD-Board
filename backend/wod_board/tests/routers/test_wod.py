@@ -75,3 +75,25 @@ async def test_get_wod_by_id(db, client):
     response = await client.get("/api/wod/2")
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
+
+
+async def test_get_wod_type_all(db, client):
+    response = await client.get("/api/wod/types")
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+    db.add(wod.WodType(name="AMRAP"))
+    db.commit()
+
+    response = await client.get("/api/wod/types")
+
+    expected_response = [
+        {
+            "id": 1,
+            "name": "AMRAP",
+        },
+    ]
+
+    assert response.status_code == 200
+    assert response.json() == expected_response
