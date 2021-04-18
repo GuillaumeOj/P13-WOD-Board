@@ -21,10 +21,11 @@ app.include_router(user_routers.router_user)
 app.include_router(user_routers.router_token)
 app.include_router(wod_routers.router)
 
-sentry_sdk.init(
-    dsn="https://9ab3f6551b3549c993c01dcb041bb41d@o453278.ingest.sentry.io/5704632",
-    traces_sample_rate=1.0,
-)
-app.add_middleware(SentryAsgiMiddleware)
+if config.WOD_BOARD_ENV != "test":
+    sentry_sdk.init(
+        dsn="https://9ab3f6551b3549c993c01dcb041bb41d@o453278.ingest.sentry.io/5704632",
+        traces_sample_rate=1.0,
+    )
+    app.add_middleware(SentryAsgiMiddleware)
 
 daiquiri.setup(level=config.LOGGING_LEVEL)
