@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -34,6 +36,13 @@ async def update_wod(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This WOD doesn't exist",
         )
+
+
+@router.get("/types", response_model=typing.List[typing.Optional[wod_schemas.WodType]])
+async def get_wod_types(
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.List[typing.Optional[wod.WodType]]:
+    return wod_crud.get_wod_type_all(db)
 
 
 @router.get("/{id}", response_model=wod_schemas.Wod)

@@ -1,3 +1,5 @@
+import typing
+
 import sqlalchemy.exc
 import sqlalchemy.orm
 
@@ -38,6 +40,16 @@ def get_wod_type_by_exact_name(db: sqlalchemy.orm.Session, name: str) -> wod.Wod
         raise UnknownWodType
 
     return db_wod_type
+
+
+def get_wod_type_all(
+    db: sqlalchemy.orm.Session,
+) -> typing.List[typing.Optional[wod.WodType]]:
+    db_wod_types: typing.List[typing.Optional[wod.WodType]] = (
+        db.query(wod.WodType).order_by(wod.WodType.name).all()
+    )
+
+    return db_wod_types
 
 
 def get_or_create_wod_type(
