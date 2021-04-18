@@ -7,6 +7,9 @@ on:
 jobs:
   pep8:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.9
@@ -21,6 +24,9 @@ jobs:
         run: tox -e pep8
   py39:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     services:
       postgres:
         image: postgres
