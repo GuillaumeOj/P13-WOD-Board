@@ -1,0 +1,2 @@
+SECRET_KEY=foo_secret_key
+DATABASE_URL=postgresql+psycopg2://user:password@localhost/wod_board:5432
