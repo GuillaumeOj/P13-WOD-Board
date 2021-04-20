@@ -1,9 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { NavLink } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
+
+import { useAuth } from './Auth';
 
 export default function Home() {
-  return (
+  const auth = useAuth();
+  return (auth.user ? <Redirect to="/dashboard" /> : (
     <>
       <Helmet>
         <title>Welcome to WOD Board!</title>
@@ -36,14 +39,14 @@ export default function Home() {
           </div>
         </div>
         <div className="subscribe">
-          <NavLink to="/register" className="button primary">
+          <Link to="/register" className="button primary">
             Register
-          </NavLink>
-          <NavLink to="/signin" className="button">
+          </Link>
+          <Link to="/signin" className="button">
             Sign In
-          </NavLink>
+          </Link>
         </div>
       </section>
     </>
-  );
+  ));
 }

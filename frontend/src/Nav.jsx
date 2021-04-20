@@ -1,39 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { useAuth } from './Auth';
 
 export default function NavBar() {
-  const [home, setHome] = useState('/');
   const auth = useAuth();
-
-  useEffect(() => {
-    setHome(auth.user ? '/dashboard' : '/');
-  }, [auth.user]);
 
   return (
     <header>
       <div className="logo">
-        <NavLink exact to={home}>
+        <Link to="/">
           <img
             src={`${process.env.PUBLIC_URL}/logo.svg`}
             className="brand_logo"
             alt="logo"
           />
           <h1 className="brand_name">WOD Board</h1>
-        </NavLink>
+        </Link>
       </div>
       <nav className="navbar">
         <ol className="crumbs">
-          <li>
-            <NavLink exact to={home}>
-              Home
-            </NavLink>
-          </li>
           {auth.user ? (
             <>
               <li>
-                <NavLink to="/profile">My Account</NavLink>
+                <Link to="/profile">My Account</Link>
               </li>
               <li>
                 <input
@@ -46,10 +36,15 @@ export default function NavBar() {
           ) : (
             <>
               <li>
-                <NavLink to="/register">Register</NavLink>
+                <Link to="/">
+                  Home
+                </Link>
               </li>
               <li>
-                <NavLink to="/signin">Sign In</NavLink>
+                <Link to="/register">Register</Link>
+              </li>
+              <li>
+                <Link to="/signin">Sign In</Link>
               </li>
             </>
           )}

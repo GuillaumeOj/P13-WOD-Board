@@ -1,18 +1,23 @@
 import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { NavLink } from 'react-router-dom';
+import {
+  Link, Redirect, useLocation,
+} from 'react-router-dom';
 
 import { useAlert } from './Alert';
 import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function SignIn() {
+  const location = useLocation();
   const auth = useAuth();
   const { addAlert } = useAlert();
 
   const [email, setEmail] = useInput('');
   const [password, setPassword] = useInput('');
+
+  const { from } = location.state || { from: { pathname: '/' } };
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -24,8 +29,8 @@ export default function SignIn() {
     axios
       .post('/api/user/token', formData)
       .then((response) => {
-        addAlert({ message: 'You are now logged in!', alertType: 'success' });
         auth.signIn(response.data);
+        addAlert({ message: 'You are now logged in!', alertType: 'success' });
       })
       .catch((error) => {
         if (error.response) {
@@ -42,6 +47,10 @@ export default function SignIn() {
           addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
+  }
+
+  if (auth.user) {
+    return <Redirect to={from.pathname} />;
   }
 
   return (
@@ -79,10 +88,10 @@ export default function SignIn() {
                 required
               />
             </div>
-            <input type="submit" value="Sign In" className="button primary" />
+            <input type="submit" onClick={handleSubmit} value="Sign In" className="button primary" />
             <p>
               Don&apos;t have any account?{' '}
-              <NavLink to="/register">Register</NavLink> now.
+              <Link to="/register">Register</Link> now.
             </p>
           </form>
         </div>

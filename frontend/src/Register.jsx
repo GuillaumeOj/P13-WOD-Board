@@ -1,12 +1,18 @@
 import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { NavLink } from 'react-router-dom';
+import {
+  Link, Redirect, useHistory, useLocation,
+} from 'react-router-dom';
 
 import { useAlert } from './Alert';
+import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
-function Register() {
+export default function Register() {
+  const history = useHistory();
+  const location = useLocation();
+  const auth = useAuth();
   const { addAlert } = useAlert();
 
   const [email, setEmail] = useInput('');
@@ -15,6 +21,8 @@ function Register() {
   const [password2, setPassword2] = useInput('');
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
+
+  const { from } = location.state || { from: { pathname: '/' } };
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -33,8 +41,10 @@ function Register() {
 
     axios
       .post('/api/user/register', formData)
-      .then(() => {
-        addAlert({ message: 'You are now registered!', alertType: 'success' });
+      .then((response) => {
+        auth.signin(response.data);
+        addAlert({ message: 'You are now registered and logged!', alertType: 'success' });
+        history.replace(from);
       })
       .catch((error) => {
         if (error.response) {
@@ -51,6 +61,10 @@ function Register() {
           addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
+  }
+
+  if (auth.user) {
+    return <Redirect to={from.pathname} />;
   }
 
   return (
@@ -136,7 +150,7 @@ function Register() {
             <p>All fields marked with * are required.</p>
             <input type="submit" value="Register" className="button primary" />
             <p>
-              Have any account already? <NavLink to="/signin">Sign In</NavLink>{' '}
+              Have any account already? <Link to="/signin">Sign In</Link>{' '}
               now.
             </p>
           </form>
@@ -145,5 +159,3 @@ function Register() {
     </>
   );
 }
-
-export default Register;
