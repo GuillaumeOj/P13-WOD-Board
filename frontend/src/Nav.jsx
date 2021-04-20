@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useAuth } from './Auth';
 
 export default function NavBar() {
+  const [home, setHome] = useState('/');
   const auth = useAuth();
-  const home = auth.user ? '/dashboard' : '/';
+
+  useEffect(() => {
+    setHome(auth.user ? '/dashboard' : '/');
+  }, [auth.user]);
+
   return (
     <header>
       <div className="logo">
         <NavLink exact to={home}>
           <img
-            src={`${process.env.PUBLIC_URL}logo.svg`}
+            src={`${process.env.PUBLIC_URL}/logo.svg`}
             className="brand_logo"
             alt="logo"
           />
