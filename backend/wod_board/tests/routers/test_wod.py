@@ -1,4 +1,5 @@
 import pytest
+
 from wod_board.models import wod
 
 
