@@ -2,12 +2,14 @@ import React, {
   useEffect, useState, useContext, createContext,
 } from 'react';
 import { useCookies } from 'react-cookie';
+import { useHistory } from 'react-router-dom';
 
 import { useAlert } from './Alert';
 
 const authContext = createContext();
 
 function useProvideAuth() {
+  const history = useHistory();
   const { addAlert } = useAlert();
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const [user, setUser] = useState(null);
@@ -16,14 +18,13 @@ function useProvideAuth() {
     removeCookie('user');
     setUser(null);
     addAlert({ message: 'You are logged out.', alertType: 'success' });
-    return user;
+    history.push('/');
   };
 
   const signIn = (tokenData) => {
     if (tokenData) {
       setCookie('user', tokenData, { path: '/' });
     }
-    return user;
   };
 
   useEffect(() => {
