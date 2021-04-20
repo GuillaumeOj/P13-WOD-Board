@@ -51,6 +51,26 @@ def test_create_wod(db):
     assert db_wod.rounds.count() == new_wod.rounds.count()
 
 
+def test_update_wod(db):
+    db_wod_type = wod.WodType(name=WOD_TYPE)
+    db_wod = wod.Wod(note="Bad Note", wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    wod_type_schema = wod_schemas.WodTypeCreate(name=WOD_TYPE)
+    wod_schema = wod_schemas.WodCreate(note="Correct Note", wod_type=wod_type_schema)
+
+    assert db_wod.note != wod_schema.note
+
+    wod_crud.update_wod(db, wod_schema, db_wod.id)
+    db_wod = db.get(wod.Wod, db_wod.id)
+    assert db_wod.note == wod_schema.note
+
+    with pytest.raises(wod_crud.UnknownWod):
+        wod_crud.update_wod(db, wod_schema, 2)
+
+
 def test_get_wod_by_id(db):
     with pytest.raises(wod_crud.UnknownWod):
         wod_crud.get_wod_by_id(db, 1)

@@ -1,4 +1,5 @@
 import pytest
+from wod_board.models import wod
 
 
 @pytest.mark.asyncio
@@ -28,3 +29,30 @@ async def test_add_wod(db, client):
 
     assert response.status_code == 200
     assert response.json() == expected_response
+
+
+@pytest.mark.asyncio
+async def test_update_wod(db, client):
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(note="Bad Note", wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    wod_json = {
+        "description": db_wod.description,
+        "note": "Updated Note",
+        "date": db_wod.date.isoformat(),
+        "wod_type_id": db_wod.wod_type.id,
+        "wod_type": {
+            "name": db_wod.wod_type.name,
+        },
+    }
+    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+
+    assert response.status_code == 200
+    assert response.json()["note"] == wod_json["note"]
+
+    response = await client.put("/api/wod/2", json=wod_json)
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This WOD doesn't exist"}
