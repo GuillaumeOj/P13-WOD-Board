@@ -56,3 +56,21 @@ async def test_update_wod(db, client):
     response = await client.put("/api/wod/2", json=wod_json)
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
+
+
+@pytest.mark.asyncio
+async def test_get_wod_by_id(db, client):
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(note="Bad Note", wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    response = await client.get(f"/api/wod/{db_wod.id}")
+
+    assert response.status_code == 200
+    assert response.json()["id"] == db_wod.id
+
+    response = await client.get("/api/wod/2")
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This WOD doesn't exist"}
