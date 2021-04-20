@@ -79,3 +79,27 @@ def create_wod(
     db.refresh(new_wod)
 
     return new_wod
+
+
+def update_wod(
+    db: sqlalchemy.orm.Session,
+    wod_data: wod_schemas.WodCreate,
+    wod_id: int,
+) -> wod.Wod:
+
+    wod_to_update: wod.Wod = db.get(wod.Wod, wod_id)
+
+    if wod_to_update is None:
+        raise UnknownWod
+
+    wod_type = get_or_create_wod_type(db, wod_data.wod_type)
+
+    wod_to_update.description = wod_data.description
+    wod_to_update.note = wod_data.note
+    wod_to_update.date = wod_data.date
+    wod_to_update.wod_type = wod_type
+
+    db.commit()
+    db.refresh(wod_to_update)
+
+    return wod_to_update
