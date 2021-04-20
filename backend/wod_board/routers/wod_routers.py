@@ -17,8 +17,8 @@ router = fastapi.APIRouter(prefix=f"{config.API_URL}/wod", tags=["wod"])
 async def add_wod(
     wod_data: wod_schemas.WodCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> wod_schemas.Wod:
-    return wod_schemas.Wod.from_orm(wod_crud.create_wod(db, wod_data))
+) -> wod.Wod:
+    return wod_crud.create_wod(db, wod_data)
 
 
 @router.put("/{id}", response_model=wod_schemas.Wod)
@@ -40,9 +40,9 @@ async def update_wod(
 async def get_wod_by_id(
     id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> wod_schemas.Wod:
+) -> wod.Wod:
     try:
-        return wod_schemas.Wod.from_orm(wod_crud.get_wod_by_id(db, id))
+        return wod_crud.get_wod_by_id(db, id)
     except wod_crud.UnknownWod:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
