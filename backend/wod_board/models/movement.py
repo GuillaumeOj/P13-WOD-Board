@@ -57,6 +57,7 @@ class MovementGoal(models.Base):
     movement_id = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id")
     )
+    round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
     repetition = sqlalchemy.Column(sqlalchemy.Integer)
 
     movement: "Movement" = sqlalchemy.orm.relationship("Movement")

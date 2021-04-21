@@ -28,11 +28,12 @@ class Movement(MovementBase):
 
 
 class MovementGoalBase(OrmBase):
-    movement_id: typing.Optional[int]
     repetition: typing.Optional[int]
 
 
 class MovementGoalCreate(MovementGoalBase):
+    movement_id: typing.Optional[int]
+    round_id: typing.Optional[int]
     movement: MovementCreate
     equipments: typing.Optional[typing.List[equipment_schemas.EquipmentCreate]]
 
@@ -55,5 +56,7 @@ class MovementGoalCreate(MovementGoalBase):
 
 class MovementGoal(MovementGoalBase):
     id: int
+    movement_id: int
+    round_id: int
     movement: Movement
     equipments: typing.Optional[typing.List[equipment_schemas.Equipment]]
