@@ -44,6 +44,7 @@ def create_round(
     new_round = wod_round.Round(
         position=round_data.position,
         duration_seconds=round_data.duration_seconds,
+        repetition=round_data.repetition,
         wod_id=round_data.wod_id,
         parent_id=parent_id,
     )
