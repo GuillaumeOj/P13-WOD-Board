@@ -5,6 +5,7 @@ import sqlalchemy.orm
 
 from wod_board import config
 from wod_board.crud import movement_crud
+from wod_board.crud import round_crud
 from wod_board.models import get_db
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
@@ -26,7 +27,33 @@ async def add_movement_goal(
     movement_data: movement_schemas.MovementGoalCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> movement.MovementGoal:
-    return movement_crud.create_movement_goal(db, movement_data)
+    try:
+        return movement_crud.create_movement_goal(db, movement_data)
+    except round_crud.UnknownRound:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="This round doesn't exist",
+        )
+
+
+@router.put("/goal/{id}", response_model=movement_schemas.MovementGoal)
+async def update_movement_goal(
+    movement_data: movement_schemas.MovementGoalCreate,
+    id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> movement.MovementGoal:
+    try:
+        return movement_crud.update_movement_goal(db, movement_data, id)
+    except movement_crud.UnknownMovement:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This goal doesn't exist",
+        )
+    except round_crud.UnknownRound:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="This round doesn't exist",
+        )
 
 
 @router.get("/goal/{id}", response_model=movement_schemas.MovementGoal)
