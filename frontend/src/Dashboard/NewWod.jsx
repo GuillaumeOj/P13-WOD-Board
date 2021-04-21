@@ -55,8 +55,8 @@ export default function NewWod() {
       setWodType('');
       setWodTypeId('');
     }
-    console.log(wodTypeId);
-    console.log(wodType);
+    console.log(wodTypeId); // eslint-disable-line no-console
+    console.log(wodType); // eslint-disable-line no-console
   };
 
   return (
