@@ -1,9 +1,12 @@
 import pytest
 
 from wod_board.crud import movement_crud
+from wod_board.crud import round_crud
 from wod_board.models import equipment
 from wod_board.models import movement
 from wod_board.models import unit
+from wod_board.models import wod
+from wod_board.models import wod_round
 from wod_board.schemas import equipment_schemas
 from wod_board.schemas import movement_schemas
 from wod_board.schemas import unit_schemas
@@ -65,6 +68,18 @@ def test_get_or_create_movement(db):
 
 
 def test_create_movement_goal(db):
+
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
     dumbbel = equipment.Equipment(name="Dumbbel")
     kettelbell = equipment.Equipment(name="Kettlebell")
     barbell = equipment.Equipment(name="Barbell")
@@ -77,14 +92,30 @@ def test_create_movement_goal(db):
     deadlift_schema = movement_schemas.MovementCreate.from_orm(deadlift)
 
     deadlift_goal = movement_schemas.MovementGoalCreate(
-        movement=deadlift_schema, repetition=5, equipments=[dumbbel, kettelbell]
+        movement=deadlift_schema,
+        round_id=2,
+        repetition=5,
+        equipments=[dumbbel, kettelbell],
+    )
+
+    with pytest.raises(round_crud.UnknownRound):
+        movement_crud.create_movement_goal(db, deadlift_goal)
+
+    deadlift_goal = movement_schemas.MovementGoalCreate(
+        movement=deadlift_schema,
+        round_id=db_round.id,
+        repetition=5,
+        equipments=[dumbbel, kettelbell],
     )
 
     goal = movement_crud.create_movement_goal(db, deadlift_goal)
-    db_unit = db.query(unit.Unit).first()
-    assert goal.movement.name == deadlift.name
-    assert goal.movement.unit == db_unit
+    assert goal.movement.name == deadlift_goal.movement.name
+    assert goal.round_id == db_round.id
+    assert goal.repetition == deadlift_goal.repetition
     assert goal.equipments.count() == 2
+
+    db_movements_goal = db.query(movement.MovementGoal)
+    assert db_movements_goal.count() == 1
 
 
 def test_get_movement_goal_by_id(db):

@@ -1,6 +1,7 @@
 import sqlalchemy.orm
 
 from wod_board.crud import equipment_crud
+from wod_board.crud import round_crud
 from wod_board.crud import unit_crud
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
@@ -72,12 +73,14 @@ def get_or_create_movement(
 
 
 def create_movement_goal(
-    db: sqlalchemy.orm.Session, goal: movement_schemas.MovementGoalCreate
+    db: sqlalchemy.orm.Session,
+    goal: movement_schemas.MovementGoalCreate,
 ) -> movement.MovementGoal:
     base_movement = get_movement_by_exact_name(db, goal.movement.name)
 
     new_movement = movement.MovementGoal(
         movement=base_movement,
+        round_id=goal.round_id,
         repetition=goal.repetition,
     )
 
@@ -89,7 +92,16 @@ def create_movement_goal(
 
     db.add(new_movement)
 
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+        if (
+            'insert or update on table "movement_goal" violates foreign '
+            'key constraint "movement_goal_round_id_fkey"'
+        ) in str(error):
+            raise round_crud.UnknownRound
+        raise error
     db.refresh(new_movement)
 
     return new_movement
