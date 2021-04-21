@@ -17,6 +17,8 @@ async def test_add_round(db, client):
 
     round_json = {
         "position": 1,
+        "duration_seconds": 60,
+        "repetition": 5,
         "wod_id": new_wod.id,
         "sub_rounds": [
             {
@@ -31,14 +33,16 @@ async def test_add_round(db, client):
     expected_response = {
         "id": 1,
         "position": 1,
-        "duration_seconds": 0,
+        "duration_seconds": 60,
+        "repetition": 5,
         "wod_id": new_wod.id,
         "parent_id": None,
         "sub_rounds": [
             {
                 "id": 2,
                 "position": 2,
-                "duration_seconds": 0,
+                "duration_seconds": None,
+                "repetition": None,
                 "wod_id": new_wod.id,
                 "parent_id": 1,
                 "sub_rounds": [],
@@ -56,7 +60,6 @@ async def test_add_round(db, client):
 async def test_add_round_with_wrong_wod_id(db, client):
     round_json = {
         "position": 1,
-        "duration_seconds": 0,
         "wod_id": 0,
         "sub_rounds": [],
         "movements": [],
@@ -78,12 +81,10 @@ async def test_add_rounds_with_same_position(db, client):
 
     round_json = {
         "position": 1,
-        "duration_seconds": 0,
         "wod_id": new_wod.id,
         "sub_rounds": [
             {
                 "position": 1,
-                "duration_seconds": 0,
                 "wod_id": new_wod.id,
                 "sub_rounds": [],
             },

@@ -10,7 +10,8 @@ from wod_board.schemas import movement_schemas
 
 class RoundBase(OrmBase):
     position: int
-    duration_seconds: int = 0
+    duration_seconds: typing.Optional[int]
+    repetition: typing.Optional[int]
     wod_id: int
 
 

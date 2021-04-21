@@ -17,7 +17,11 @@ def test_create_round(db):
 
     sub_round = round_schemas.RoundCreate(position=2, wod_id=db_wod.id)
     first_round = round_schemas.RoundCreate(
-        position=1, wod_id=db_wod.id, sub_rounds=[sub_round]
+        position=1,
+        duration_seconds=60,
+        repetition=5,
+        wod_id=db_wod.id,
+        sub_rounds=[sub_round],
     )
 
     round_crud.create_round(db, first_round)

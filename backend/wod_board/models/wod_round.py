@@ -26,6 +26,7 @@ class Round(models.Base):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     position = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
+    repetition = sqlalchemy.Column(sqlalchemy.Integer)
     wod_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"))
     parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
 
