@@ -33,25 +33,35 @@ def test_create_round(db):
     assert parent_round.sub_rounds.count() == 1
 
 
-def test_create_round_with_mouvement(db):
-    wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=wod_type)
+def test_update_round(db):
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=db_wod_type)
     db.add(db_wod)
     db.commit()
     db.refresh(db_wod)
 
-    devil_press = movement_schemas.MovementCreate(name="Devil Press")
-    db.add(movement.Movement(name=devil_press.name))
+    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    db.add(db_round)
     db.commit()
+    db.refresh(db_round)
 
-    goal = movement_schemas.MovementGoalCreate(movement=devil_press)
-
-    first_round = round_schemas.RoundCreate(
-        position=1, wod_id=db_wod.id, movements=[goal]
+    round_schema = round_schemas.RoundCreate(
+        position=db_round.position,
+        duration_seconds=60,
+        repetition=5,
+        wod_id=db_round.wod_id,
     )
 
-    round_crud.create_round(db, first_round)
-    assert db.query(movement.MovementGoal).count() == 1
+    assert db_round.duration_seconds != round_schema.duration_seconds
+    assert db_round.repetition != round_schema.repetition
+
+    round_crud.update_round(db, round_schema, db_round.id)
+    db_round = db.get(wod_round.Round, db_round.id)
+    assert db_round.duration_seconds == round_schema.duration_seconds
+    assert db_round.repetition == round_schema.repetition
+
+    with pytest.raises(round_crud.UnknownRound):
+        round_crud.update_round(db, round_schema, 2)
 
 
 def test_create_rounds_with_duplicated_position(db):
