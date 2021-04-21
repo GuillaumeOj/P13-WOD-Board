@@ -77,6 +77,7 @@ async def test_get_wod_by_id(db, client):
     assert response.json() == {"detail": "This WOD doesn't exist"}
 
 
+@pytest.mark.asyncio
 async def test_get_wod_type_all(db, client):
     response = await client.get("/api/wod/types")
 
