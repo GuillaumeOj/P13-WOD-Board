@@ -1,10 +1,8 @@
 import pytest
 
 from wod_board.crud import round_crud
-from wod_board.models import movement
 from wod_board.models import wod
 from wod_board.models import wod_round
-from wod_board.schemas import movement_schemas
 from wod_board.schemas import round_schemas
 
 

@@ -1,3 +1,4 @@
+import daiquiri
 import sqlalchemy.orm
 
 from wod_board.crud import equipment_crud
@@ -5,6 +6,9 @@ from wod_board.crud import round_crud
 from wod_board.crud import unit_crud
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
+
+
+LOG = daiquiri.getLogger(__name__)
 
 
 class UnknownMovement(Exception):
@@ -76,7 +80,7 @@ def create_movement_goal(
     db: sqlalchemy.orm.Session,
     goal: movement_schemas.MovementGoalCreate,
 ) -> movement.MovementGoal:
-    base_movement = get_movement_by_exact_name(db, goal.movement.name)
+    base_movement = get_or_create_movement(db, goal.movement)
 
     new_movement = movement.MovementGoal(
         movement=base_movement,
@@ -96,15 +100,58 @@ def create_movement_goal(
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
+
         if (
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_round_id_fkey"'
         ) in str(error):
             raise round_crud.UnknownRound
-        raise error
+
+        LOG.error(str(error))
+
     db.refresh(new_movement)
 
     return new_movement
+
+
+def update_movement_goal(
+    db: sqlalchemy.orm.Session,
+    goal: movement_schemas.MovementGoalCreate,
+    id: int,
+) -> movement.MovementGoal:
+    movement_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
+
+    if movement_goal is None:
+        raise UnknownMovement
+
+    base_movement = get_movement_by_exact_name(db, goal.movement.name)
+
+    movement_goal.movement = base_movement
+    movement_goal.round_id = goal.round_id
+    movement_goal.repetition = goal.repetition
+
+    if goal.equipments:
+        movement_goal.equipments = [
+            equipment_crud.get_or_create_equipment(db, equipment)
+            for equipment in goal.equipments
+        ]
+
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+
+        if (
+            'insert or update on table "movement_goal" violates foreign '
+            'key constraint "movement_goal_round_id_fkey"'
+        ) in str(error):
+            raise round_crud.UnknownRound
+
+        LOG.error(str(error))
+
+    db.refresh(movement_goal)
+
+    return movement_goal
 
 
 def get_movement_goal_by_id(

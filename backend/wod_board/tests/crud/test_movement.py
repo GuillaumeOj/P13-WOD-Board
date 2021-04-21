@@ -118,6 +118,47 @@ def test_create_movement_goal(db):
     assert db_movements_goal.count() == 1
 
 
+def test_update_movement_goal(db):
+
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
+    dumbbel = equipment.Equipment(name="Dumbbel")
+    kettelbell = equipment.Equipment(name="Kettlebell")
+    barbell = equipment.Equipment(name="Barbell")
+    equipments = [dumbbel, kettelbell, barbell]
+
+    deadlift = movement.Movement(name="Dead Lift", equipments=equipments)
+    db_movement_goal = movement.MovementGoal(movement=deadlift, round_id=db_round.id)
+    db.add(db_movement_goal)
+    db.commit()
+    db.refresh(db_movement_goal)
+
+    updated_deadlift_goal = movement_schemas.MovementGoalCreate.from_orm(
+        db_movement_goal
+    )
+    updated_deadlift_goal.repetition = 5
+
+    goal = movement_crud.update_movement_goal(
+        db, updated_deadlift_goal, db_movement_goal.id
+    )
+    assert goal.repetition == updated_deadlift_goal.repetition
+
+    db_movements_goal = db.query(movement.MovementGoal)
+    assert db_movements_goal.count() == 1
+
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.update_movement_goal(db, updated_deadlift_goal, 2)
+
+
 def test_get_movement_goal_by_id(db):
     with pytest.raises(movement_crud.UnknownMovement):
         movement_crud.get_movement_goal_by_id(db, 1)
