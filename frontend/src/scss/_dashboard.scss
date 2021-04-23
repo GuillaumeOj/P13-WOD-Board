@@ -18,5 +18,30 @@
   }
 
   .subContent {
+    .roundArea {
+      margin-bottom: $spacer;
+      input,
+      label {
+        font-size: $default-font-size;
+        color: $primary;
+      }
+      .lead {
+        display: flex;
+        justify-content: space-between;
+        margin-top: $spacer;
+        margin-bottom: calc(#{$spacer} * 0.5);
+      }
+      .button {
+        font-size: $default-font-size;
+
+        &.warning {
+          margin: 0;
+        }
+      }
+
+      .group {
+        padding: calc(#{$spacer} * 0.5);
+      }
+    }
   }
 }
