@@ -7,6 +7,8 @@ import { Helmet } from 'react-helmet';
 import { useAlert } from '../Alert';
 import { useInput } from '../Utils';
 
+import WodComposer from './WodComposer/WodComposer';
+
 dayjs.extend(utc);
 
 export default function NewWod() {
@@ -84,6 +86,7 @@ export default function NewWod() {
               ))}
             </select>
           </div>
+          <WodComposer />
           <p>All fields marked with * are required.</p>
           <input type="submit" value="New WOD" className="button primary" />
         </form>
