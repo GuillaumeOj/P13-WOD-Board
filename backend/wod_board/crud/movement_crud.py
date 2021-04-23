@@ -1,3 +1,5 @@
+import typing
+
 import daiquiri
 import sqlalchemy.orm
 
@@ -36,6 +38,16 @@ def create_movement(
     db.refresh(new_movement)
 
     return new_movement
+
+
+def get_movements(
+    db: sqlalchemy.orm.Session,
+) -> typing.List[typing.Optional[movement.Movement]]:
+    movements: typing.List[typing.Optional[movement.Movement]] = db.query(
+        movement.Movement
+    ).all()
+
+    return movements
 
 
 def get_movement_by_id(

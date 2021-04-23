@@ -27,6 +27,21 @@ async def test_add_movement(db, client):
 
 
 @pytest.mark.asyncio
+async def test_get_movements(db, client):
+    response = await client.get("api/movement/")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+    db.add(movement.Movement(name="Devil Press"))
+    db.add(movement.Movement(name="Burpees"))
+    db.commit()
+
+    response = await client.get("api/movement/")
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+
+@pytest.mark.asyncio
 async def test_get_movement_by_exact_name(db, client):
     name = "Devil Press"
     response = await client.get(f"/api/movement/{name}")
