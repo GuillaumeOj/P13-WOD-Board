@@ -19,6 +19,15 @@ def test_create_movement(db):
     assert created_movement.name == devil_press.name
 
 
+def test_get_movements(db):
+    db.add(movement.Movement(name="Devil Press"))
+    db.add(movement.Movement(name="Burpees"))
+    db.commit()
+
+    db_movements = movement_crud.get_movements(db)
+    assert len(db_movements) == 2
+
+
 def test_get_movement_by_id(db):
     with pytest.raises(movement_crud.UnknownMovement):
         movement_crud.get_movement_by_id(db, 1)
