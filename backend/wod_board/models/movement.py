@@ -59,6 +59,7 @@ class MovementGoal(models.Base):
     )
     round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
     repetition = sqlalchemy.Column(sqlalchemy.Integer)
+    duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
 
     movement: "Movement" = sqlalchemy.orm.relationship("Movement")
     equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(

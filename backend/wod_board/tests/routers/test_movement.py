@@ -11,51 +11,8 @@ LOG = daiquiri.getLogger(__name__)
 
 @pytest.mark.asyncio
 async def test_add_movement(db, client):
-    movement_json = {"name": "Devil Press", "unit_id": None, "equipments": []}
+    movement_json = {"name": "Devil Press"}
     response = await client.post("/api/movement/", json=movement_json)
-
-    expected_response = {
-        "id": 1,
-        "name": "Devil Press",
-        "unit_id": None,
-        "unit": None,
-        "equipments": [],
-    }
-
-    assert response.status_code == 200
-    assert response.json() == expected_response
-
-
-@pytest.mark.asyncio
-async def test_get_movements(db, client):
-    response = await client.get("api/movement/")
-    assert response.status_code == 200
-    assert len(response.json()) == 0
-
-    db.add(movement.Movement(name="Devil Press"))
-    db.add(movement.Movement(name="Burpees"))
-    db.commit()
-
-    response = await client.get("api/movement/")
-    assert response.status_code == 200
-    assert len(response.json()) == 2
-
-
-@pytest.mark.asyncio
-async def test_get_movement_by_exact_name(db, client):
-    name = "Devil Press"
-    response = await client.get(f"/api/movement/{name}")
-
-    expected_response = {"detail": f"{name} doesn't exist yet"}
-
-    assert response.status_code == 404
-    assert response.json() == expected_response
-
-    wanted_movement = movement.Movement(name=name)
-    db.add(wanted_movement)
-    db.commit()
-
-    response = await client.get(f"/api/movement/{name}")
 
     expected_response = {
         "id": 1,
@@ -88,27 +45,23 @@ async def test_add_movement_goal(db, client):
     db.refresh(db_round)
 
     movement_json = {
-        "repetition": 10,
+        "movement_id": db_movement.id,
         "round_id": db_round.id,
-        "movement": {
-            "name": "Devil Press",
-        },
+        "repetition": 10,
+        "duration_seconds": 60 * 5,
     }
     response = await client.post("/api/movement/goal", json=movement_json)
 
-    expected_response = {
+    expected_response = movement_json | {
         "id": 1,
-        "repetition": 10,
-        "round_id": db_round.id,
-        "movement_id": db_movement.id,
-        "movement": {
-            "equipments": db_movement.equipments.all(),
-            "id": db_movement.id,
-            "name": db_movement.name,
-            "unit": db_movement.unit,
-            "unit_id": db_movement.unit_id,
-        },
         "equipments": [],
+        "movement": {
+            "equipments": [],
+            "id": 1,
+            "name": "Devil Press",
+            "unit": None,
+            "unit_id": None,
+        },
     }
 
     assert response.status_code == 200
@@ -117,14 +70,22 @@ async def test_add_movement_goal(db, client):
     movement_json = {
         "repetition": 10,
         "round_id": 2,
-        "movement": {
-            "name": "Devil Press",
-        },
+        "movement_id": db_movement.id,
     }
 
     response = await client.post("/api/movement/goal", json=movement_json)
     assert response.status_code == 422
     assert response.json() == {"detail": "This round doesn't exist"}
+
+    movement_json = {
+        "repetition": 10,
+        "round_id": db_round.id,
+        "movement_id": 2,
+    }
+
+    response = await client.post("/api/movement/goal", json=movement_json)
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This goal doesn't exist"}
 
 
 @pytest.mark.asyncio
@@ -154,31 +115,26 @@ async def test_update_movement_goal(db, client):
     db.refresh(db_movement_goal)
 
     movement_goal_json = {
-        "repetition": 10,
-        "round_id": db_movement_goal.round_id,
         "movement_id": db_movement_goal.movement_id,
-        "movement": {
-            "name": db_movement_goal.movement.name,
-        },
+        "round_id": db_movement_goal.round_id,
+        "repetition": 10,
+        "duration_seconds": 60 * 5,
     }
 
     response = await client.put(
         f"/api/movement/goal/{db_movement_goal.id}", json=movement_goal_json
     )
 
-    expected_response = {
+    expected_response = movement_goal_json | {
         "id": 1,
-        "repetition": movement_goal_json["repetition"],
-        "round_id": db_movement_goal.round_id,
-        "movement_id": db_movement_goal.id,
+        "equipments": [],
         "movement": {
-            "id": db_movement.id,
-            "name": db_movement.name,
-            "unit_id": db_movement.unit_id,
-            "unit": db_movement.unit,
-            "equipments": db_movement.equipments.all(),
+            "equipments": [],
+            "id": 1,
+            "name": "Devil Press",
+            "unit": None,
+            "unit_id": None,
         },
-        "equipments": db_movement_goal.equipments.all(),
     }
 
     assert response.status_code == 200
@@ -189,12 +145,23 @@ async def test_update_movement_goal(db, client):
     assert response.json() == {"detail": "This goal doesn't exist"}
 
     movement_goal_json = {
+        "movement_id": 2,
+        "round_id": db_movement_goal.round_id,
         "repetition": 10,
-        "round_id": 2,
+        "duration_seconds": 60 * 5,
+    }
+
+    response = await client.put(
+        f"/api/movement/goal/{db_movement_goal.id}", json=movement_goal_json
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This movement doesn't exist"}
+
+    movement_goal_json = {
         "movement_id": db_movement_goal.movement_id,
-        "movement": {
-            "name": db_movement_goal.movement.name,
-        },
+        "round_id": 2,
+        "repetition": 10,
+        "duration_seconds": 60 * 5,
     }
 
     response = await client.put(
@@ -224,8 +191,8 @@ async def test_get_movement_goal_by_id(db, client):
     db.commit()
     db.refresh(db_round)
 
-    wanted_movement = movement.Movement(name="Devil Press")
-    goal = movement.MovementGoal(round_id=db_round.id, movement=wanted_movement)
+    devil_press = movement.Movement(name="Devil Press")
+    goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)
     db.add(goal)
     db.commit()
     db.refresh(goal)
@@ -233,18 +200,19 @@ async def test_get_movement_goal_by_id(db, client):
     response = await client.get(f"/api/movement/goal/{goal.id}")
 
     expected_response = {
-        "id": goal.id,
+        "id": 1,
         "round_id": db_round.id,
-        "repetition": goal.repetition,
         "movement_id": goal.movement_id,
+        "repetition": None,
+        "duration_seconds": None,
+        "equipments": [],
         "movement": {
-            "equipments": goal.movement.equipments.all(),
-            "id": goal.movement.id,
-            "name": goal.movement.name,
-            "unit": goal.movement.unit,
-            "unit_id": goal.movement.unit_id,
+            "equipments": [],
+            "id": 1,
+            "name": "Devil Press",
+            "unit": None,
+            "unit_id": None,
         },
-        "equipments": goal.equipments.all(),
     }
 
     assert response.status_code == 200

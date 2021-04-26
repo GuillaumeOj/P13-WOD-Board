@@ -1,5 +1,3 @@
-import typing
-
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -24,13 +22,6 @@ async def add_movement(
     return movement_crud.get_or_create_movement(db, movement_data)
 
 
-@router.get("/", response_model=typing.List[typing.Optional[movement_schemas.Movement]])
-async def get_movements(
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> typing.List[typing.Optional[movement.Movement]]:
-    return movement_crud.get_movements(db)
-
-
 @router.post("/goal", response_model=movement_schemas.MovementGoal)
 async def add_movement_goal(
     movement_data: movement_schemas.MovementGoalCreate,
@@ -43,6 +34,11 @@ async def add_movement_goal(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This round doesn't exist",
         )
+    except movement_crud.UnknownMovement:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="This goal doesn't exist",
+        )
 
 
 @router.put("/goal/{id}", response_model=movement_schemas.MovementGoal)
@@ -53,10 +49,15 @@ async def update_movement_goal(
 ) -> movement.MovementGoal:
     try:
         return movement_crud.update_movement_goal(db, movement_data, id)
-    except movement_crud.UnknownMovement:
+    except movement_crud.UnknownGoal:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist",
+        )
+    except movement_crud.UnknownMovement:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="This movement doesn't exist",
         )
     except round_crud.UnknownRound:
         raise HTTPException(
@@ -76,18 +77,4 @@ async def get_movement_goal_by_id(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist yet",
-        )
-
-
-@router.get("/{name}", response_model=movement_schemas.Movement)
-async def get_movement_by_exact_name(
-    name: str,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> movement.Movement:
-    try:
-        return movement_crud.get_movement_by_exact_name(db, name)
-    except movement_crud.UnknownMovement:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"{name} doesn't exist yet",
         )
