@@ -17,8 +17,7 @@ class MovementBase(OrmBase):
 
 
 class MovementCreate(MovementBase):
-    unit: typing.Optional[unit_schemas.UnitCreate]
-    equipments: typing.Optional[typing.List[equipment_schemas.EquipmentCreate]]
+    pass
 
 
 class Movement(MovementBase):
@@ -28,35 +27,17 @@ class Movement(MovementBase):
 
 
 class MovementGoalBase(OrmBase):
+    movement_id: int
+    round_id: int
     repetition: typing.Optional[int]
+    duration_seconds: typing.Optional[int]
 
 
 class MovementGoalCreate(MovementGoalBase):
-    movement_id: typing.Optional[int]
-    round_id: typing.Optional[int]
-    movement: MovementCreate
-    equipments: typing.Optional[typing.List[equipment_schemas.EquipmentCreate]]
-
-    @pydantic.validator("equipments")
-    def check_equipments(cls, v, values):
-        movement = values.get("movement")
-        if not v:
-            return v
-        if not movement.equipments:
-            raise ValueError(f"{v} is not in {movement.equipments}")
-
-        for equipment in v:
-            if not movement.equipments:
-                raise ValueError(f"{equipment} is not in {movement.equipments}")
-            if equipment not in movement.equipments:
-                raise ValueError(f"{equipment} is not in {movement.equipments}")
-
-        return v
+    pass
 
 
 class MovementGoal(MovementGoalBase):
     id: int
-    movement_id: int
-    round_id: int
     movement: Movement
     equipments: typing.Optional[typing.List[equipment_schemas.Equipment]]

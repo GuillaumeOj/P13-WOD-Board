@@ -2,82 +2,84 @@ import pytest
 
 from wod_board.crud import movement_crud
 from wod_board.crud import round_crud
-from wod_board.models import equipment
+from wod_board.crud import unit_crud
 from wod_board.models import movement
 from wod_board.models import unit
 from wod_board.models import wod
 from wod_board.models import wod_round
-from wod_board.schemas import equipment_schemas
 from wod_board.schemas import movement_schemas
-from wod_board.schemas import unit_schemas
 
 
 def test_create_movement(db):
-    devil_press = movement_schemas.MovementCreate(name="Devil Press")
-
-    created_movement = movement_crud.create_movement(db, devil_press)
-    assert created_movement.name == devil_press.name
-
-
-def test_get_movements(db):
-    db.add(movement.Movement(name="Devil Press"))
-    db.add(movement.Movement(name="Burpees"))
+    unit_unit = unit.Unit(name="Unit", symbol="u")
+    db.add(unit_unit)
     db.commit()
+    db.refresh(unit_unit)
 
-    db_movements = movement_crud.get_movements(db)
-    assert len(db_movements) == 2
+    assert db.query(movement.Movement).count() == 0
+
+    devil_press = movement_schemas.MovementCreate(
+        name="Devil Press", unit_id=unit_unit.id
+    )
+
+    assert movement_crud.create_movement(db, devil_press)
+    assert db.query(movement.Movement).count() == 1
+
+    devil_press = movement_schemas.MovementCreate(name="Burpees", unit_id=2)
+    with pytest.raises(unit_crud.UnknownUnit):
+        movement_crud.create_movement(db, devil_press)
 
 
 def test_get_movement_by_id(db):
     with pytest.raises(movement_crud.UnknownMovement):
         movement_crud.get_movement_by_id(db, 1)
 
-    devil_press = movement_schemas.MovementCreate(name="Devil Press")
+    unit_unit = unit.Unit(name="Unit", symbol="u")
+    db.add(unit_unit)
+    db.commit()
+    db.refresh(unit_unit)
+
+    devil_press = movement_schemas.MovementCreate(
+        name="Devil Press", unit_id=unit_unit.id
+    )
     db.add(movement.Movement(name=devil_press.name))
     db.commit()
 
-    db_devil_press = movement_crud.get_movement_by_id(db, 1)
-    assert db_devil_press.name == devil_press.name
+    assert movement_crud.get_movement_by_id(db, 1)
 
 
-def test_get_movement_by_exact_name(db):
-    devil_press = movement_schemas.MovementCreate(name="Devil Press")
-
-    db.add(movement.Movement(name=devil_press.name))
+def test_get_movement_by_name(db):
+    db.add(movement.Movement(name="Devil Press"))
     db.commit()
 
-    devil_press = movement_crud.get_movement_by_exact_name(db, devil_press.name)
+    devil_press = movement_crud.get_movement_by_name(db, "Devil Press")
     assert devil_press.name == devil_press.name
 
     with pytest.raises(movement_crud.UnknownMovement):
-        movement_crud.get_movement_by_exact_name(db, "Burpee")
+        movement_crud.get_movement_by_name(db, "Burpee")
+
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.get_movement_by_name(db, "Devil press")
 
 
 def test_get_or_create_movement(db):
-    dumbbel_schema = equipment_schemas.EquipmentCreate(name="Dumbbel")
-    barbell_schema = equipment_schemas.EquipmentCreate(name="Barbell")
-    equipments = [dumbbel_schema, barbell_schema]
-    unit_unit = unit_schemas.UnitCreate(name="Unit", symbol="u")
+    unit_unit = unit.Unit(name="Unit", symbol="u")
+    db.add(unit_unit)
+    db.commit()
+    db.refresh(unit_unit)
+
+    assert db.query(movement.Movement).count() == 0
 
     devil_press = movement_schemas.MovementCreate(
-        name="Devil Press", equipments=equipments, unit=unit_unit
+        name="Devil Press", unit_id=unit_unit.id
     )
 
-    wanted_movement = movement_crud.get_or_create_movement(db, devil_press)
-    db_equipments = db.query(equipment.Equipment).all()
-    db_unit = db.query(unit.Unit).first()
-    assert wanted_movement.name == devil_press.name
-    assert wanted_movement.unit == db_unit
-    assert wanted_movement.equipments.all() == db_equipments
-
-    wanted_movement = movement_crud.get_or_create_movement(db, devil_press)
-    movements = db.query(movement.Movement)
-    assert wanted_movement.name == devil_press.name
-    assert movements.count() == 1
+    assert movement_crud.get_or_create_movement(db, devil_press)
+    assert movement_crud.get_or_create_movement(db, devil_press)
+    assert db.query(movement.Movement).count() == 1
 
 
 def test_create_movement_goal(db):
-
     db_wod_type = wod.WodType(name="AMRAP")
     db_wod = wod.Wod(wod_type=db_wod_type)
     db.add(db_wod)
@@ -89,46 +91,42 @@ def test_create_movement_goal(db):
     db.commit()
     db.refresh(db_round)
 
-    dumbbel = equipment.Equipment(name="Dumbbel")
-    kettelbell = equipment.Equipment(name="Kettlebell")
-    barbell = equipment.Equipment(name="Barbell")
-    equipments = [dumbbel, kettelbell, barbell]
-
-    deadlift = movement.Movement(name="Dead Lift", equipments=equipments)
+    deadlift = movement.Movement(name="Dead Lift")
     db.add(deadlift)
     db.commit()
+    db.refresh(deadlift)
 
-    deadlift_schema = movement_schemas.MovementCreate.from_orm(deadlift)
+    assert db.query(movement.MovementGoal).count() == 0
 
     deadlift_goal = movement_schemas.MovementGoalCreate(
-        movement=deadlift_schema,
+        movement_id=deadlift.id,
+        round_id=db_round.id,
+        repetition=5,
+    )
+
+    assert movement_crud.create_movement_goal(db, deadlift_goal)
+    assert db.query(movement.MovementGoal).count() == 1
+
+    deadlift_goal = movement_schemas.MovementGoalCreate(
+        movement_id=2,
+        round_id=db_round.id,
+        repetition=5,
+    )
+
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.create_movement_goal(db, deadlift_goal)
+
+    deadlift_goal = movement_schemas.MovementGoalCreate(
+        movement_id=deadlift.id,
         round_id=2,
         repetition=5,
-        equipments=[dumbbel, kettelbell],
     )
 
     with pytest.raises(round_crud.UnknownRound):
         movement_crud.create_movement_goal(db, deadlift_goal)
 
-    deadlift_goal = movement_schemas.MovementGoalCreate(
-        movement=deadlift_schema,
-        round_id=db_round.id,
-        repetition=5,
-        equipments=[dumbbel, kettelbell],
-    )
-
-    goal = movement_crud.create_movement_goal(db, deadlift_goal)
-    assert goal.movement.name == deadlift_goal.movement.name
-    assert goal.round_id == db_round.id
-    assert goal.repetition == deadlift_goal.repetition
-    assert goal.equipments.count() == 2
-
-    db_movements_goal = db.query(movement.MovementGoal)
-    assert db_movements_goal.count() == 1
-
 
 def test_update_movement_goal(db):
-
     db_wod_type = wod.WodType(name="AMRAP")
     db_wod = wod.Wod(wod_type=db_wod_type)
     db.add(db_wod)
@@ -140,13 +138,14 @@ def test_update_movement_goal(db):
     db.commit()
     db.refresh(db_round)
 
-    dumbbel = equipment.Equipment(name="Dumbbel")
-    kettelbell = equipment.Equipment(name="Kettlebell")
-    barbell = equipment.Equipment(name="Barbell")
-    equipments = [dumbbel, kettelbell, barbell]
+    db_deadlift = movement.Movement(name="Dead Lift")
+    db.add(db_deadlift)
+    db.commit()
+    db.refresh(db_deadlift)
 
-    deadlift = movement.Movement(name="Dead Lift", equipments=equipments)
-    db_movement_goal = movement.MovementGoal(movement=deadlift, round_id=db_round.id)
+    db_movement_goal = movement.MovementGoal(
+        movement_id=db_deadlift.id, round_id=db_round.id
+    )
     db.add(db_movement_goal)
     db.commit()
     db.refresh(db_movement_goal)
@@ -161,11 +160,23 @@ def test_update_movement_goal(db):
     )
     assert goal.repetition == updated_deadlift_goal.repetition
 
-    db_movements_goal = db.query(movement.MovementGoal)
-    assert db_movements_goal.count() == 1
+    assert db.query(movement.MovementGoal).count() == 1
 
-    with pytest.raises(movement_crud.UnknownMovement):
+    with pytest.raises(movement_crud.UnknownGoal):
         movement_crud.update_movement_goal(db, updated_deadlift_goal, 2)
+
+    updated_deadlift_goal.movement_id = 2
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.update_movement_goal(
+            db, updated_deadlift_goal, db_movement_goal.id
+        )
+
+    updated_deadlift_goal.movement_id = db_movement_goal.movement_id
+    updated_deadlift_goal.round_id = 2
+    with pytest.raises(round_crud.UnknownRound):
+        movement_crud.update_movement_goal(
+            db, updated_deadlift_goal, db_movement_goal.id
+        )
 
 
 def test_get_movement_goal_by_id(db):
@@ -181,5 +192,4 @@ def test_get_movement_goal_by_id(db):
     db.add(movement.MovementGoal(movement=db_devil_press))
     db.commit()
 
-    db_devil_press_goal = movement_crud.get_movement_goal_by_id(db, 1)
-    assert db_devil_press_goal.movement.name == devil_press.name
+    assert movement_crud.get_movement_goal_by_id(db, 1)
