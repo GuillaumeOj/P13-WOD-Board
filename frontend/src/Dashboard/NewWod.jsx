@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet';
 import { useAlert } from '../Alert';
 import { useInput } from '../Utils';
 
-import WodComposer from './WodComposer/WodComposer';
+import Rounds from './WodComposer/Rounds';
 
 dayjs.extend(utc);
 
@@ -21,7 +21,8 @@ export default function NewWod() {
   const [wodTypes, setWodTypes] = useState([]);
 
   const loadWodTypes = () => {
-    axios.get('/api/wod/types')
+    axios
+      .get('/api/wod/types')
       .then((response) => setWodTypes(response.data))
       .catch((error) => {
         if (error) {
@@ -36,14 +37,19 @@ export default function NewWod() {
               }
             }
           } else {
-            addAlert({ message: 'Impossible to retrieve WOD types', alertType: 'error' });
+            addAlert({
+              message: 'Impossible to retrieve WOD types',
+              alertType: 'error',
+            });
           }
         }
       });
   };
 
   useEffect(() => {
-    if (wodTypes.length === 0) { loadWodTypes(); }
+    if (wodTypes.length === 0) {
+      loadWodTypes();
+    }
   });
 
   const selectWodType = (event) => {
@@ -71,7 +77,13 @@ export default function NewWod() {
         <form>
           <div className="field">
             <label htmlFor="description">Description:&nbsp;</label>
-            <input type="text" name="description" id="description" value={description} onChange={setDescription} />
+            <input
+              type="text"
+              name="description"
+              id="description"
+              value={description}
+              onChange={setDescription}
+            />
           </div>
           <div className="field">
             <label htmlFor="note">Note:&nbsp;</label>
@@ -80,13 +92,18 @@ export default function NewWod() {
           <div className="field">
             <label htmlFor="wodType">Type of WOD*:&nbsp;</label>
             <select name="wodType" id="wodType" onChange={selectWodType}>
-              <option value="" key="">-- Choose a type --</option>
-              {wodTypes && wodTypes.map(({ name, id }) => (
-                <option value={name} key={id}>{name}</option>
-              ))}
+              <option value="" key="">
+                -- Choose a type --
+              </option>
+              {wodTypes
+                && wodTypes.map(({ name, id }) => (
+                  <option value={name} key={id}>
+                    {name}
+                  </option>
+                ))}
             </select>
           </div>
-          <WodComposer />
+          <Rounds />
           <p>All fields marked with * are required.</p>
           <input type="submit" value="New WOD" className="button primary" />
         </form>
