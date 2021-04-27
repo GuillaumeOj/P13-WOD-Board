@@ -17,7 +17,7 @@ router = fastapi.APIRouter(prefix=f"{config.API_URL}/movement", tags=["movement"
 
 
 @router.post("/goal", response_model=movement_schemas.MovementGoal)
-async def add_movement_goal(
+async def add_goal(
     movement_data: movement_schemas.MovementGoalCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> movement.MovementGoal:
@@ -36,7 +36,7 @@ async def add_movement_goal(
 
 
 @router.put("/goal/{id}", response_model=movement_schemas.MovementGoal)
-async def update_movement_goal(
+async def update_goal(
     movement_data: movement_schemas.MovementGoalCreate,
     id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
@@ -61,7 +61,7 @@ async def update_movement_goal(
 
 
 @router.get("/goal/{id}", response_model=movement_schemas.MovementGoal)
-async def get_movement_goal_by_id(
+async def get_goal_by_id(
     id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> movement.MovementGoal:
