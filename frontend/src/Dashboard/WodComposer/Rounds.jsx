@@ -51,7 +51,7 @@ export default function Rounds() {
   return (
     <div className="rounds">
       <button className="button primary" type="button" onClick={addRound}>
-        Add a Round +
+        Round +
       </button>
       {rounds
         && rounds.map((round) => (

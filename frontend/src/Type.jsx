@@ -11,3 +11,10 @@ export const RoundPropType = PropTypes.shape({
   durationMinutes: PropTypes.number.isRequired,
   durationSeconds: PropTypes.number.isRequired,
 });
+
+export const MovementPropType = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  repetition: PropTypes.number.isRequired,
+  durationMinutes: PropTypes.number.isRequired,
+  durationSeconds: PropTypes.number.isRequired,
+});
