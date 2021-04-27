@@ -78,23 +78,19 @@ async def test_get_wod_by_id(db, client):
 
 
 @pytest.mark.asyncio
-async def test_get_wod_type_all(db, client):
-    response = await client.get("/api/wod/types")
-
+async def test_get_wod_types_by_name(db, client):
+    response = await client.get("/api/wod/types/AMRAP")
     assert response.status_code == 200
     assert response.json() == []
 
-    db.add(wod.WodType(name="AMRAP"))
+    db.add(wod.WodType(name="For Time"))
+    db.add(wod.WodType(name="For Load"))
     db.commit()
 
-    response = await client.get("/api/wod/types")
-
-    expected_response = [
-        {
-            "id": 1,
-            "name": "AMRAP",
-        },
-    ]
-
+    response = await client.get("/api/wod/types/for")
     assert response.status_code == 200
-    assert response.json() == expected_response
+    assert len(response.json()) == 2
+
+    response = await client.get("/api/wod/types/loa")
+    assert response.status_code == 200
+    assert len(response.json()) == 1

@@ -38,11 +38,14 @@ async def update_wod(
         )
 
 
-@router.get("/types", response_model=typing.List[typing.Optional[wod_schemas.WodType]])
-async def get_wod_types(
+@router.get(
+    "/types/{name}", response_model=typing.List[typing.Optional[wod_schemas.WodType]]
+)
+async def get_wod_types_by_name(
+    name: str,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> typing.List[typing.Optional[wod.WodType]]:
-    return wod_crud.get_wod_type_all(db)
+    return wod_crud.get_wod_types_by_name(db, name)
 
 
 @router.get("/{id}", response_model=wod_schemas.Wod)

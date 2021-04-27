@@ -17,13 +17,25 @@ def test_create_wod_type(db):
 
 def test_get_wod_type_by_name(db):
     with pytest.raises(wod_crud.UnknownWodType):
-        wod_crud.get_wod_type_by_exact_name(db, WOD_TYPE)
+        wod_crud.get_wod_type_by_name(db, WOD_TYPE)
 
     db.add(wod.WodType(name=WOD_TYPE))
     db.commit()
 
-    wod_type = wod_crud.get_wod_type_by_exact_name(db, WOD_TYPE)
+    wod_type = wod_crud.get_wod_type_by_name(db, WOD_TYPE)
     assert wod_type.name == WOD_TYPE
+
+
+def test_get_wod_types_by_name(db):
+    db.add(wod.WodType(name="For Time"))
+    db.add(wod.WodType(name="For Load"))
+    db.commit()
+
+    wod_types = wod_crud.get_wod_types_by_name(db, "for")
+    assert len(wod_types) == 2
+
+    wod_types = wod_crud.get_wod_types_by_name(db, "loa")
+    assert len(wod_types) == 1
 
 
 def test_get_wod_type_all(db):
