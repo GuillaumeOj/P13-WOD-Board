@@ -75,3 +75,26 @@ def test_create_rounds_with_duplicated_position(db):
 
     with pytest.raises(round_crud.DuplicatedRoundPosition):
         round_crud.create_round(db, first_round)
+
+
+def test_delete_round_by_id(db):
+    wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(wod_id=db_wod.id, position=1)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
+    assert db.query(wod_round.Round).count() == 1
+
+    with pytest.raises(round_crud.UnknownRound):
+        round_crud.delete_round_by_id(db, 2)
+
+    assert db.query(wod_round.Round).count() == 1
+
+    assert round_crud.delete_round_by_id(db, db_round.id)
+    assert db.query(wod_round.Round).count() == 0

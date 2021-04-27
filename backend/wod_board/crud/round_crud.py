@@ -117,3 +117,18 @@ def update_round(
         db.refresh(db_round)
 
     return db_round
+
+
+def delete_round_by_id(
+    db: sqlalchemy.orm.Session,
+    id: int,
+) -> bool:
+    db_round = db.get(wod_round.Round, id)
+
+    if db_round is None:
+        raise UnknownRound
+
+    db.delete(db_round)
+    db.commit()
+
+    return True

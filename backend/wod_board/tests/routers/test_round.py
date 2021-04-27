@@ -169,3 +169,31 @@ async def test_add_rounds_with_same_position(db, client):
 
     assert response.status_code == 422
     assert response.json() == {"detail": "Rounds have the same position"}
+
+
+@pytest.mark.asyncio
+async def test_delete_round_by_id(db, client):
+    wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(wod_id=db_wod.id, position=1)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
+    assert db.query(wod_round.Round).count() == 1
+
+    response = await client.delete("api/round/2")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "This round doesn't exist"}
+
+    assert db.query(wod_round.Round).count() == 1
+
+    response = await client.delete(f"api/round/{db_round.id}")
+    assert response.status_code == 200
+    assert response.json() == {"detail": "Round successfully deleted"}
+
+    assert db.query(wod_round.Round).count() == 0
