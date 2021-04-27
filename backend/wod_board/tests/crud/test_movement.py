@@ -193,3 +193,27 @@ def test_get_movement_goal_by_id(db):
     db.commit()
 
     assert movement_crud.get_movement_goal_by_id(db, 1)
+
+
+def test_delete_movement_goal_by_id(db):
+    with pytest.raises(movement_crud.UnknownMovement):
+        movement_crud.delete_movement_goal_by_id(db, 1)
+
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
+    devil_press = movement.Movement(name="Devil Press")
+    goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)
+    db.add(goal)
+    db.commit()
+    db.refresh(goal)
+
+    assert movement_crud.delete_movement_goal_by_id(db, goal.id)

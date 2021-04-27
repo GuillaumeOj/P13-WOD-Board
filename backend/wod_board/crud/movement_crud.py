@@ -1,3 +1,5 @@
+import typing
+
 import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
@@ -163,3 +165,17 @@ def get_movement_goal_by_id(
         raise UnknownMovement
 
     return db_movement
+
+
+def delete_movement_goal_by_id(
+    db: sqlalchemy.orm.Session, id: int
+) -> typing.Literal[True]:
+    db_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
+
+    if db_goal is None:
+        raise UnknownMovement
+
+    db.delete(db_goal)
+    db.commit()
+
+    return True

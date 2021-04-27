@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -68,8 +70,24 @@ async def get_movement_goal_by_id(
     except movement_crud.UnknownMovement:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="This goal doesn't exist yet",
+            detail="This goal doesn't exist",
         )
+
+
+@router.delete("/goal/{id}")
+async def delete_goal_by_id(
+    id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.Dict["str", "str"]:
+    try:
+        movement_crud.delete_movement_goal_by_id(db, id)
+    except movement_crud.UnknownMovement:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This goal doesn't exist",
+        )
+
+    return {"detail": "Goal successfully deleted"}
 
 
 @router.post("/", response_model=movement_schemas.Movement)
