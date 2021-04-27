@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { Prompt } from 'react-router-dom';
 
 import { useAlert } from '../Alert';
 import { useInput } from '../Utils';
@@ -19,6 +20,7 @@ export default function NewWod() {
   const [wodTypeId, setWodTypeId] = useState('');
   const [wodType, setWodType] = useState('');
   const [wodTypes, setWodTypes] = useState([]);
+  const [isBlocking, setIsBlocking] = useState(true);
 
   const loadWodTypes = () => {
     axios
@@ -74,7 +76,13 @@ export default function NewWod() {
       </Helmet>
       <div className="subContent">
         <h2 className="title">Create a new WOD</h2>
-        <form>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            setIsBlocking(false);
+          }}
+        >
+          <Prompt when={isBlocking} message="Are you sure you want to leave the form?" />
           <div className="field">
             <label htmlFor="description">Description:&nbsp;</label>
             <input
