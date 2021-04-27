@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -67,6 +69,22 @@ async def get_round_by_id(
         return round_crud.get_round_by_id(db, id)
     except round_crud.UnknownRound:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Unknown round",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This round doesn't exist",
         )
+
+
+@router.delete("/{id}")
+async def delete_round_by_id(
+    id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.Dict[str, str]:
+    try:
+        round_crud.delete_round_by_id(db, id)
+    except round_crud.UnknownRound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This round doesn't exist",
+        )
+
+    return {"detail": "Round successfully deleted"}
