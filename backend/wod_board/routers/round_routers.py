@@ -55,7 +55,7 @@ async def update_round(
         )
     except round_crud.UnknownRound:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="This round doesn't exist",
         )
 
