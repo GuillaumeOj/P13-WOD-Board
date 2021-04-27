@@ -5,7 +5,7 @@ export default function SideNav() {
   const { url } = useRouteMatch();
 
   return (
-    <div>
+    <div className="sideNav">
       <nav className="navbar">
         <ol className="crumbs">
           <li>
