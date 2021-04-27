@@ -217,3 +217,39 @@ async def test_get_movement_goal_by_id(db, client):
 
     assert response.status_code == 200
     assert response.json() == expected_response
+
+
+@pytest.mark.asyncio
+async def test_delete_movement_goal_by_id(db, client):
+    db_wod_type = wod.WodType(name="AMRAP")
+    db_wod = wod.Wod(wod_type=db_wod_type)
+    db.add(db_wod)
+    db.commit()
+    db.refresh(db_wod)
+
+    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    db.add(db_round)
+    db.commit()
+    db.refresh(db_round)
+
+    devil_press = movement.Movement(name="Devil Press")
+    goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)
+    db.add(goal)
+    db.commit()
+    db.refresh(goal)
+
+    assert db.query(movement.MovementGoal).count() == 1
+
+    response = await client.get("/api/movement/goal/2")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "This goal doesn't exist"}
+
+    assert db.query(movement.MovementGoal).count() == 1
+
+    response = await client.delete(f"/api/movement/goal/{goal.id}")
+
+    assert response.status_code == 200
+    assert response.json() == {"detail": "Goal successfully deleted"}
+
+    assert db.query(movement.MovementGoal).count() == 0
