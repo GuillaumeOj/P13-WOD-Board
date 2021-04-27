@@ -70,39 +70,41 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
   return (
     movement && (
       <div className="movement">
-        <button className="button warning" type="button" onClick={() => removeMovement(id)}>
-          X
-        </button>
-        <div className="field">
+        <div className="lead field">
           <label htmlFor={`movementName-${id}`}>Name:&nbsp;</label>
-          <input
-            type="text"
-            id={`movementName-${id}`}
-            name={`movementName-${id}`}
-            value={name}
-            onChange={selectMovement}
-          />
-          <div className="completion">
-            {movements && (
-              <div className="types">
-                {movements.map((item) => (
-                  <button
-                    className="button type"
-                    type="button"
-                    key={item.id}
-                    value={item.name}
-                    onClick={() => {
-                      setMovementId(item.movement_id);
-                      setName(item.name);
-                      setMovements([]);
-                    }}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="input">
+            <input
+              type="text"
+              id={`movementName-${id}`}
+              name={`movementName-${id}`}
+              value={name}
+              onChange={selectMovement}
+            />
+            <div className="completion">
+              {movements && (
+                <div className="types">
+                  {movements.map((item) => (
+                    <button
+                      className="button type"
+                      type="button"
+                      key={item.id}
+                      value={item.name}
+                      onClick={() => {
+                        setMovementId(item.movement_id);
+                        setName(item.name);
+                        setMovements([]);
+                      }}
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+          <button className="button warning" type="button" onClick={() => removeMovement(id)}>
+            X
+          </button>
         </div>
         <div className="group">
           <div className="field">
