@@ -14,14 +14,6 @@ from wod_board.schemas import movement_schemas
 router = fastapi.APIRouter(prefix=f"{config.API_URL}/movement", tags=["movement"])
 
 
-@router.post("/", response_model=movement_schemas.Movement)
-async def add_movement(
-    movement_data: movement_schemas.MovementCreate,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> movement.Movement:
-    return movement_crud.get_or_create_movement(db, movement_data)
-
-
 @router.post("/goal", response_model=movement_schemas.MovementGoal)
 async def add_movement_goal(
     movement_data: movement_schemas.MovementGoalCreate,
@@ -78,3 +70,11 @@ async def get_movement_goal_by_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist yet",
         )
+
+
+@router.post("/", response_model=movement_schemas.Movement)
+async def add_movement(
+    movement_data: movement_schemas.MovementCreate,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> movement.Movement:
+    return movement_crud.get_or_create_movement(db, movement_data)
