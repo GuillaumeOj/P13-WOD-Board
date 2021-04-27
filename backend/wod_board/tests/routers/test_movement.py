@@ -4,26 +4,10 @@ import pytest
 from wod_board.models import movement
 from wod_board.models import wod
 from wod_board.models import wod_round
+from wod_board.schemas import movement_schemas
 
 
 LOG = daiquiri.getLogger(__name__)
-
-
-@pytest.mark.asyncio
-async def test_add_movement(db, client):
-    movement_json = {"name": "Devil Press"}
-    response = await client.post("/api/movement/", json=movement_json)
-
-    expected_response = {
-        "id": 1,
-        "name": "Devil Press",
-        "unit_id": None,
-        "unit": None,
-        "equipments": [],
-    }
-
-    assert response.status_code == 200
-    assert response.json() == expected_response
 
 
 @pytest.mark.asyncio
@@ -251,3 +235,57 @@ async def test_delete_movement_goal_by_id(db, client):
     assert response.json() == {"detail": "Goal successfully deleted"}
 
     assert db.query(movement.MovementGoal).count() == 0
+
+
+@pytest.mark.asyncio
+async def test_add_movement(db, client):
+    assert db.query(movement.Movement).count() == 0
+
+    movement_json = {"name": "Devil Press"}
+    response = await client.post("/api/movement/", json=movement_json)
+
+    expected_response = {
+        "id": 1,
+        "name": "Devil Press",
+        "unit_id": None,
+        "unit": None,
+        "equipments": [],
+    }
+
+    assert response.status_code == 200
+    assert response.json() == expected_response
+    assert db.query(movement.Movement).count() == 1
+
+
+@pytest.mark.asyncio
+async def test_get_movements_by_name(db, client):
+    devil_press = movement.Movement(name="Devil Press")
+    push_press = movement.Movement(name="Push Press")
+    db.add_all([devil_press, push_press])
+    db.commit()
+    db.refresh(devil_press)
+    db.refresh(push_press)
+
+    response = await client.get("/api/movement/Pres")
+
+    expected_response = [
+        movement_schemas.Movement.from_orm(devil_press),
+        movement_schemas.Movement.from_orm(push_press),
+    ]
+
+    assert response.status_code == 200
+    assert response.json() == expected_response
+
+    response = await client.get("/api/movement/Devil Pres")
+
+    expected_response = [
+        movement_schemas.Movement.from_orm(devil_press),
+    ]
+
+    assert response.status_code == 200
+    assert response.json() == expected_response
+
+    response = await client.get("/api/movement/Burpee")
+
+    assert response.status_code == 200
+    assert response.json() == []

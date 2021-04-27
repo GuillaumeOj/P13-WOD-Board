@@ -96,3 +96,13 @@ async def add_movement(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> movement.Movement:
     return movement_crud.get_or_create_movement(db, movement_data)
+
+
+@router.get(
+    "/{name}", response_model=typing.List[typing.Optional[movement_schemas.Movement]]
+)
+async def get_movements_by_name(
+    name: str,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.List[typing.Optional[movement.Movement]]:
+    return movement_crud.get_movements_by_name(db, name)

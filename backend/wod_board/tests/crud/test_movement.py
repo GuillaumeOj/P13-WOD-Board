@@ -79,6 +79,25 @@ def test_get_or_create_movement(db):
     assert db.query(movement.Movement).count() == 1
 
 
+def test_get_movements_by_name(db):
+    devil_press = movement.Movement(name="Devil Press")
+    push_press = movement.Movement(name="Push Press")
+    db.add_all([devil_press, push_press])
+    db.commit()
+    db.refresh(devil_press)
+    db.refresh(push_press)
+
+    movements = movement_crud.get_movements_by_name(db, "pres")
+    assert len(movements) == 2
+
+    movements = movement_crud.get_movements_by_name(db, "push pres")
+    assert len(movements) == 1
+    assert movements[0].name == push_press.name
+
+    movements = movement_crud.get_movements_by_name(db, "Burpee")
+    assert movements == []
+
+
 def test_create_movement_goal(db):
     db_wod_type = wod.WodType(name="AMRAP")
     db_wod = wod.Wod(wod_type=db_wod_type)

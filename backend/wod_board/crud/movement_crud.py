@@ -85,6 +85,19 @@ def get_or_create_movement(
     return db_movement
 
 
+def get_movements_by_name(
+    db: sqlalchemy.orm.Session,
+    name: str,
+) -> typing.List[typing.Optional[movement.Movement]]:
+    movements: typing.List[typing.Optional[movement.Movement]] = (
+        db.query(movement.Movement)
+        .filter(movement.Movement.name.ilike(f"%{name}%"))
+        .all()
+    )
+
+    return movements
+
+
 def create_movement_goal(
     db: sqlalchemy.orm.Session,
     goal: movement_schemas.MovementGoalCreate,
