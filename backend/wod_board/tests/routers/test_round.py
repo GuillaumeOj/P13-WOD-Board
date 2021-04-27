@@ -94,7 +94,7 @@ async def test_update_round(db, client):
     assert response.json() == expected_response
 
     response = await client.put("/api/round/2", json=round_json)
-    assert response.status_code == 422
+    assert response.status_code == 404
     assert response.json() == {"detail": "This round doesn't exist"}
 
     round_json = {
