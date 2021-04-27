@@ -14,6 +14,23 @@
   }
 
   .subContent {
+    .completion {
+      position: relative;
+      .types {
+        position: absolute;
+        top: calc(#{$spacer} * 0.25);
+        .type {
+          margin: 0;
+          margin-right: calc(#{$spacer} * 0.25);
+          background-color: $yellow-orange-crayola;
+          color: $primary;
+          font-size: $default-font-size !important;
+          &:hover {
+            background-color: $sandy-brown;
+          }
+        }
+      }
+    }
     .rounds {
       margin-bottom: $spacer;
       input,

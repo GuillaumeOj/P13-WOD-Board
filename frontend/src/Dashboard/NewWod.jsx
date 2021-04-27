@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Prompt } from 'react-router-dom';
 
@@ -17,14 +17,13 @@ export default function NewWod() {
 
   const [description, setDescription] = useInput('');
   const [note, setNote] = useInput('');
-  const [wodTypeId, setWodTypeId] = useState('');
-  const [wodType, setWodType] = useState('');
+  const [wodType, setWodType] = useState({ id: null, name: '' });
   const [wodTypes, setWodTypes] = useState([]);
   const [isBlocking, setIsBlocking] = useState(true);
 
-  const loadWodTypes = () => {
+  const searchWodType = async (name) => {
     axios
-      .get('/api/wod/types')
+      .get(`/api/wod/types/${name}`)
       .then((response) => setWodTypes(response.data))
       .catch((error) => {
         if (error) {
@@ -48,25 +47,15 @@ export default function NewWod() {
       });
   };
 
-  useEffect(() => {
-    if (wodTypes.length === 0) {
-      loadWodTypes();
-    }
-  });
-
-  const selectWodType = (event) => {
+  const selectWodType = async (event) => {
     const typeName = event.target.value;
     if (typeName) {
-      const typeId = wodTypes.find((type) => type.name === typeName).id;
-
+      await searchWodType(typeName);
       setWodType(typeName);
-      setWodTypeId(typeId);
     } else {
+      setWodTypes([]);
       setWodType('');
-      setWodTypeId('');
     }
-    console.log(wodTypeId); // eslint-disable-line no-console
-    console.log(wodType); // eslint-disable-line no-console
   };
 
   return (
@@ -99,17 +88,27 @@ export default function NewWod() {
           </div>
           <div className="field">
             <label htmlFor="wodType">Type of WOD*:&nbsp;</label>
-            <select name="wodType" id="wodType" onChange={selectWodType}>
-              <option value="" key="">
-                -- Choose a type --
-              </option>
-              {wodTypes
-                && wodTypes.map(({ name, id }) => (
-                  <option value={name} key={id}>
-                    {name}
-                  </option>
-                ))}
-            </select>
+            <input name="wodType" id="wodType" value={wodType.name} onChange={selectWodType} />
+            <div className="completion">
+              {wodTypes && (
+                <div className="types">
+                  {wodTypes.map((item) => (
+                    <button
+                      className="button type"
+                      type="button"
+                      key={item.id}
+                      value={item.name}
+                      onClick={() => {
+                        setWodType({ id: item.id, name: item.name });
+                        setWodTypes('');
+                      }}
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <Rounds />
           <p>All fields marked with * are required.</p>
