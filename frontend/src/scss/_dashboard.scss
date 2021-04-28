@@ -38,21 +38,22 @@
       }
     }
     .rounds {
-      margin-bottom: $spacer;
       input,
       label {
         font-size: $default-font-size;
         color: $primary;
       }
+      .button.primary {
+        margin-top: 0;
+        margin-bottom: $spacer;
+      }
       .round {
-        margin-top: $spacer;
-        margin-bottom: calc(#{$spacer} * 0.5);
+        margin-bottom: $spacer;
         border: 1px solid $primary;
         .lead {
           display: flex;
           justify-content: space-between;
-          margin: $spacer $spacer 0 $spacer;
-          margin-bottom: calc(#{$spacer} * 0.5);
+          margin: $spacer;
         }
         .button {
           font-size: $default-font-size;
@@ -60,51 +61,59 @@
             margin: 0;
           }
         }
-
-        .group {
-          display: flex;
-          justify-content: space-between;
-        }
-
-        .field {
-          margin: $spacer $spacer 0 $spacer;
-        }
-
         .button.primary {
-          margin: $spacer;
+          margin-left: $spacer;
+        }
+        .field {
+          margin-left: $spacer;
         }
       }
     }
-    .movement {
-      margin-top: $spacer;
-      margin-bottom: $spacer;
-      .lead.field {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        label {
-          margin: 0;
+    .movements {
+      .movement {
+        &:first-of-type {
+          margin-top: $spacer;
         }
-        .input {
-          flex-grow: 2;
-          margin: 0 $spacer 0 $spacer;
+        .lead.field {
           display: flex;
-          flex-direction: column;
-          input {
-            width: 100%;
-            box-sizing: border-box;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 0;
+          label {
+            margin: 0;
+          }
+          .input {
+            flex-grow: 2;
+            margin-left: $spacer;
+            margin-right: $spacer;
+            display: flex;
+            flex-direction: column;
+            input {
+              width: 100%;
+              box-sizing: border-box;
+            }
           }
         }
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid $primary;
+        margin-top: 0;
+        margin-bottom: $spacer;
       }
     }
     .group {
       .field {
-        display: flex !important;
-        flex-direction: row !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start !important;
         align-items: center;
         label {
           margin: 0;
+        }
+        input[type="number"] {
+          width: calc(#{$default-font-size} * 3);
         }
       }
     }

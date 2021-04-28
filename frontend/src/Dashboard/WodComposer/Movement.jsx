@@ -69,79 +69,82 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
 
   return (
     movement && (
-      <div className="movement">
-        <div className="lead field">
-          <label htmlFor={`movementName-${id}`}>Name:&nbsp;</label>
-          <div className="input">
-            <input
-              type="text"
-              id={`movementName-${id}`}
-              name={`movementName-${id}`}
-              value={name}
-              onChange={selectMovement}
-            />
-            <div className="completion">
-              {movements && (
-                <div className="types">
-                  {movements.map((item) => (
-                    <button
-                      className="button type"
-                      type="button"
-                      key={item.id}
-                      value={item.name}
-                      onClick={() => {
-                        setMovementId(item.movement_id);
-                        setName(item.name);
-                        setMovements([]);
-                      }}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
-                </div>
-              )}
+      <>
+        <hr className="divider" />
+        <div className="movement">
+          <div className="lead field">
+            <label htmlFor={`movementName-${id}`}>Name:&nbsp;</label>
+            <div className="input">
+              <input
+                type="text"
+                id={`movementName-${id}`}
+                name={`movementName-${id}`}
+                value={name}
+                onChange={selectMovement}
+              />
+              <div className="completion">
+                {movements && (
+                  <div className="types">
+                    {movements.map((item) => (
+                      <button
+                        className="button type"
+                        type="button"
+                        key={item.id}
+                        value={item.name}
+                        onClick={() => {
+                          setMovementId(item.movement_id);
+                          setName(item.name);
+                          setMovements([]);
+                        }}
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button className="button warning" type="button" onClick={() => removeMovement(id)}>
+              X
+            </button>
+          </div>
+          <div className="group">
+            <div className="field">
+              <label htmlFor={`repetitionMovement-${id}`}>Repetition:&nbsp;</label>
+              <input
+                type="number"
+                id={`repetitionMovement-${id}`}
+                name={`repetitionMovement-${id}`}
+                value={repetition}
+                onChange={setRepetition}
+                min="0"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor={`durationMinutes-${id}`}>Minutes:&nbsp;</label>
+              <input
+                type="number"
+                id={`durationMinutes-${id}`}
+                name={`durationMinutes-${id}`}
+                value={durationMinutes}
+                onChange={setDurationMinutes}
+                min="0"
+              />
+            </div>
+            <div className="field">
+              <label htmlFor={`durationSeconds-${id}`}>Seconds:&nbsp;</label>
+              <input
+                type="number"
+                id={`durationSeconds-${id}`}
+                name={`durationSeconds-${id}`}
+                value={durationSeconds}
+                onChange={setDurationSeconds}
+                min="0"
+              />
             </div>
           </div>
-          <button className="button warning" type="button" onClick={() => removeMovement(id)}>
-            X
-          </button>
         </div>
-        <div className="group">
-          <div className="field">
-            <label htmlFor={`repetitionMovement-${id}`}>Repetition:&nbsp;</label>
-            <input
-              type="number"
-              id={`repetitionMovement-${id}`}
-              name={`repetitionMovement-${id}`}
-              value={repetition}
-              onChange={setRepetition}
-              min="0"
-            />
-          </div>
-          <div className="field">
-            <label htmlFor={`durationMinutes-${id}`}>Minutes:&nbsp;</label>
-            <input
-              type="number"
-              id={`durationMinutes-${id}`}
-              name={`durationMinutes-${id}`}
-              value={durationMinutes}
-              onChange={setDurationMinutes}
-              min="0"
-            />
-          </div>
-          <div className="field">
-            <label htmlFor={`durationSeconds-${id}`}>Seconds:&nbsp;</label>
-            <input
-              type="number"
-              id={`durationSeconds-${id}`}
-              name={`durationSeconds-${id}`}
-              value={durationSeconds}
-              onChange={setDurationSeconds}
-              min="0"
-            />
-          </div>
-        </div>
-      </div>
+      </>
     )
   );
 }
