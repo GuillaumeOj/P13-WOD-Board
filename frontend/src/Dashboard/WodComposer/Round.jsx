@@ -115,15 +115,17 @@ export default function Round({ round, removeRound, updateRound }) {
         <button className="button primary" type="button" onClick={addMovement}>
           Movement +
         </button>
-        {movements
-          && movements.map((movement) => (
-            <Movement
-              key={movement.id}
-              movement={movement}
-              removeMovement={removeMovement}
-              updateMovement={updateMovement}
-            />
-          ))}
+        <div className="movements">
+          {movements
+            && movements.map((movement) => (
+              <Movement
+                key={movement.id}
+                movement={movement}
+                removeMovement={removeMovement}
+                updateMovement={updateMovement}
+              />
+            ))}
+        </div>
       </div>
     )
   );

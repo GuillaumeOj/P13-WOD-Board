@@ -170,6 +170,7 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  flex-wrap: wrap;
 
   .field {
     display: flex;
@@ -185,6 +186,7 @@ form {
 
   .group {
     display: flex;
+    flex-wrap: wrap;
     .field {
       margin-left: $spacer;
       &:first-of-type {
