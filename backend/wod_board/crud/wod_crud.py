@@ -1,10 +1,15 @@
 import typing
 
+import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
 
+from wod_board.crud import user_crud
 from wod_board.models import wod
 from wod_board.schemas import wod_schemas
+
+
+LOG = daiquiri.getLogger(__name__)
 
 
 class UnknownWodType(Exception):
@@ -12,6 +17,10 @@ class UnknownWodType(Exception):
 
 
 class UnknownWod(Exception):
+    pass
+
+
+class TitleAlreadyUsed(Exception):
     pass
 
 
@@ -86,18 +95,28 @@ def create_wod(
     db: sqlalchemy.orm.Session,
     wod_data: wod_schemas.WodCreate,
 ) -> wod.Wod:
-
-    wod_type = get_or_create_wod_type(db, wod_data.wod_type)
-
-    new_wod = wod.Wod(
-        description=wod_data.description,
-        note=wod_data.note,
-        date=wod_data.date,
-        wod_type=wod_type,
-    )
+    new_wod = wod.Wod(**wod_data.dict())
 
     db.add(new_wod)
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+        if (
+            'insert or update on table "wod" violates foreign '
+            'key constraint "wod_wod_type_id_fkey"'
+        ) in str(error):
+            raise UnknownWodType
+        if (
+            'insert or update on table "wod" violates foreign '
+            'key constraint "wod_author_id_fkey"'
+        ) in str(error):
+            raise user_crud.UnknownUser
+        if ('duplicate key value violates unique constraint "wod_title_key"') in str(
+            error
+        ):
+            raise TitleAlreadyUsed
+        LOG.error(error)
     db.refresh(new_wod)
 
     return new_wod
@@ -114,14 +133,32 @@ def update_wod(
     if wod_to_update is None:
         raise UnknownWod
 
-    wod_type = get_or_create_wod_type(db, wod_data.wod_type)
-
+    wod_to_update.title = wod_data.title
     wod_to_update.description = wod_data.description
-    wod_to_update.note = wod_data.note
     wod_to_update.date = wod_data.date
-    wod_to_update.wod_type = wod_type
+    wod_to_update.author_id = wod_data.author_id
+    wod_to_update.wod_type_id = wod_data.wod_type_id
 
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+        if (
+            'insert or update on table "wod" violates foreign '
+            'key constraint "wod_wod_type_id_fkey"'
+        ) in str(error):
+            raise UnknownWodType
+        if (
+            'insert or update on table "wod" violates foreign '
+            'key constraint "wod_author_id_fkey"'
+        ) in str(error):
+            raise user_crud.UnknownUser
+        if ('duplicate key value violates unique constraint "wod_title_key"') in str(
+            error
+        ):
+            raise TitleAlreadyUsed
+        LOG.error(error)
+
     db.refresh(wod_to_update)
 
     return wod_to_update

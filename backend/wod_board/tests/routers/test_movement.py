@@ -2,8 +2,6 @@ import daiquiri
 import pytest
 
 from wod_board.models import movement
-from wod_board.models import wod
-from wod_board.models import wod_round
 from wod_board.schemas import movement_schemas
 
 
@@ -11,22 +9,8 @@ LOG = daiquiri.getLogger(__name__)
 
 
 @pytest.mark.asyncio
-async def test_add_movement_goal(db, client):
-    db_movement = movement.Movement(name="Devil Press")
-    db.add(db_movement)
-    db.commit()
-    db.refresh(db_movement)
-
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
+async def test_add_movement_goal(db, client, db_round, db_movement):
+    assert db.query(movement.MovementGoal).count() == 0
 
     movement_json = {
         "movement_id": db_movement.id,
@@ -35,7 +19,6 @@ async def test_add_movement_goal(db, client):
         "duration_seconds": 60 * 5,
     }
     response = await client.post("/api/movement/goal", json=movement_json)
-
     expected_response = movement_json | {
         "id": 1,
         "equipments": [],
@@ -47,56 +30,40 @@ async def test_add_movement_goal(db, client):
             "unit_id": None,
         },
     }
-
     assert response.status_code == 200
     assert response.json() == expected_response
+    assert db.query(movement.MovementGoal).count() == 1
 
     movement_json = {
         "repetition": 10,
         "round_id": 2,
         "movement_id": db_movement.id,
     }
-
     response = await client.post("/api/movement/goal", json=movement_json)
     assert response.status_code == 422
     assert response.json() == {"detail": "This round doesn't exist"}
+    assert db.query(movement.MovementGoal).count() == 1
 
     movement_json = {
         "repetition": 10,
         "round_id": db_round.id,
         "movement_id": 2,
     }
-
     response = await client.post("/api/movement/goal", json=movement_json)
     assert response.status_code == 422
     assert response.json() == {"detail": "This goal doesn't exist"}
+    assert db.query(movement.MovementGoal).count() == 1
 
 
 @pytest.mark.asyncio
-async def test_update_movement_goal(db, client):
-    db_movement = movement.Movement(name="Devil Press")
-    db.add(db_movement)
-    db.commit()
-    db.refresh(db_movement)
-
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
-
+async def test_update_movement_goal(db, client, db_round, db_movement):
     db_movement_goal = movement.MovementGoal(
         repetition=5, round_id=db_round.id, movement_id=db_movement.id
     )
-
     db.add(db_movement_goal)
     db.commit()
     db.refresh(db_movement_goal)
+    assert db.query(movement.MovementGoal).count() == 1
 
     movement_goal_json = {
         "movement_id": db_movement_goal.movement_id,
@@ -104,11 +71,9 @@ async def test_update_movement_goal(db, client):
         "repetition": 10,
         "duration_seconds": 60 * 5,
     }
-
     response = await client.put(
         f"/api/movement/goal/{db_movement_goal.id}", json=movement_goal_json
     )
-
     expected_response = movement_goal_json | {
         "id": 1,
         "equipments": [],
@@ -120,13 +85,14 @@ async def test_update_movement_goal(db, client):
             "unit_id": None,
         },
     }
-
     assert response.status_code == 200
     assert response.json() == expected_response
+    assert db.query(movement.MovementGoal).count() == 1
 
     response = await client.put("/api/movement/goal/2", json=movement_goal_json)
     assert response.status_code == 404
     assert response.json() == {"detail": "This goal doesn't exist"}
+    assert db.query(movement.MovementGoal).count() == 1
 
     movement_goal_json = {
         "movement_id": 2,
@@ -134,12 +100,12 @@ async def test_update_movement_goal(db, client):
         "repetition": 10,
         "duration_seconds": 60 * 5,
     }
-
     response = await client.put(
         f"/api/movement/goal/{db_movement_goal.id}", json=movement_goal_json
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "This movement doesn't exist"}
+    assert db.query(movement.MovementGoal).count() == 1
 
     movement_goal_json = {
         "movement_id": db_movement_goal.movement_id,
@@ -147,34 +113,22 @@ async def test_update_movement_goal(db, client):
         "repetition": 10,
         "duration_seconds": 60 * 5,
     }
-
     response = await client.put(
         f"/api/movement/goal/{db_movement_goal.id}", json=movement_goal_json
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "This round doesn't exist"}
+    assert db.query(movement.MovementGoal).count() == 1
 
 
 @pytest.mark.asyncio
-async def test_get_movement_goal_by_id(db, client):
+async def test_get_movement_goal_by_id(db, client, db_round, db_movement):
     response = await client.get("/api/movement/goal/1")
 
     assert response.status_code == 404
     assert response.json() == {"detail": "This goal doesn't exist"}
 
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
-
-    devil_press = movement.Movement(name="Devil Press")
-    goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)
+    goal = movement.MovementGoal(round_id=db_round.id, movement_id=db_movement.id)
     db.add(goal)
     db.commit()
     db.refresh(goal)
@@ -202,20 +156,8 @@ async def test_get_movement_goal_by_id(db, client):
 
 
 @pytest.mark.asyncio
-async def test_delete_movement_goal_by_id(db, client):
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
-
-    devil_press = movement.Movement(name="Devil Press")
-    goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)
+async def test_delete_movement_goal_by_id(db, client, db_round, db_movement):
+    goal = movement.MovementGoal(round_id=db_round.id, movement_id=db_movement.id)
     db.add(goal)
     db.commit()
     db.refresh(goal)

@@ -9,19 +9,20 @@ from wod_board.schemas import OrmBase
 
 
 class WodBase(OrmBase):
+    title: str
     description: typing.Optional[str]
-    note: typing.Optional[str]
     date: datetime.datetime = datetime.datetime.utcnow()
+    author_id: int
     wod_type_id: typing.Optional[int]
 
 
 class WodCreate(WodBase):
-    wod_type: WodTypeCreate
+    pass
 
 
 class Wod(WodBase):
     id: int
-    wod_type: WodType
+    wod_type: typing.Optional[WodType]
     rounds: "typing.List[Round]"
 
 
