@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Prompt } from 'react-router-dom';
 
 import { useAlert } from '../../Alert';
 import { useInput } from '../../Utils';
@@ -22,7 +21,6 @@ export default function Wod() {
   const [note, setNote] = useInput('');
   const [wodType, setWodType] = useState({ id: 0, name: '' });
   const [wodTypes, setWodTypes] = useState([]);
-  const [isBlocking, setIsBlocking] = useState(true);
   const [wod, setWod] = useState();
 
   const searchWodType = (name) => {
@@ -85,7 +83,6 @@ export default function Wod() {
       setId(1);
     }
     updateWod();
-    setIsBlocking(false);
   };
 
   return wod ? (
@@ -96,7 +93,6 @@ export default function Wod() {
       <div className="subContent">
         <h2 className="title">Create a new WOD</h2>
         <form onSubmit={handleSubmit}>
-          <Prompt when={isBlocking} message="Are you sure you want to leave the form?" />
           <div className="field">
             <label htmlFor="description">Description:&nbsp;</label>
             <input
