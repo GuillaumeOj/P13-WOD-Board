@@ -5,8 +5,6 @@ from wod_board.crud import round_crud
 from wod_board.crud import unit_crud
 from wod_board.models import movement
 from wod_board.models import unit
-from wod_board.models import wod
-from wod_board.models import wod_round
 from wod_board.schemas import movement_schemas
 
 
@@ -98,18 +96,7 @@ def test_get_movements_by_name(db):
     assert movements == []
 
 
-def test_create_movement_goal(db):
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
-
+def test_create_movement_goal(db, db_round):
     deadlift = movement.Movement(name="Dead Lift")
     db.add(deadlift)
     db.commit()
@@ -145,18 +132,7 @@ def test_create_movement_goal(db):
         movement_crud.create_movement_goal(db, deadlift_goal)
 
 
-def test_update_movement_goal(db):
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
-
+def test_update_movement_goal(db, db_round):
     db_deadlift = movement.Movement(name="Dead Lift")
     db.add(db_deadlift)
     db.commit()
@@ -214,20 +190,9 @@ def test_get_movement_goal_by_id(db):
     assert movement_crud.get_movement_goal_by_id(db, 1)
 
 
-def test_delete_movement_goal_by_id(db):
+def test_delete_movement_goal_by_id(db, db_round):
     with pytest.raises(movement_crud.UnknownMovement):
         movement_crud.delete_movement_goal_by_id(db, 1)
-
-    db_wod_type = wod.WodType(name="AMRAP")
-    db_wod = wod.Wod(wod_type=db_wod_type)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
-
-    db_round = wod_round.Round(position=1, wod_id=db_wod.id)
-    db.add(db_round)
-    db.commit()
-    db.refresh(db_round)
 
     devil_press = movement.Movement(name="Devil Press")
     goal = movement.MovementGoal(round_id=db_round.id, movement=devil_press)

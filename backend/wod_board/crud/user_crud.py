@@ -8,6 +8,10 @@ from wod_board.schemas import user_schemas
 from wod_board.utils import user_utils
 
 
+class UnknownUser(Exception):
+    pass
+
+
 class DuplicatedEmail(Exception):
     pass
 

@@ -1,5 +1,8 @@
 import datetime
 
+import pytest
+import sqlalchemy.exc
+
 from wod_board.models import wod
 
 
@@ -15,14 +18,46 @@ def test_wod_type(db):
     assert wod_type.id == 1
     assert wod_type.name == "AMRAP"
 
+    wod_type = wod.WodType(name="AMRAP")
+    db.add(wod_type)
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
+        db.commit()
 
-def test_wod(db):
-    new_wod = wod.Wod(date=NOW)
+    assert 'duplicate key value violates unique constraint "wod_type_name_key"' in str(
+        error
+    )
+
+
+def test_wod(db, db_user):
+    assert db.query(wod.Wod).count() == 0
+
+    new_wod = wod.Wod(title="Murph", author_id=db_user.id, date=NOW)
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)
-
-    assert new_wod.id == 1
+    assert db.query(wod.Wod).count() == 1
+    assert new_wod.title == "Murph"
     assert new_wod.description is None
-    assert new_wod.note is None
     assert new_wod.date == NOW
+    assert new_wod.author_id == db_user.id
+
+    same_wod = wod.Wod(title="Murph", author_id=db_user.id, date=NOW)
+    db.add(same_wod)
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
+        db.commit()
+    db.rollback()
+    assert 'duplicate key value violates unique constraint "wod_title_key"' in str(
+        error
+    )
+    assert db.query(wod.Wod).count() == 1
+
+    new_wod = wod.Wod(title="Karen", author_id=2)
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
+        db.add(new_wod)
+        db.commit()
+    db.rollback()
+    assert (
+        'insert or update on table "wod" violates foreign key '
+        'constraint "wod_author_id_fkey"' in str(error)
+    )
+    assert db.query(wod.Wod).count() == 1
