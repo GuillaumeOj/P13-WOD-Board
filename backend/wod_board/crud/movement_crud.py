@@ -1,7 +1,9 @@
+import typing
+
 import daiquiri
+import sqlalchemy.exc
 import sqlalchemy.orm
 
-from wod_board.crud import equipment_crud
 from wod_board.crud import round_crud
 from wod_board.crud import unit_crud
 from wod_board.models import movement
@@ -15,24 +17,31 @@ class UnknownMovement(Exception):
     pass
 
 
+class UnknownGoal(Exception):
+    pass
+
+
 def create_movement(
     db: sqlalchemy.orm.Session,
     movement_data: movement_schemas.MovementCreate,
 ) -> movement.Movement:
-    new_movement = movement.Movement(name=movement_data.name)
-
-    if movement_data.equipments:
-        new_movement.equipments = [
-            equipment_crud.get_or_create_equipment(db, equipment)
-            for equipment in movement_data.equipments
-        ]
-
-    if movement_data.unit:
-        new_movement.unit = unit_crud.get_or_create_unit(db, movement_data.unit)
-
+    new_movement = movement.Movement(
+        name=movement_data.name, unit_id=movement_data.unit_id
+    )
     db.add(new_movement)
 
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+        if (
+            'insert or update on table "movement" violates foreign '
+            'key constraint "movement_unit_id_fkey"'
+        ) in str(error):
+            raise unit_crud.UnknownUnit
+
+        LOG(str(error))
+
     db.refresh(new_movement)
 
     return new_movement
@@ -50,7 +59,7 @@ def get_movement_by_id(
     return db_movement
 
 
-def get_movement_by_exact_name(
+def get_movement_by_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> movement.Movement:
@@ -69,49 +78,58 @@ def get_or_create_movement(
     movement_data: movement_schemas.MovementCreate,
 ) -> movement.Movement:
     try:
-        db_movement = get_movement_by_exact_name(db, movement_data.name)
+        db_movement = get_movement_by_name(db, movement_data.name)
     except UnknownMovement:
         db_movement = create_movement(db, movement_data)
 
     return db_movement
 
 
+def get_movements_by_name(
+    db: sqlalchemy.orm.Session,
+    name: str,
+) -> typing.List[typing.Optional[movement.Movement]]:
+    movements: typing.List[typing.Optional[movement.Movement]] = (
+        db.query(movement.Movement)
+        .filter(movement.Movement.name.ilike(f"%{name}%"))
+        .all()
+    )
+
+    return movements
+
+
 def create_movement_goal(
     db: sqlalchemy.orm.Session,
     goal: movement_schemas.MovementGoalCreate,
 ) -> movement.MovementGoal:
-    base_movement = get_or_create_movement(db, goal.movement)
-
-    new_movement = movement.MovementGoal(
-        movement=base_movement,
+    new_goal = movement.MovementGoal(
+        movement_id=goal.movement_id,
         round_id=goal.round_id,
         repetition=goal.repetition,
+        duration_seconds=goal.duration_seconds,
     )
-
-    if goal.equipments:
-        new_movement.equipments = [
-            equipment_crud.get_or_create_equipment(db, equipment)
-            for equipment in goal.equipments
-        ]
-
-    db.add(new_movement)
+    db.add(new_goal)
 
     try:
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
-
         if (
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_round_id_fkey"'
         ) in str(error):
             raise round_crud.UnknownRound
+        if (
+            'insert or update on table "movement_goal" violates foreign '
+            'key constraint "movement_goal_movement_id_fkey"'
+        ) in str(error):
+            raise UnknownMovement
 
         LOG.error(str(error))
 
-    db.refresh(new_movement)
+    db.refresh(new_goal)
 
-    return new_movement
+    return new_goal
 
 
 def update_movement_goal(
@@ -122,30 +140,27 @@ def update_movement_goal(
     movement_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
 
     if movement_goal is None:
-        raise UnknownMovement
+        raise UnknownGoal
 
-    base_movement = get_movement_by_exact_name(db, goal.movement.name)
-
-    movement_goal.movement = base_movement
+    movement_goal.movement_id = goal.movement_id
     movement_goal.round_id = goal.round_id
     movement_goal.repetition = goal.repetition
-
-    if goal.equipments:
-        movement_goal.equipments = [
-            equipment_crud.get_or_create_equipment(db, equipment)
-            for equipment in goal.equipments
-        ]
+    movement_goal.duration_seconds = goal.duration_seconds
 
     try:
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
-
         if (
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_round_id_fkey"'
         ) in str(error):
             raise round_crud.UnknownRound
+        if (
+            'insert or update on table "movement_goal" violates foreign '
+            'key constraint "movement_goal_movement_id_fkey"'
+        ) in str(error):
+            raise UnknownMovement
 
         LOG.error(str(error))
 
@@ -163,3 +178,17 @@ def get_movement_goal_by_id(
         raise UnknownMovement
 
     return db_movement
+
+
+def delete_movement_goal_by_id(
+    db: sqlalchemy.orm.Session, id: int
+) -> typing.Literal[True]:
+    db_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
+
+    if db_goal is None:
+        raise UnknownMovement
+
+    db.delete(db_goal)
+    db.commit()
+
+    return True

@@ -31,7 +31,7 @@ def create_wod_type(
     return new_type
 
 
-def get_wod_type_by_exact_name(db: sqlalchemy.orm.Session, name: str) -> wod.WodType:
+def get_wod_type_by_name(db: sqlalchemy.orm.Session, name: str) -> wod.WodType:
     db_wod_type: wod.WodType = (
         db.query(wod.WodType).filter(wod.WodType.name == name).first()
     )
@@ -40,6 +40,16 @@ def get_wod_type_by_exact_name(db: sqlalchemy.orm.Session, name: str) -> wod.Wod
         raise UnknownWodType
 
     return db_wod_type
+
+
+def get_wod_types_by_name(
+    db: sqlalchemy.orm.Session, name: str
+) -> typing.List[typing.Optional[wod.WodType]]:
+    db_wod_types: typing.List[typing.Optional[wod.WodType]] = (
+        db.query(wod.WodType).filter(wod.WodType.name.ilike(f"%{name}%")).all()
+    )
+
+    return db_wod_types
 
 
 def get_wod_type_all(
@@ -56,7 +66,7 @@ def get_or_create_wod_type(
     db: sqlalchemy.orm.Session, wod_type: wod_schemas.WodTypeCreate
 ) -> wod.WodType:
     try:
-        db_wod_type = get_wod_type_by_exact_name(db, wod_type.name)
+        db_wod_type = get_wod_type_by_name(db, wod_type.name)
     except UnknownWodType:
         db_wod_type = create_wod_type(db, wod_type)
 

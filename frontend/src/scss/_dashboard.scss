@@ -2,21 +2,120 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: flex-start;
-  padding-top: $spacer;
+  width: 100vw;
+  .sideNav {
+    margin: 0;
+    padding: 0;
+    width: 15vw;
+    .navbar {
+      li {
+        list-style-type: none;
 
-  .navbar {
-    min-width: 20vw;
-
-    li {
-      list-style-type: none;
-
-      a {
-        font-size: 1.5em;
+        a {
+          font-size: 1.5em;
+        }
       }
     }
   }
 
   .subContent {
+    width: 75vw;
+    .completion {
+      position: relative;
+      .types {
+        position: absolute;
+        top: calc(#{$spacer} * 0.25);
+        .type {
+          margin: 0;
+          margin-right: calc(#{$spacer} * 0.25);
+          background-color: $yellow-orange-crayola;
+          color: $primary;
+          font-size: $default-font-size !important;
+          &:hover {
+            background-color: $sandy-brown;
+          }
+        }
+      }
+    }
+    .rounds {
+      input,
+      label {
+        font-size: $default-font-size;
+        color: $primary;
+      }
+      .button.primary {
+        margin-top: 0;
+        margin-bottom: $spacer;
+      }
+      .round {
+        margin-bottom: $spacer;
+        border: 1px solid $primary;
+        .lead {
+          display: flex;
+          justify-content: space-between;
+          margin: $spacer;
+        }
+        .button {
+          font-size: $default-font-size;
+          &.warning {
+            margin: 0;
+          }
+        }
+        .button.primary {
+          margin-left: $spacer;
+        }
+        .field {
+          margin-left: $spacer;
+        }
+      }
+    }
+    .movements {
+      .movement {
+        &:first-of-type {
+          margin-top: $spacer;
+        }
+        .lead.field {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 0;
+          label {
+            margin: 0;
+          }
+          .input {
+            flex-grow: 2;
+            margin-left: $spacer;
+            margin-right: $spacer;
+            display: flex;
+            flex-direction: column;
+            input {
+              width: 100%;
+              box-sizing: border-box;
+            }
+          }
+        }
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid $primary;
+        margin-top: 0;
+        margin-bottom: $spacer;
+      }
+    }
+    .group {
+      .field {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start !important;
+        align-items: center;
+        label {
+          margin: 0;
+        }
+        input[type="number"] {
+          width: calc(#{$default-font-size} * 3);
+        }
+      }
+    }
   }
 }

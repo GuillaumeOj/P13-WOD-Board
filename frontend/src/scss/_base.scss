@@ -72,7 +72,6 @@ a:hover {
     }
 
     .subContent {
-      min-width: 60vw;
       display: flex;
       justify-content: space-around;
 
@@ -104,6 +103,16 @@ a:hover {
   &.primary {
     background-color: $primary;
     color: $secondary;
+  }
+
+  &.warning {
+    color: #842029;
+    font-weight: bold;
+    background-color: #f8d7da;
+
+    &:hover {
+      color: red;
+    }
   }
 
   &:hover {
@@ -161,7 +170,7 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 90vw;
+  flex-wrap: wrap;
 
   .field {
     display: flex;
@@ -177,6 +186,7 @@ form {
 
   .group {
     display: flex;
+    flex-wrap: wrap;
     .field {
       margin-left: $spacer;
       &:first-of-type {
