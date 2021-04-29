@@ -1,27 +1,31 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Prompt } from 'react-router-dom';
 
-import { useAlert } from '../Alert';
-import { useInput } from '../Utils';
+import { useAlert } from '../../Alert';
+import { useInput } from '../../Utils';
 
-import Rounds from './WodComposer/Rounds';
+import Rounds from './Rounds';
 
 dayjs.extend(utc);
 
-export default function NewWod() {
+export default function Wod() {
   const { addAlert } = useAlert();
 
+  const date = dayjs.utc().format();
+
+  const [id, setId] = useState(0);
   const [description, setDescription] = useInput('');
   const [note, setNote] = useInput('');
-  const [wodType, setWodType] = useState({ id: null, name: '' });
+  const [wodType, setWodType] = useState({ id: 0, name: '' });
   const [wodTypes, setWodTypes] = useState([]);
   const [isBlocking, setIsBlocking] = useState(true);
+  const [wod, setWod] = useState();
 
-  const searchWodType = async (name) => {
+  const searchWodType = (name) => {
     axios
       .get(`/api/wod/types/${name}`)
       .then((response) => setWodTypes(response.data))
@@ -47,30 +51,51 @@ export default function NewWod() {
       });
   };
 
-  const selectWodType = async (event) => {
+  const selectWodType = (event) => {
+    const previousWodType = { ...wodType };
     const typeName = event.target.value;
     if (typeName) {
-      await searchWodType(typeName);
-      setWodType(typeName);
+      searchWodType(typeName);
+      setWodType({ ...previousWodType, name: typeName });
     } else {
       setWodTypes([]);
-      setWodType('');
+      setWodType({ ...previousWodType, name: typeName });
     }
   };
 
-  return (
+  const updateWod = () => {
+    const updatedWod = {
+      id,
+      date,
+      description,
+      note,
+      wodTypeId: wodType.id,
+      wodType,
+    };
+    setWod(updatedWod);
+  };
+
+  useEffect(() => {
+    updateWod();
+  }, [date, id, description, note, wodType]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (id === 0) {
+      setId(1);
+    }
+    updateWod();
+    setIsBlocking(false);
+  };
+
+  return wod ? (
     <>
       <Helmet>
         <title>WOD Board - My Dashboard</title>
       </Helmet>
       <div className="subContent">
         <h2 className="title">Create a new WOD</h2>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            setIsBlocking(false);
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <Prompt when={isBlocking} message="Are you sure you want to leave the form?" />
           <div className="field">
             <label htmlFor="description">Description:&nbsp;</label>
@@ -100,7 +125,7 @@ export default function NewWod() {
                       value={item.name}
                       onClick={() => {
                         setWodType({ id: item.id, name: item.name });
-                        setWodTypes('');
+                        setWodTypes([]);
                       }}
                     >
                       {item.name}
@@ -110,11 +135,13 @@ export default function NewWod() {
               )}
             </div>
           </div>
-          <Rounds />
+          <Rounds wod={wod} />
           <p>All fields marked with * are required.</p>
           <input type="submit" value="New WOD" className="button primary" />
         </form>
       </div>
     </>
+  ) : (
+    ''
   );
 }

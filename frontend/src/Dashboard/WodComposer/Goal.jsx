@@ -3,25 +3,26 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
 import { useAlert } from '../../Alert';
-import { MovementPropType } from '../../Type';
+import { GoalPropType } from '../../Type';
 import { useInput } from '../../Utils';
 
-export default function Movement({ movement, removeMovement, updateMovement }) {
-  const { id } = movement;
+export default function Goal({ goal, removeGoal, updateGoal }) {
+  const { uuid, id } = goal;
 
   const { addAlert } = useAlert();
 
-  const [movementId, setMovementId] = useState(movement.movementId);
-  const [name, setName] = useState(movement.name);
-  const [repetition, setRepetition] = useInput(movement.repetition);
-  const [durationMinutes, setDurationMinutes] = useInput(movement.durationMinutes);
-  const [durationSeconds, setDurationSeconds] = useInput(movement.durationSeconds);
+  const [movementId, setMovementId] = useState(goal.movementId);
+  const [name, setName] = useState(goal.name);
+  const [repetition, setRepetition] = useInput(goal.repetition);
+  const [durationMinutes, setDurationMinutes] = useInput(goal.durationMinutes);
+  const [durationSeconds, setDurationSeconds] = useInput(goal.durationSeconds);
 
   const [movements, setMovements] = useState([]);
 
   useEffect(() => {
-    updateMovement({
+    updateGoal({
       id,
+      uuid,
       movementId: parseInt(movementId, 10),
       name,
       repetition: parseInt(repetition, 10),
@@ -30,7 +31,7 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
     });
   }, [movementId, name, repetition, durationMinutes, durationSeconds]);
 
-  const searchMovement = async (movementName) => {
+  const searchMovement = (movementName) => {
     axios
       .get(`/api/movement/${movementName}`)
       .then((response) => setMovements(response.data))
@@ -48,7 +49,7 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
             }
           } else {
             addAlert({
-              message: 'Impossible to retrieve WOD types',
+              message: 'Impossible to retrieve movements',
               alertType: 'error',
             });
           }
@@ -56,10 +57,10 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
       });
   };
 
-  const selectMovement = async (event) => {
+  const selectMovement = (event) => {
     const movementName = event.target.value;
     if (movementName) {
-      await searchMovement(movementName);
+      searchMovement(movementName);
       setName(movementName);
     } else {
       setMovements([]);
@@ -68,17 +69,17 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
   };
 
   return (
-    movement && (
+    goal && (
       <>
         <hr className="divider" />
         <div className="movement">
           <div className="lead field">
-            <label htmlFor={`movementName-${id}`}>Name:&nbsp;</label>
+            <label htmlFor={`movementName-${uuid}`}>Name:&nbsp;</label>
             <div className="input">
               <input
                 type="text"
-                id={`movementName-${id}`}
-                name={`movementName-${id}`}
+                id={`movementName-${uuid}`}
+                name={`movementName-${uuid}`}
                 value={name}
                 onChange={selectMovement}
               />
@@ -104,39 +105,39 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
                 )}
               </div>
             </div>
-            <button className="button warning" type="button" onClick={() => removeMovement(id)}>
+            <button className="button warning" type="button" onClick={() => removeGoal(uuid)}>
               X
             </button>
           </div>
           <div className="group">
             <div className="field">
-              <label htmlFor={`repetitionMovement-${id}`}>Repetition:&nbsp;</label>
+              <label htmlFor={`repetitionMovement-${uuid}`}>Repetition:&nbsp;</label>
               <input
                 type="number"
-                id={`repetitionMovement-${id}`}
-                name={`repetitionMovement-${id}`}
+                id={`repetitionMovement-${uuid}`}
+                name={`repetitionMovement-${uuid}`}
                 value={repetition}
                 onChange={setRepetition}
                 min="0"
               />
             </div>
             <div className="field">
-              <label htmlFor={`durationMinutes-${id}`}>Minutes:&nbsp;</label>
+              <label htmlFor={`durationMinutes-${uuid}`}>Minutes:&nbsp;</label>
               <input
                 type="number"
-                id={`durationMinutes-${id}`}
-                name={`durationMinutes-${id}`}
+                id={`durationMinutes-${uuid}`}
+                name={`durationMinutes-${uuid}`}
                 value={durationMinutes}
                 onChange={setDurationMinutes}
                 min="0"
               />
             </div>
             <div className="field">
-              <label htmlFor={`durationSeconds-${id}`}>Seconds:&nbsp;</label>
+              <label htmlFor={`durationSeconds-${uuid}`}>Seconds:&nbsp;</label>
               <input
                 type="number"
-                id={`durationSeconds-${id}`}
-                name={`durationSeconds-${id}`}
+                id={`durationSeconds-${uuid}`}
+                name={`durationSeconds-${uuid}`}
                 value={durationSeconds}
                 onChange={setDurationSeconds}
                 min="0"
@@ -148,8 +149,8 @@ export default function Movement({ movement, removeMovement, updateMovement }) {
     )
   );
 }
-Movement.propTypes = {
-  movement: MovementPropType.isRequired,
-  removeMovement: PropTypes.func.isRequired,
-  updateMovement: PropTypes.func.isRequired,
+Goal.propTypes = {
+  goal: GoalPropType.isRequired,
+  removeGoal: PropTypes.func.isRequired,
+  updateGoal: PropTypes.func.isRequired,
 };

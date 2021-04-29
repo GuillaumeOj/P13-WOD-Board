@@ -6,51 +6,54 @@ import { v4 as uuidV4 } from 'uuid';
 import { RoundPropType } from '../../Type';
 import { useInput } from '../../Utils';
 
-import Movement from './Movement';
+import Goal from './Goal';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const { position, id } = round;
+  const { position, uuid, id } = round;
 
   const [repetition, setRepetition] = useInput(round.repetition);
   const [durationMinutes, setDurationMinutes] = useInput(round.durationMinutes);
   const [durationSeconds, setDurationSeconds] = useInput(round.durationSeconds);
 
-  const [movements, setMovements] = useState([]);
+  const [goals, setGoals] = useState([]);
 
-  const removeMovement = (movementId) => {
-    const updatedMovements = movements.filter((item) => item.id !== movementId);
-    setMovements(updatedMovements);
+  const removeGoal = (goalUuid) => {
+    const updatedGoals = goals.filter((goal) => goal.uuid !== goalUuid);
+    setGoals(updatedGoals);
   };
 
-  const addMovement = () => {
-    const newMovements = [...movements];
-    newMovements.push({
-      id: uuidV4(),
+  const addGoal = () => {
+    const updatedGoals = [...goals];
+    updatedGoals.push({
+      uuid: uuidV4(),
+      id: 0,
       movementId: null,
+      movement: null,
       roundId: null,
       name: '',
+      equipments: null,
       repetition: 0,
       durationMinutes: 0,
       durationSeconds: 0,
     });
 
-    setMovements(newMovements);
+    setGoals(updatedGoals);
   };
 
-  const updateMovement = (movement) => {
-    const updatedMovements = [...movements];
+  const updatedGoal = (goal) => {
+    const updatedGoals = [...goals];
 
-    if (movement) {
-      setMovements(
-        updatedMovements.map((item) => {
-          if (item.id === movement.id) {
+    if (goal) {
+      setGoals(
+        updatedGoals.map((item) => {
+          if (item.uuid === goal.uuid) {
             return {
               ...item,
-              name: movement.name,
-              movementId: movement.movementId,
-              repetition: movement.repetition,
-              durationMinutes: movement.durationMinutes,
-              durationSeconds: movement.durationSeconds,
+              name: goal.name,
+              movementId: goal.movementId,
+              repetition: goal.repetition,
+              durationMinutes: goal.durationMinutes,
+              durationSeconds: goal.durationSeconds,
             };
           }
           return item;
@@ -61,6 +64,7 @@ export default function Round({ round, removeRound, updateRound }) {
 
   useEffect(() => {
     updateRound({
+      uuid,
       id,
       repetition: parseInt(repetition, 10),
       durationMinutes: parseInt(durationMinutes, 10),
@@ -73,7 +77,7 @@ export default function Round({ round, removeRound, updateRound }) {
       <div className="round">
         <div className="lead">
           <p>{`Round number ${position}`}</p>
-          <button className="button warning" type="button" onClick={() => removeRound(id)}>
+          <button className="button warning" type="button" onClick={() => removeRound(uuid)}>
             X
           </button>
         </div>
@@ -112,18 +116,13 @@ export default function Round({ round, removeRound, updateRound }) {
             />
           </div>
         </div>
-        <button className="button primary" type="button" onClick={addMovement}>
+        <button className="button primary" type="button" onClick={addGoal}>
           Movement +
         </button>
         <div className="movements">
-          {movements
-            && movements.map((movement) => (
-              <Movement
-                key={movement.id}
-                movement={movement}
-                removeMovement={removeMovement}
-                updateMovement={updateMovement}
-              />
+          {goals
+            && goals.map((goal) => (
+              <Goal key={goal.uuid} goal={goal} removeGoal={removeGoal} updateGoal={updatedGoal} />
             ))}
         </div>
       </div>

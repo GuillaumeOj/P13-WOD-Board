@@ -6,8 +6,8 @@ import {
 
 import { useAuth } from '../Auth';
 
-import NewWod from './NewWod';
 import SideNav from './SideNav';
+import Wod from './WodComposer/Wod';
 
 export default function Dashboard() {
   const { path } = useRouteMatch();
@@ -32,7 +32,7 @@ export default function Dashboard() {
             </div>
           </Route>
           <Route path={`${path}/create-wod`}>
-            <NewWod />
+            <Wod />
           </Route>
         </Switch>
       </section>
