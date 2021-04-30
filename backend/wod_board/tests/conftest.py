@@ -73,6 +73,16 @@ def db_movement(db):
 
 
 @pytest.fixture()
+def db_goal(db, db_round, db_movement):
+    new_goal = movement.MovementGoal(round_id=db_round.id, movement_id=db_movement.id)
+    db.add(new_goal)
+    db.commit()
+    db.refresh(new_goal)
+
+    yield new_goal
+
+
+@pytest.fixture()
 async def client():
     async with AsyncClient(app=web.app, base_url="http://test") as async_client:
         yield async_client

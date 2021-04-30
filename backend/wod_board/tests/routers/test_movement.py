@@ -156,26 +156,17 @@ async def test_get_movement_goal_by_id(db, client, db_round, db_movement):
 
 
 @pytest.mark.asyncio
-async def test_delete_movement_goal_by_id(db, client, db_round, db_movement):
-    goal = movement.MovementGoal(round_id=db_round.id, movement_id=db_movement.id)
-    db.add(goal)
-    db.commit()
-    db.refresh(goal)
-
+async def test_delete_movement_goal_by_id(db, client, db_goal):
     assert db.query(movement.MovementGoal).count() == 1
 
     response = await client.get("/api/movement/goal/2")
-
     assert response.status_code == 404
     assert response.json() == {"detail": "This goal doesn't exist"}
-
     assert db.query(movement.MovementGoal).count() == 1
 
-    response = await client.delete(f"/api/movement/goal/{goal.id}")
-
+    response = await client.delete(f"/api/movement/goal/{db_goal.id}")
     assert response.status_code == 200
     assert response.json() == {"detail": "Goal successfully deleted"}
-
     assert db.query(movement.MovementGoal).count() == 0
 
 
@@ -185,7 +176,6 @@ async def test_add_movement(db, client):
 
     movement_json = {"name": "Devil Press"}
     response = await client.post("/api/movement/", json=movement_json)
-
     expected_response = {
         "id": 1,
         "name": "Devil Press",
@@ -193,7 +183,6 @@ async def test_add_movement(db, client):
         "unit": None,
         "equipments": [],
     }
-
     assert response.status_code == 200
     assert response.json() == expected_response
     assert db.query(movement.Movement).count() == 1
@@ -209,25 +198,20 @@ async def test_get_movements_by_name(db, client):
     db.refresh(push_press)
 
     response = await client.get("/api/movement/Pres")
-
     expected_response = [
         movement_schemas.Movement.from_orm(devil_press),
         movement_schemas.Movement.from_orm(push_press),
     ]
-
     assert response.status_code == 200
     assert response.json() == expected_response
 
     response = await client.get("/api/movement/Devil Pres")
-
     expected_response = [
         movement_schemas.Movement.from_orm(devil_press),
     ]
-
     assert response.status_code == 200
     assert response.json() == expected_response
 
     response = await client.get("/api/movement/Burpee")
-
     assert response.status_code == 200
     assert response.json() == []

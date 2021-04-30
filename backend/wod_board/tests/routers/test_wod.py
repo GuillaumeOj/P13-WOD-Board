@@ -99,6 +99,15 @@ async def test_update_wod(db, client, db_user):
     assert db.query(wod.Wod).count() == 2
 
     wod_json = {
+        "title": "Karen",
+        "author_id": 2,
+    }
+    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This author is unknown"}
+    assert db.query(wod.Wod).count() == 2
+
+    wod_json = {
         "title": "Cindy",
         "author_id": db_user.id,
     }
