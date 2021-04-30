@@ -16,6 +16,16 @@ from wod_board.schemas import wod_schemas
 router = fastapi.APIRouter(prefix=f"{config.API_URL}/wod", tags=["wod"])
 
 
+@router.get(
+    "/types/{name}", response_model=typing.List[typing.Optional[wod_schemas.WodType]]
+)
+async def get_wod_types_by_name(
+    name: str,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.List[typing.Optional[wod.WodType]]:
+    return wod_crud.get_wod_types_by_name(db, name)
+
+
 @router.post("/", response_model=wod_schemas.Wod)
 async def create_wod(
     wod_data: wod_schemas.WodCreate,
@@ -68,16 +78,6 @@ async def update_wod(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This author is unknown",
         )
-
-
-@router.get(
-    "/types/{name}", response_model=typing.List[typing.Optional[wod_schemas.WodType]]
-)
-async def get_wod_types_by_name(
-    name: str,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> typing.List[typing.Optional[wod.WodType]]:
-    return wod_crud.get_wod_types_by_name(db, name)
 
 
 @router.get("/{id}", response_model=wod_schemas.Wod)
