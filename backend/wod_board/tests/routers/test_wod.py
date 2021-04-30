@@ -46,6 +46,7 @@ async def test_create_wod(db, client, db_user):
         "title": "Murph",
         "description": "Murph Day!",
         "date": "2021-03-24T14:42:46.580110",
+        "is_complete": False,
         "author_id": db_user.id,
         "wod_type_id": wod_type.id,
         "rounds": [],
@@ -65,12 +66,9 @@ async def test_create_wod(db, client, db_user):
 
 
 @pytest.mark.asyncio
-async def test_update_wod(db, client, db_user):
-    db_wod = wod.Wod(title="Murph", author_id=db_user.id)
-    db.add(db_wod)
-    db.add(wod.Wod(title="Cindy", author_id=db_user.id))
+async def test_update_wod(db, client, db_user, db_wod):
+    db.add(wod.Wod(title="Cindy", is_complete=True, author_id=db_user.id))
     db.commit()
-    db.refresh(db_wod)
 
     assert db.query(wod.Wod).count() == 2
 
@@ -118,19 +116,18 @@ async def test_update_wod(db, client, db_user):
 
 
 @pytest.mark.asyncio
-async def test_get_wod_by_id(db, client, db_user):
-    db_wod = wod.Wod(title="Murph", author_id=db_user.id)
-    db.add(db_wod)
-    db.commit()
-    db.refresh(db_wod)
+async def test_get_wod_by_id(db, client, db_wod):
+    assert db.query(wod.Wod).count() == 1
 
     response = await client.get(f"/api/wod/{db_wod.id}")
     assert response.status_code == 200
     assert response.json()["id"] == db_wod.id
+    assert db.query(wod.Wod).count() == 1
 
     response = await client.get("/api/wod/2")
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
+    assert db.query(wod.Wod).count() == 1
 
 
 @pytest.mark.asyncio

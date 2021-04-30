@@ -31,7 +31,7 @@ def test_wod_type(db):
 def test_wod(db, db_user):
     assert db.query(wod.Wod).count() == 0
 
-    new_wod = wod.Wod(title="Murph", author_id=db_user.id, date=NOW)
+    new_wod = wod.Wod(title="Murph", is_complete=True, author_id=db_user.id, date=NOW)
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)
@@ -41,7 +41,7 @@ def test_wod(db, db_user):
     assert new_wod.date == NOW
     assert new_wod.author_id == db_user.id
 
-    same_wod = wod.Wod(title="Murph", author_id=db_user.id, date=NOW)
+    same_wod = wod.Wod(title="Murph", is_complete=True, author_id=db_user.id, date=NOW)
     db.add(same_wod)
     with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
         db.commit()
@@ -51,7 +51,7 @@ def test_wod(db, db_user):
     )
     assert db.query(wod.Wod).count() == 1
 
-    new_wod = wod.Wod(title="Karen", author_id=2)
+    new_wod = wod.Wod(title="Karen", is_complete=True, author_id=2)
     with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
         db.add(new_wod)
         db.commit()

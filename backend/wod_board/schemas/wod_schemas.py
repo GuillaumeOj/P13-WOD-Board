@@ -12,6 +12,7 @@ class WodBase(OrmBase):
     title: str
     description: typing.Optional[str]
     date: datetime.datetime = datetime.datetime.utcnow()
+    is_complete: bool = False
     author_id: int
     wod_type_id: typing.Optional[int]
 

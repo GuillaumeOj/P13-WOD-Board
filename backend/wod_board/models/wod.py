@@ -27,6 +27,7 @@ class Wod(models.Base):
     date = sqlalchemy.Column(
         sqlalchemy.DateTime, nullable=False, server_default=sqlalchemy.func.now()
     )
+    is_complete = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
     author_id = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"), nullable=False
     )

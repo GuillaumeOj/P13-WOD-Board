@@ -44,7 +44,7 @@ def db_user(db):
 
 @pytest.fixture()
 def db_wod(db, db_user):
-    new_wod = wod.Wod(title="Murph", author_id=db_user.id)
+    new_wod = wod.Wod(title="Murph", is_complete=True, author_id=db_user.id)
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)

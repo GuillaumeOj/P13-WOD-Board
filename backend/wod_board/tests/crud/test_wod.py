@@ -85,23 +85,19 @@ def test_create_wod(db, db_user):
     assert db.query(wod.Wod).count() == 1
 
 
-def test_update_wod(db, db_user):
-    db_wod = wod.Wod(title="Murph", author_id=db_user.id)
-    db.add(db_wod)
-    db.add(wod.Wod(title="Cindy", author_id=db_user.id))
+def test_update_wod(db, db_user, db_wod):
+    db.add(wod.Wod(title="Cindy", is_complete=True, author_id=db_user.id))
     db.commit()
-    db.refresh(db_wod)
-
     assert db.query(wod.Wod).count() == 2
+
     wod_schema = wod_schemas.WodCreate(title="Karen", author_id=db_user.id)
-
     assert db_wod.title != wod_schema.title
+
     assert wod_crud.update_wod(db, wod_schema, db_wod.id)
-    assert db.query(wod.Wod).count() == 2
 
     db.refresh(db_wod)
-
     assert db_wod.title == wod_schema.title
+    assert db.query(wod.Wod).count() == 2
 
     with pytest.raises(wod_crud.UnknownWod):
         wod_crud.update_wod(db, wod_schema, 3)
@@ -117,13 +113,9 @@ def test_update_wod(db, db_user):
     assert db.query(wod.Wod).count() == 2
 
 
-def test_get_wod_by_id(db, db_user):
+def test_get_wod_by_id(db, db_wod):
     with pytest.raises(wod_crud.UnknownWod):
-        wod_crud.get_wod_by_id(db, 1)
+        wod_crud.get_wod_by_id(db, 2)
 
-    wanted_wod = wod.Wod(title="Murph", author_id=db_user.id)
-    db.add(wanted_wod)
-    db.commit()
-
-    wanted_wod = wod_crud.get_wod_by_id(db, 1)
-    assert wanted_wod.id == 1
+    wanted_wod = wod_crud.get_wod_by_id(db, db_wod.id)
+    assert wanted_wod.title == db_wod.title
