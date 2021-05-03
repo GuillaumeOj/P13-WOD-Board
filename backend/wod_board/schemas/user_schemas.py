@@ -15,6 +15,7 @@ class UserBase(BaseModel):
     username: str
     first_name: typing.Optional[str]
     last_name: typing.Optional[str]
+    is_admin: bool = False
 
 
 class UserCreate(UserBase):

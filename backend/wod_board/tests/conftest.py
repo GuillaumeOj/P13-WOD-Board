@@ -46,8 +46,30 @@ def db_user(db):
 
 
 @pytest.fixture()
+def admin(db):
+    password = "very-strong-password"
+    hashed_password = config.PASSWORD_CTXT.hash(password)
+    new_admin = user.User(
+        email="admin@bar.com",
+        hashed_password=hashed_password,
+        username="admin",
+        is_admin=True,
+    )
+    db.add(new_admin)
+    db.commit()
+    db.refresh(new_admin)
+
+    yield new_admin
+
+
+@pytest.fixture()
 def token(db_user):
     yield user_utils.create_access_token(db_user)
+
+
+@pytest.fixture()
+def token_admin(admin):
+    yield user_utils.create_access_token(admin)
 
 
 @pytest.fixture()

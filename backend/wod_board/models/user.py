@@ -13,6 +13,7 @@ class User(models.Base):
     username = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     first_name = sqlalchemy.Column(sqlalchemy.String)
     last_name = sqlalchemy.Column(sqlalchemy.String)
+    is_admin = sqlalchemy.Column(sqlalchemy.Boolean)
 
     def __repr__(self):
         return f"<User {self.email}>"

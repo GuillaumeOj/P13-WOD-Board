@@ -23,6 +23,14 @@ class InvalidToken(HTTPException):
         )
 
 
+class IsNotAdmin(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Need admin rights",
+        )
+
+
 # NOTE: https://github.com/mpdavis/python-jose/issues/215
 # Jose does not provide type hints.
 def create_access_token(
