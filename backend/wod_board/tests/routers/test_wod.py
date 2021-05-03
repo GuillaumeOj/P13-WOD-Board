@@ -4,64 +4,84 @@ from wod_board.models import wod
 
 
 @pytest.mark.asyncio
-async def test_create_wod(db, client, db_user):
-    wod_type = wod.WodType(name="For Time")
-    db.add(wod_type)
-    db.commit()
-    db.refresh(wod_type)
+async def test_create_wod(db, client, db_user, token):
+    wod_json = {
+        "title": "Murph",
+        "description": "Murph Day!",
+        "date": "2021-03-24T14:42:46.580110",
+        "author_id": db_user.id,
+    }
+    response = await client.post(
+        "/api/wod",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
+    expected_response = {
+        "id": 1,
+        "title": "Murph",
+        "description": "Murph Day!",
+        "date": "2021-03-24T14:42:46.580110",
+        "is_complete": False,
+        "author_id": db_user.id,
+        "wod_type_id": None,
+        "rounds": [],
+        "wod_type": None,
+    }
+    assert response.status_code == 200
+    assert response.json() == expected_response
+    assert db.query(wod.Wod).count() == 1
+
+    response = await client.post(
+        "/api/wod",
+        json=wod_json,
+    )
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
+    assert db.query(wod.Wod).count() == 1
 
     wod_json = {
         "title": "Murph",
         "description": "Murph Day!",
         "date": "2021-03-24T14:42:46.580110",
         "author_id": 2,
-        "wod_type_id": wod_type.id,
     }
-    response = await client.post("/api/wod", json=wod_json)
+    response = await client.post(
+        "/api/wod",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This author is unknown"}
+    assert response.json() == {"detail": "Author don't match with authenticated user"}
+    assert db.query(wod.Wod).count() == 1
 
     wod_json = {
         "title": "Murph",
         "description": "Murph Day!",
+        "date": "2021-03-24T14:42:46.580110",
+        "author_id": db_user.id,
+    }
+    response = await client.post(
+        "/api/wod",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This title is already used"}
+    assert db.query(wod.Wod).count() == 1
+
+    wod_json = {
+        "title": "Cindy",
         "date": "2021-03-24T14:42:46.580110",
         "author_id": db_user.id,
         "wod_type_id": 2,
     }
-    response = await client.post("/api/wod", json=wod_json)
+    response = await client.post(
+        "/api/wod",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD Type doesn't exist"}
-    assert db.query(wod.Wod).count() == 0
-
-    wod_json = {
-        "title": "Murph",
-        "description": "Murph Day!",
-        "date": "2021-03-24T14:42:46.580110",
-        "author_id": db_user.id,
-        "wod_type_id": wod_type.id,
-    }
-    response = await client.post("/api/wod", json=wod_json)
-    expected_response = {
-        "id": 3,
-        "title": "Murph",
-        "description": "Murph Day!",
-        "date": "2021-03-24T14:42:46.580110",
-        "is_complete": False,
-        "author_id": db_user.id,
-        "wod_type_id": wod_type.id,
-        "rounds": [],
-        "wod_type": {
-            "id": wod_type.id,
-            "name": wod_type.name,
-        },
-    }
-    assert response.status_code == 200
-    assert response.json() == expected_response
-    assert db.query(wod.Wod).count() == 1
-
-    response = await client.post("/api/wod", json=wod_json)
-    assert response.status_code == 422
-    assert response.json() == {"detail": "This title is already used"}
     assert db.query(wod.Wod).count() == 1
 
 
