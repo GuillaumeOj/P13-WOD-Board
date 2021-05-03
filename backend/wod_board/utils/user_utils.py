@@ -1,21 +1,26 @@
 import datetime
 import typing
 
-from fastapi.security.oauth2 import OAuth2PasswordBearer
+import fastapi
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from jose import jwt
 from jose.exceptions import JWTError
-from passlib.context import CryptContext
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board.crud import user_crud
+from wod_board.models import get_db
 from wod_board.models import user
 from wod_board.schemas import user_schemas
 
 
-PASSWORD_CTXT = CryptContext(schemes=config.HASH_SCHEMES, deprecated="auto")
-
-OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl=config.ACCESS_TOKEN_URL)
+class InvalidToken(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
 
 
 # NOTE: https://github.com/mpdavis/python-jose/issues/215
@@ -41,35 +46,21 @@ def create_access_token(
 
 
 def get_user_with_token(
-    db: sqlalchemy.orm.Session, token: user_schemas.Token
-) -> typing.Optional[user.User]:
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+    token: str = fastapi.Depends(config.OAUTH2_SCHEME),
+) -> user.User:
     try:
         payload = jwt.decode(
-            token.access_token,
+            token,
             config.SECRET_KEY,
             algorithms=[config.ACCESS_TOKEN_ALGORITHM],
         )
     except JWTError:
-        return None
+        raise InvalidToken
 
     email: str = payload.get("sub")
 
-    user_account = user_crud.get_user_by_email(db, user_email=email)
-    if user_account is None:
-        return None
-
-    return user_account
-
-
-def authenticate_user(
-    db: sqlalchemy.orm.Session, email: str, password: str
-) -> typing.Optional[user.User]:
-    user_account = user_crud.get_user_by_email(db, email)
-
-    if not user_account:
-        return None
-
-    if not PASSWORD_CTXT.verify(password, user_account.hashed_password):
-        return None
-
-    return user_account
+    try:
+        return user_crud.get_user_by_email(db, email)
+    except user_crud.UnknownUser:
+        raise InvalidToken

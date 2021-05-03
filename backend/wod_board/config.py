@@ -4,6 +4,8 @@ import typing
 
 from dotenv import find_dotenv
 from dotenv import load_dotenv
+from fastapi.security.oauth2 import OAuth2PasswordBearer
+from passlib.context import CryptContext
 
 
 load_dotenv(find_dotenv())
@@ -26,6 +28,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 ACCESS_TOKEN_URL: str = "user/token"
 
 API_URL: str = os.getenv("API_URL", "/api")
+
+PASSWORD_CTXT = CryptContext(schemes=HASH_SCHEMES, deprecated="auto")
+OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl=ACCESS_TOKEN_URL)
 
 if WOD_BOARD_ENV == "test":
     LOGGING_LEVEL = logging.INFO
