@@ -86,7 +86,7 @@ async def test_create_wod(db, client, db_user, token):
 
 
 @pytest.mark.asyncio
-async def test_update_wod(db, client, db_user, db_wod):
+async def test_update_wod(db, client, db_user, db_wod, token):
     db.add(wod.Wod(title="Cindy", is_complete=True, author_id=db_user.id))
     db.commit()
 
@@ -96,12 +96,20 @@ async def test_update_wod(db, client, db_user, db_wod):
         "title": "Karen",
         "author_id": db_user.id,
     }
-    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    response = await client.put(
+        f"/api/wod/{db_wod.id}",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 200
     assert response.json()["title"] == wod_json["title"]
     assert db.query(wod.Wod).count() == 2
 
-    response = await client.put("/api/wod/3", json=wod_json)
+    response = await client.put(
+        "/api/wod/3",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 404
     assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod.Wod).count() == 2
@@ -111,7 +119,11 @@ async def test_update_wod(db, client, db_user, db_wod):
         "author_id": db_user.id,
         "wod_type_id": 1,
     }
-    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    response = await client.put(
+        f"/api/wod/{db_wod.id}",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD Type doesn't exist"}
     assert db.query(wod.Wod).count() == 2
@@ -120,16 +132,29 @@ async def test_update_wod(db, client, db_user, db_wod):
         "title": "Karen",
         "author_id": 2,
     }
-    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    response = await client.put(
+        f"/api/wod/{db_wod.id}",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This author is unknown"}
+    assert response.json() == {"detail": "Author don't match with authenticated user"}
+    assert db.query(wod.Wod).count() == 2
+
+    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
     assert db.query(wod.Wod).count() == 2
 
     wod_json = {
         "title": "Cindy",
         "author_id": db_user.id,
     }
-    response = await client.put(f"/api/wod/{db_wod.id}", json=wod_json)
+    response = await client.put(
+        f"/api/wod/{db_wod.id}",
+        json=wod_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
     assert response.status_code == 422
     assert response.json() == {"detail": "This title is already used"}
     assert db.query(wod.Wod).count() == 2
