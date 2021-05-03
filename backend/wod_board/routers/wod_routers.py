@@ -6,7 +6,6 @@ from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
-from wod_board.crud import user_crud
 from wod_board.crud import wod_crud
 from wod_board.models import get_db
 from wod_board.models import user
@@ -57,11 +56,6 @@ async def create_wod(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This title is already used",
         )
-    except user_crud.UnknownUser:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="This author is unknown",
-        )
 
 
 @router.put("/{id}", response_model=wod_schemas.Wod)
@@ -69,7 +63,11 @@ async def update_wod(
     wod_data: wod_schemas.WodCreate,
     id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+    current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> wod.Wod:
+    if wod_data.author_id != current_user.id:
+        raise AuthorNotUser
+
     try:
         return wod_crud.update_wod(db, wod_data, id)
     except wod_crud.UnknownWodType:
@@ -86,11 +84,6 @@ async def update_wod(
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This title is already used",
-        )
-    except user_crud.UnknownUser:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="This author is unknown",
         )
 
 
