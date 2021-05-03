@@ -1,11 +1,13 @@
-import typing
-
+import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
 
+from wod_board import config
 from wod_board.models import user
 from wod_board.schemas import user_schemas
-from wod_board.utils import user_utils
+
+
+LOG = daiquiri.getLogger(__name__)
 
 
 class UnknownUser(Exception):
@@ -20,24 +22,10 @@ class DuplicatedUsername(Exception):
     pass
 
 
-def get_user(db: sqlalchemy.orm.Session, user_id: int) -> typing.Optional[user.User]:
-    return (  # type: ignore[no-any-return]
-        db.query(user.User).filter(user.User.id == user_id).first()
-    )
-
-
-def get_user_by_email(
-    db: sqlalchemy.orm.Session, user_email: str
-) -> typing.Optional[user.User]:
-    return (  # type: ignore[no-any-return]
-        db.query(user.User).filter(user.User.email == user_email).first()
-    )
-
-
 def create_user(
     db: sqlalchemy.orm.Session, user_data: user_schemas.UserCreate
 ) -> user.User:
-    hashed_password = user_utils.PASSWORD_CTXT.hash(user_data.password)
+    hashed_password = config.PASSWORD_CTXT.hash(user_data.password)
 
     new_user = user.User(
         email=user_data.email,
@@ -56,11 +44,31 @@ def create_user(
             error
         ):
             raise DuplicatedEmail
-        elif (
+        if (
             'duplicate key value violates unique constraint "user_username_key"'
         ) in str(error):
             raise DuplicatedUsername
+
+        LOG.error(error)
     else:
         db.refresh(new_user)
 
     return new_user
+
+
+def get_user_by_id(db: sqlalchemy.orm.Session, id: int) -> user.User:
+    db_user: user.User = db.get(user.User, id)
+
+    if db_user is None:
+        raise UnknownUser
+
+    return db_user
+
+
+def get_user_by_email(db: sqlalchemy.orm.Session, email: str) -> user.User:
+    db_user: user.User = db.query(user.User).filter(user.User.email == email).first()
+
+    if db_user is None:
+        raise UnknownUser
+
+    return db_user

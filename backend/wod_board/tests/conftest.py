@@ -9,6 +9,7 @@ from wod_board.models import movement
 from wod_board.models import user
 from wod_board.models import wod
 from wod_board.models import wod_round
+from wod_board.utils import user_utils
 
 
 @pytest.fixture(autouse=True)
@@ -32,14 +33,21 @@ def db():
 
 @pytest.fixture()
 def db_user(db):
+    password = "very-strong-password"
+    hashed_password = config.PASSWORD_CTXT.hash(password)
     new_user = user.User(
-        email="foo@bar.com", hashed_password="very-strong-password", username="foo-boy"
+        email="foo@bar.com", hashed_password=hashed_password, username="foo-boy"
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
     yield new_user
+
+
+@pytest.fixture()
+def token(db_user):
+    yield user_utils.create_access_token(db_user)
 
 
 @pytest.fixture()

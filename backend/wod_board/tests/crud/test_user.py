@@ -1,35 +1,57 @@
 import pytest
 
 from wod_board.crud import user_crud
+from wod_board.models import user
 from wod_board.schemas import user_schemas
 
 
-default_user = user_schemas.UserCreate(
-    email="foo@bar.com",
-    password="hashed-password",
-    username="foo",
-)
-
-
 def test_create_user(db):
-    created_user = user_crud.create_user(db, default_user)
+    assert db.query(user.User).count() == 0
 
-    assert created_user.email == default_user.email
-    assert isinstance(created_user.hashed_password, str)
-    assert created_user.hashed_password != default_user.password
-    assert created_user.username == default_user.username
+    user_schema = user_schemas.UserCreate(
+        email="foo@bar.com",
+        password="hashed-password",
+        username="foo",
+    )
+    assert user_crud.create_user(db, user_schema)
+    assert db.query(user.User).count() == 1
 
-    assert created_user.id == 1
-
-
-def test_create_existing_user(db, monkeypatch):
-    created_user = user_crud.create_user(db, default_user)
-    assert created_user.email == default_user.email
-
+    user_schema = user_schemas.UserCreate(
+        email="foo@bar.com",
+        password="hashed-password",
+        username="bar",
+    )
     with pytest.raises(user_crud.DuplicatedEmail):
-        user_crud.create_user(db, default_user)
+        user_crud.create_user(db, user_schema)
 
-    with monkeypatch.context() as m:
-        m.setattr(default_user, "email", "foo2@bar.com")
-        with pytest.raises(user_crud.DuplicatedUsername):
-            user_crud.create_user(db, default_user)
+    user_schema = user_schemas.UserCreate(
+        email="bar@foo.com",
+        password="hashed-password",
+        username="foo",
+    )
+    with pytest.raises(user_crud.DuplicatedUsername):
+        user_crud.create_user(db, user_schema)
+
+
+def test_get_user_by_id(db, db_user):
+    assert db.query(user.User).count() == 1
+
+    wanted_user = user_crud.get_user_by_id(db, db_user.id)
+    assert wanted_user.id == db_user.id
+    assert db.query(user.User).count() == 1
+
+    with pytest.raises(user_crud.UnknownUser):
+        user_crud.get_user_by_id(db, 2)
+    assert db.query(user.User).count() == 1
+
+
+def test_get_user_by_email(db, db_user):
+    assert db.query(user.User).count() == 1
+
+    wanted_user = user_crud.get_user_by_email(db, db_user.email)
+    assert wanted_user.id == db_user.id
+    assert db.query(user.User).count() == 1
+
+    with pytest.raises(user_crud.UnknownUser):
+        user_crud.get_user_by_email(db, "bar@foo.com")
+    assert db.query(user.User).count() == 1

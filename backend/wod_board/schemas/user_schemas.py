@@ -7,12 +7,12 @@ from pydantic import EmailStr
 
 class Token(BaseModel):
     access_token: str
-    token_type: typing.Optional[str] = "bearer"
+    token_type: str = "bearer"
 
 
 class UserBase(BaseModel):
     email: EmailStr
-    username: typing.Optional[str]
+    username: str
     first_name: typing.Optional[str]
     last_name: typing.Optional[str]
 
@@ -24,7 +24,7 @@ class UserCreate(UserBase):
     def as_form(
         cls,
         email: EmailStr = Form(...),
-        username: typing.Optional[str] = Form(None),
+        username: str = Form(...),
         first_name: typing.Optional[str] = Form(None),
         last_name: typing.Optional[str] = Form(None),
         password: str = Form(...),
