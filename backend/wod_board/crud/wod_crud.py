@@ -4,28 +4,12 @@ import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
 
-from wod_board.crud import user_crud
+from wod_board import exceptions
 from wod_board.models import wod
 from wod_board.schemas import wod_schemas
 
 
 LOG = daiquiri.getLogger(__name__)
-
-
-class UnknownWodType(Exception):
-    pass
-
-
-class UnknownWod(Exception):
-    pass
-
-
-class TitleAlreadyUsed(Exception):
-    pass
-
-
-class WrongWodId(Exception):
-    pass
 
 
 def create_wod_type(
@@ -46,7 +30,7 @@ def get_wod_type_by_name(db: sqlalchemy.orm.Session, name: str) -> wod.WodType:
     )
 
     if db_wod_type is None:
-        raise UnknownWodType
+        raise exceptions.UnknownWodType
 
     return db_wod_type
 
@@ -76,7 +60,7 @@ def get_or_create_wod_type(
 ) -> wod.WodType:
     try:
         db_wod_type = get_wod_type_by_name(db, wod_type.name)
-    except UnknownWodType:
+    except exceptions.UnknownWodType:
         db_wod_type = create_wod_type(db, wod_type)
 
     return db_wod_type
@@ -86,7 +70,7 @@ def get_wod_by_id(db: sqlalchemy.orm.Session, id: int) -> wod.Wod:
     db_wod: wod.Wod = db.get(wod.Wod, id)
 
     if db_wod is None:
-        raise UnknownWod
+        raise exceptions.UnknownWod
 
     return db_wod
 
@@ -106,16 +90,16 @@ def create_wod(
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_wod_type_id_fkey"'
         ) in str(error):
-            raise UnknownWodType
+            raise exceptions.UnknownWodType
         if (
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_author_id_fkey"'
         ) in str(error):
-            raise user_crud.UnknownUser
+            raise exceptions.UnknownUser
         if ('duplicate key value violates unique constraint "wod_title_key"') in str(
             error
         ):
-            raise TitleAlreadyUsed
+            raise exceptions.TitleAlreadyUsed
         LOG.error(error)
     db.refresh(new_wod)
 
@@ -131,7 +115,7 @@ def update_wod(
     wod_to_update: wod.Wod = db.get(wod.Wod, wod_id)
 
     if wod_to_update is None:
-        raise UnknownWod
+        raise exceptions.UnknownWod
 
     wod_to_update.title = wod_data.title
     wod_to_update.description = wod_data.description
@@ -147,16 +131,16 @@ def update_wod(
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_wod_type_id_fkey"'
         ) in str(error):
-            raise UnknownWodType
+            raise exceptions.UnknownWodType
         if (
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_author_id_fkey"'
         ) in str(error):
-            raise user_crud.UnknownUser
+            raise exceptions.UnknownUser
         if ('duplicate key value violates unique constraint "wod_title_key"') in str(
             error
         ):
-            raise TitleAlreadyUsed
+            raise exceptions.TitleAlreadyUsed
         LOG.error(error)
 
     db.refresh(wod_to_update)

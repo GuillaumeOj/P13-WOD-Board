@@ -4,6 +4,7 @@ from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.crud import equipment_crud
 from wod_board.models import get_db
 from wod_board.schemas import equipment_schemas
@@ -31,7 +32,7 @@ async def get_equipment_by_exact_name(
         return equipment_schemas.Equipment.from_orm(
             equipment_crud.get_equipment_by_exact_name(db, name)
         )
-    except equipment_crud.UnknownEquipment:
+    except exceptions.UnknownEquipment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"{name} doesn't exist yet",

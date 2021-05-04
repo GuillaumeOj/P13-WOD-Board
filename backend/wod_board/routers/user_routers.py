@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.crud import user_crud
 from wod_board.models import get_db
 from wod_board.models import user
@@ -28,12 +29,12 @@ async def register(
 ) -> user.User:
     try:
         new_user = user_crud.create_user(db, user_data)
-    except user_crud.DuplicatedEmail:
+    except exceptions.DuplicatedEmail:
         raise HTTPException(
             status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Email already used",
         )
-    except user_crud.DuplicatedUsername:
+    except exceptions.DuplicatedUsername:
         raise HTTPException(
             status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Username already used",
@@ -54,7 +55,7 @@ async def login(
     )
     try:
         db_user = user_crud.get_user_by_email(db, form_data.username)
-    except user_crud.UnknownUser:
+    except exceptions.UnknownUser:
         raise login_exception
 
     if not config.PASSWORD_CTXT.verify(form_data.password, db_user.hashed_password):

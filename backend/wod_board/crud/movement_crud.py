@@ -4,21 +4,12 @@ import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
 
-from wod_board.crud import round_crud
-from wod_board.crud import unit_crud
+from wod_board import exceptions
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
 
 
 LOG = daiquiri.getLogger(__name__)
-
-
-class UnknownMovement(Exception):
-    pass
-
-
-class UnknownGoal(Exception):
-    pass
 
 
 def create_movement(
@@ -38,7 +29,7 @@ def create_movement(
             'insert or update on table "movement" violates foreign '
             'key constraint "movement_unit_id_fkey"'
         ) in str(error):
-            raise unit_crud.UnknownUnit
+            raise exceptions.UnknownUnit
 
         LOG(str(error))
 
@@ -54,7 +45,7 @@ def get_movement_by_id(
     db_movement: movement.Movement = db.get(movement.Movement, id)
 
     if db_movement is None:
-        raise UnknownMovement
+        raise exceptions.UnknownMovement
 
     return db_movement
 
@@ -68,7 +59,7 @@ def get_movement_by_name(
     )
 
     if db_movement is None:
-        raise UnknownMovement
+        raise exceptions.UnknownMovement
 
     return db_movement
 
@@ -79,7 +70,7 @@ def get_or_create_movement(
 ) -> movement.Movement:
     try:
         db_movement = get_movement_by_name(db, movement_data.name)
-    except UnknownMovement:
+    except exceptions.UnknownMovement:
         db_movement = create_movement(db, movement_data)
 
     return db_movement
@@ -118,12 +109,12 @@ def create_movement_goal(
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_round_id_fkey"'
         ) in str(error):
-            raise round_crud.UnknownRound
+            raise exceptions.UnknownRound
         if (
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_movement_id_fkey"'
         ) in str(error):
-            raise UnknownMovement
+            raise exceptions.UnknownMovement
 
         LOG.error(str(error))
 
@@ -140,7 +131,7 @@ def update_movement_goal(
     movement_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
 
     if movement_goal is None:
-        raise UnknownGoal
+        raise exceptions.UnknownGoal
 
     movement_goal.movement_id = goal.movement_id
     movement_goal.round_id = goal.round_id
@@ -155,12 +146,12 @@ def update_movement_goal(
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_round_id_fkey"'
         ) in str(error):
-            raise round_crud.UnknownRound
+            raise exceptions.UnknownRound
         if (
             'insert or update on table "movement_goal" violates foreign '
             'key constraint "movement_goal_movement_id_fkey"'
         ) in str(error):
-            raise UnknownMovement
+            raise exceptions.UnknownMovement
 
         LOG.error(str(error))
 
@@ -175,7 +166,7 @@ def get_movement_goal_by_id(
     db_movement: movement.MovementGoal = db.get(movement.MovementGoal, id)
 
     if db_movement is None:
-        raise UnknownMovement
+        raise exceptions.UnknownMovement
 
     return db_movement
 
@@ -186,7 +177,7 @@ def delete_movement_goal_by_id(
     db_goal: movement.MovementGoal = db.get(movement.MovementGoal, id)
 
     if db_goal is None:
-        raise UnknownMovement
+        raise exceptions.UnknownMovement
 
     db.delete(db_goal)
     db.commit()

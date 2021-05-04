@@ -1,5 +1,6 @@
 import pytest
 
+from wod_board import exceptions
 from wod_board.crud import equipment_crud
 from wod_board.models import equipment
 from wod_board.schemas import equipment_schemas
@@ -16,7 +17,7 @@ def test_create_equipment(db):
 
 
 def test_get_equipment_by_exact_name(db):
-    with pytest.raises(equipment_crud.UnknownEquipment):
+    with pytest.raises(exceptions.UnknownEquipment):
         equipment_crud.get_equipment_by_exact_name(db, EQUIPMENT_NAME)
 
     dumbbell = equipment_schemas.EquipmentCreate(name=EQUIPMENT_NAME)
