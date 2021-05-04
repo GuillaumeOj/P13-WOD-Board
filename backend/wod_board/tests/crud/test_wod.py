@@ -1,6 +1,6 @@
 import pytest
 
-from wod_board.crud import user_crud
+from wod_board import exceptions
 from wod_board.crud import wod_crud
 from wod_board.models import wod
 from wod_board.schemas import wod_schemas
@@ -17,7 +17,7 @@ def test_create_wod_type(db):
 
 
 def test_get_wod_type_by_name(db):
-    with pytest.raises(wod_crud.UnknownWodType):
+    with pytest.raises(exceptions.UnknownWodType):
         wod_crud.get_wod_type_by_name(db, WOD_TYPE)
 
     db.add(wod.WodType(name=WOD_TYPE))
@@ -65,11 +65,11 @@ def test_create_wod(db, db_user):
     wod_schema = wod_schemas.WodCreate(
         title="Murph", wod_type_id=1, author_id=db_user.id
     )
-    with pytest.raises(wod_crud.UnknownWodType):
+    with pytest.raises(exceptions.UnknownWodType):
         wod_crud.create_wod(db, wod_schema)
 
     wod_schema = wod_schemas.WodCreate(title="Murph", author_id=2)
-    with pytest.raises(user_crud.UnknownUser):
+    with pytest.raises(exceptions.UnknownUser):
         wod_crud.create_wod(db, wod_schema)
 
     assert db.query(wod.Wod).count() == 0
@@ -79,7 +79,7 @@ def test_create_wod(db, db_user):
     assert wod_crud.create_wod(db, wod_schema)
     assert db.query(wod.Wod).count() == 1
 
-    with pytest.raises(wod_crud.TitleAlreadyUsed):
+    with pytest.raises(exceptions.TitleAlreadyUsed):
         wod_crud.create_wod(db, wod_schema)
 
     assert db.query(wod.Wod).count() == 1
@@ -99,22 +99,22 @@ def test_update_wod(db, db_user, db_wod):
     assert db_wod.title == wod_schema.title
     assert db.query(wod.Wod).count() == 2
 
-    with pytest.raises(wod_crud.UnknownWod):
+    with pytest.raises(exceptions.UnknownWod):
         wod_crud.update_wod(db, wod_schema, 3)
 
     wod_schema = wod_schemas.WodCreate(title="Karen", author_id=2)
-    with pytest.raises(user_crud.UnknownUser):
+    with pytest.raises(exceptions.UnknownUser):
         wod_crud.update_wod(db, wod_schema, db_wod.id)
 
     wod_schema = wod_schemas.WodCreate(title="Cindy", author_id=db_user.id)
-    with pytest.raises(wod_crud.TitleAlreadyUsed):
+    with pytest.raises(exceptions.TitleAlreadyUsed):
         wod_crud.update_wod(db, wod_schema, db_wod.id)
 
     assert db.query(wod.Wod).count() == 2
 
 
 def test_get_wod_by_id(db, db_wod):
-    with pytest.raises(wod_crud.UnknownWod):
+    with pytest.raises(exceptions.UnknownWod):
         wod_crud.get_wod_by_id(db, 2)
 
     wanted_wod = wod_crud.get_wod_by_id(db, db_wod.id)

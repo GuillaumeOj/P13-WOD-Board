@@ -6,8 +6,8 @@ from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.crud import movement_crud
-from wod_board.crud import round_crud
 from wod_board.models import get_db
 from wod_board.models import movement
 from wod_board.schemas import movement_schemas
@@ -23,12 +23,12 @@ async def add_goal(
 ) -> movement.MovementGoal:
     try:
         return movement_crud.create_movement_goal(db, movement_data)
-    except round_crud.UnknownRound:
+    except exceptions.UnknownRound:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This round doesn't exist",
         )
-    except movement_crud.UnknownMovement:
+    except exceptions.UnknownMovement:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This goal doesn't exist",
@@ -43,17 +43,17 @@ async def update_goal(
 ) -> movement.MovementGoal:
     try:
         return movement_crud.update_movement_goal(db, movement_data, id)
-    except movement_crud.UnknownGoal:
+    except exceptions.UnknownGoal:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist",
         )
-    except movement_crud.UnknownMovement:
+    except exceptions.UnknownMovement:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This movement doesn't exist",
         )
-    except round_crud.UnknownRound:
+    except exceptions.UnknownRound:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This round doesn't exist",
@@ -67,7 +67,7 @@ async def get_goal_by_id(
 ) -> movement.MovementGoal:
     try:
         return movement_crud.get_movement_goal_by_id(db, id)
-    except movement_crud.UnknownMovement:
+    except exceptions.UnknownMovement:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist",
@@ -81,7 +81,7 @@ async def delete_goal_by_id(
 ) -> typing.Dict["str", "str"]:
     try:
         movement_crud.delete_movement_goal_by_id(db, id)
-    except movement_crud.UnknownMovement:
+    except exceptions.UnknownMovement:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This goal doesn't exist",

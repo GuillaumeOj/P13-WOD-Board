@@ -6,6 +6,7 @@ from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.crud import wod_crud
 from wod_board.models import get_db
 from wod_board.models import user
@@ -46,12 +47,12 @@ async def create_wod(
 
     try:
         return wod_crud.create_wod(db, wod_data)
-    except wod_crud.UnknownWodType:
+    except exceptions.UnknownWodType:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This WOD Type doesn't exist",
         )
-    except wod_crud.TitleAlreadyUsed:
+    except exceptions.TitleAlreadyUsed:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This title is already used",
@@ -70,17 +71,17 @@ async def update_wod(
 
     try:
         return wod_crud.update_wod(db, wod_data, id)
-    except wod_crud.UnknownWodType:
+    except exceptions.UnknownWodType:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This WOD Type doesn't exist",
         )
-    except wod_crud.UnknownWod:
+    except exceptions.UnknownWod:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This WOD doesn't exist",
         )
-    except wod_crud.TitleAlreadyUsed:
+    except exceptions.TitleAlreadyUsed:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This title is already used",
@@ -94,7 +95,7 @@ async def get_wod_by_id(
 ) -> wod.Wod:
     try:
         return wod_crud.get_wod_by_id(db, id)
-    except wod_crud.UnknownWod:
+    except exceptions.UnknownWod:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This WOD doesn't exist",

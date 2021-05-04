@@ -1,12 +1,9 @@
 import sqlalchemy.orm
 
+from wod_board import exceptions
 from wod_board.crud import unit_crud
 from wod_board.models import equipment
 from wod_board.schemas import equipment_schemas
-
-
-class UnknownEquipment(Exception):
-    pass
 
 
 def create_equipment(
@@ -34,7 +31,7 @@ def get_equipment_by_exact_name(
     )
 
     if db_equiment is None:
-        raise UnknownEquipment
+        raise exceptions.UnknownEquipment
 
     return db_equiment
 
@@ -45,7 +42,7 @@ def get_or_create_equipment(
 ) -> equipment.Equipment:
     try:
         db_equiment = get_equipment_by_exact_name(db, equipment_data.name)
-    except UnknownEquipment:
+    except exceptions.UnknownEquipment:
         db_equiment = create_equipment(db, equipment_data)
 
     return db_equiment

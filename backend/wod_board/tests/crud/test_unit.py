@@ -1,5 +1,6 @@
 import pytest
 
+from wod_board import exceptions
 from wod_board.crud import unit_crud
 from wod_board.models import unit
 from wod_board.schemas import unit_schemas
@@ -27,7 +28,7 @@ def test_get_unit_by_exact_name(db):
     assert wanted_unit.name == unit_schema.name
     assert wanted_unit.symbol == unit_schema.symbol
 
-    with pytest.raises(unit_crud.UnknownUnit):
+    with pytest.raises(exceptions.UnknownUnit):
         unit_crud.get_unit_by_exact_name(db, "Unit")
 
 

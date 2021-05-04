@@ -24,6 +24,7 @@ async def test_register(db, client):
     expected_response = user_json.copy()
     del expected_response["password"]
     expected_response["id"] = 1
+    expected_response["is_admin"] = None
     assert response.status_code == 200
     assert response.json() == expected_response
     assert db.query(user.User).count() == 1
@@ -103,6 +104,7 @@ async def test_get_current_user(client, db_user, token):
         "email": db_user.email,
         "first_name": db_user.first_name,
         "last_name": db_user.last_name,
+        "is_admin": db_user.is_admin,
     }
     assert response.status_code == 200
     assert response.json() == expected_response

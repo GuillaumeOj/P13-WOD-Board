@@ -1,11 +1,8 @@
 import sqlalchemy.orm
 
+from wod_board import exceptions
 from wod_board.models import unit
 from wod_board.schemas import unit_schemas
-
-
-class UnknownUnit(Exception):
-    pass
 
 
 def _create_unit(
@@ -28,7 +25,7 @@ def get_unit_by_exact_name(
     db_unit: unit.Unit = db.query(unit.Unit).filter(unit.Unit.name == name).first()
 
     if db_unit is None:
-        raise UnknownUnit
+        raise exceptions.UnknownUnit
 
     return db_unit
 
@@ -39,7 +36,7 @@ def get_or_create_unit(
 ) -> unit.Unit:
     try:
         db_unit = get_unit_by_exact_name(db, wanted_unit.name)
-    except UnknownUnit:
+    except exceptions.UnknownUnit:
         db_unit = _create_unit(db, wanted_unit)
 
     return db_unit

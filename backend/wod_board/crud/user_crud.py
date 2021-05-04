@@ -3,23 +3,12 @@ import sqlalchemy.exc
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.models import user
 from wod_board.schemas import user_schemas
 
 
 LOG = daiquiri.getLogger(__name__)
-
-
-class UnknownUser(Exception):
-    pass
-
-
-class DuplicatedEmail(Exception):
-    pass
-
-
-class DuplicatedUsername(Exception):
-    pass
 
 
 def create_user(
@@ -43,11 +32,11 @@ def create_user(
         if 'duplicate key value violates unique constraint "user_email_key"' in str(
             error
         ):
-            raise DuplicatedEmail
+            raise exceptions.DuplicatedEmail
         if (
             'duplicate key value violates unique constraint "user_username_key"'
         ) in str(error):
-            raise DuplicatedUsername
+            raise exceptions.DuplicatedUsername
 
         LOG.error(error)
     else:
@@ -60,7 +49,7 @@ def get_user_by_id(db: sqlalchemy.orm.Session, id: int) -> user.User:
     db_user: user.User = db.get(user.User, id)
 
     if db_user is None:
-        raise UnknownUser
+        raise exceptions.UnknownUser
 
     return db_user
 
@@ -69,6 +58,6 @@ def get_user_by_email(db: sqlalchemy.orm.Session, email: str) -> user.User:
     db_user: user.User = db.query(user.User).filter(user.User.email == email).first()
 
     if db_user is None:
-        raise UnknownUser
+        raise exceptions.UnknownUser
 
     return db_user

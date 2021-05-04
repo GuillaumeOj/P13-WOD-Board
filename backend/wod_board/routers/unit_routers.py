@@ -4,6 +4,7 @@ from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
+from wod_board import exceptions
 from wod_board.crud import unit_crud
 from wod_board.models import get_db
 from wod_board.models import unit
@@ -34,7 +35,7 @@ async def get_unit_by_exact_name(
 ) -> unit_schemas.Unit:
     try:
         return unit_schemas.Unit.from_orm(unit_crud.get_unit_by_exact_name(db, name))
-    except unit_crud.UnknownUnit:
+    except exceptions.UnknownUnit:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"{name} doesn't exist yet",

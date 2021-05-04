@@ -1,5 +1,6 @@
 import pytest
 
+from wod_board import exceptions
 from wod_board.crud import user_crud
 from wod_board.models import user
 from wod_board.schemas import user_schemas
@@ -21,7 +22,7 @@ def test_create_user(db):
         password="hashed-password",
         username="bar",
     )
-    with pytest.raises(user_crud.DuplicatedEmail):
+    with pytest.raises(exceptions.DuplicatedEmail):
         user_crud.create_user(db, user_schema)
 
     user_schema = user_schemas.UserCreate(
@@ -29,7 +30,7 @@ def test_create_user(db):
         password="hashed-password",
         username="foo",
     )
-    with pytest.raises(user_crud.DuplicatedUsername):
+    with pytest.raises(exceptions.DuplicatedUsername):
         user_crud.create_user(db, user_schema)
 
 
@@ -40,7 +41,7 @@ def test_get_user_by_id(db, db_user):
     assert wanted_user.id == db_user.id
     assert db.query(user.User).count() == 1
 
-    with pytest.raises(user_crud.UnknownUser):
+    with pytest.raises(exceptions.UnknownUser):
         user_crud.get_user_by_id(db, 2)
     assert db.query(user.User).count() == 1
 
@@ -52,6 +53,6 @@ def test_get_user_by_email(db, db_user):
     assert wanted_user.id == db_user.id
     assert db.query(user.User).count() == 1
 
-    with pytest.raises(user_crud.UnknownUser):
+    with pytest.raises(exceptions.UnknownUser):
         user_crud.get_user_by_email(db, "bar@foo.com")
     assert db.query(user.User).count() == 1
