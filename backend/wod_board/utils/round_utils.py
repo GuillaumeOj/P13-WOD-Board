@@ -8,7 +8,7 @@ def check_round_author(
     db: sqlalchemy.orm.Session,
     wod_id: int,
     user_id: int,
-) -> bool:
+) -> None:
     db_wod: wod.Wod = db.get(wod.Wod, wod_id)
 
     if db_wod is None:
@@ -16,5 +16,3 @@ def check_round_author(
 
     if db_wod.author_id != user_id:
         raise exceptions.UserIsNotAuthor
-
-    return True

@@ -21,12 +21,16 @@ class RoundMovement(models.Base):
 class Round(models.Base):
     __tablename__ = "round"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    position = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
-    duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
-    repetition = sqlalchemy.Column(sqlalchemy.Integer)
-    wod_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"))
-    parent_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
+    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    position: int = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
+    duration_seconds: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
+    repetition: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
+    wod_id: int = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("wod.id"), nullable=False
+    )
+    parent_id: typing.Optional[int] = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id")
+    )
 
     sub_rounds: typing.List["Round"] = sqlalchemy.orm.relationship(
         "Round",
