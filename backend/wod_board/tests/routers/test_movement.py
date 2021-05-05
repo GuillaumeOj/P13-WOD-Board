@@ -9,7 +9,7 @@ LOG = daiquiri.getLogger(__name__)
 
 
 @pytest.mark.asyncio
-async def test_add_movement_goal(db, client, db_round, db_movement):
+async def test_create_movement_goal(db, client, db_round, db_movement):
     assert db.query(movement.MovementGoal).count() == 0
 
     movement_json = {
@@ -23,11 +23,15 @@ async def test_add_movement_goal(db, client, db_round, db_movement):
         "id": 1,
         "equipments": [],
         "movement": {
-            "equipments": [],
-            "id": 1,
-            "name": "Devil Press",
-            "unit": None,
-            "unit_id": None,
+            "equipments": db_movement.equipments.all(),
+            "id": db_movement.id,
+            "name": db_movement.name,
+            "unit": {
+                "id": db_movement.unit.id,
+                "name": db_movement.unit.name,
+                "symbol": db_movement.unit.symbol,
+            },
+            "unit_id": db_movement.unit.id,
         },
     }
     assert response.status_code == 200
@@ -78,11 +82,15 @@ async def test_update_movement_goal(db, client, db_round, db_movement):
         "id": 1,
         "equipments": [],
         "movement": {
-            "equipments": [],
-            "id": 1,
-            "name": "Devil Press",
-            "unit": None,
-            "unit_id": None,
+            "equipments": db_movement.equipments.all(),
+            "id": db_movement.id,
+            "name": db_movement.name,
+            "unit": {
+                "id": db_movement.unit.id,
+                "name": db_movement.unit.name,
+                "symbol": db_movement.unit.symbol,
+            },
+            "unit_id": db_movement.unit.id,
         },
     }
     assert response.status_code == 200
@@ -143,11 +151,15 @@ async def test_get_movement_goal_by_id(db, client, db_round, db_movement):
         "duration_seconds": None,
         "equipments": [],
         "movement": {
-            "equipments": [],
-            "id": 1,
-            "name": "Devil Press",
-            "unit": None,
-            "unit_id": None,
+            "equipments": db_movement.equipments.all(),
+            "id": db_movement.id,
+            "name": db_movement.name,
+            "unit": {
+                "id": db_movement.unit.id,
+                "name": db_movement.unit.name,
+                "symbol": db_movement.unit.symbol,
+            },
+            "unit_id": db_movement.unit.id,
         },
     }
 
@@ -171,16 +183,22 @@ async def test_delete_movement_goal_by_id(db, client, db_goal):
 
 
 @pytest.mark.asyncio
-async def test_add_movement(db, client):
+async def test_create_movement(db, client, db_unit, token):
     assert db.query(movement.Movement).count() == 0
 
-    movement_json = {"name": "Devil Press"}
-    response = await client.post("/api/movement/", json=movement_json)
-    expected_response = {
+    movement_json = {"name": "Devil Press", "unit_id": db_unit.id}
+    response = await client.post(
+        "/api/movement/",
+        json=movement_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
+    expected_response = movement_json | {
         "id": 1,
-        "name": "Devil Press",
-        "unit_id": None,
-        "unit": None,
+        "unit": {
+            "id": db_unit.id,
+            "name": db_unit.name,
+            "symbol": db_unit.symbol,
+        },
         "equipments": [],
     }
     assert response.status_code == 200
@@ -189,9 +207,9 @@ async def test_add_movement(db, client):
 
 
 @pytest.mark.asyncio
-async def test_get_movements_by_name(db, client):
-    devil_press = movement.Movement(name="Devil Press")
-    push_press = movement.Movement(name="Push Press")
+async def test_get_movements_by_name(db, client, db_unit):
+    devil_press = movement.Movement(name="Devil Press", unit_id=db_unit.id)
+    push_press = movement.Movement(name="Push Press", unit_id=db_unit.id)
     db.add_all([devil_press, push_press])
     db.commit()
     db.refresh(devil_press)

@@ -2,6 +2,10 @@ class DuplicatedEmail(Exception):
     pass
 
 
+class DuplicatedMovement(Exception):
+    pass
+
+
 class DuplicatedRoundPosition(Exception):
     pass
 

@@ -13,7 +13,7 @@ LOG = daiquiri.getLogger(__name__)
 
 class MovementBase(OrmBase):
     name: str = pydantic.Field(..., max_length=250)
-    unit_id: typing.Optional[int]
+    unit_id: int
 
 
 class MovementCreate(MovementBase):
@@ -22,7 +22,7 @@ class MovementCreate(MovementBase):
 
 class Movement(MovementBase):
     id: int
-    unit: typing.Optional[unit_schemas.Unit]
+    unit: unit_schemas.Unit
     equipments: typing.Optional[typing.List[equipment_schemas.Equipment]]
 
 

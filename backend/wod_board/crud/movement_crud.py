@@ -30,8 +30,12 @@ def create_movement(
             'key constraint "movement_unit_id_fkey"'
         ) in str(error):
             raise exceptions.UnknownUnit
+        if (
+            'duplicate key value violates unique constraint "movement_name_key"'
+        ) in str(error):
+            raise exceptions.DuplicatedMovement
 
-        LOG(str(error))
+        LOG.error(str(error))
 
     db.refresh(new_movement)
 

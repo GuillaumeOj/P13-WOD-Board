@@ -28,7 +28,9 @@ class Movement(models.Base):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     name = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
-    unit_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id"))
+    unit_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id"), nullable=False
+    )
 
     unit: "Unit" = sqlalchemy.orm.relationship("Unit")
     equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(
