@@ -28,6 +28,7 @@ def get_db():
 
 # Import each model fo Alembic
 from wod_board.models.equipment import *  # noqa
+from wod_board.models.goal import *  # noqa
 from wod_board.models.movement import *  # noqa
 from wod_board.models.unit import *  # noqa
 from wod_board.models.user import *  # noqa
