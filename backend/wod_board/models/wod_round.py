@@ -7,17 +7,15 @@ from wod_board import models
 
 
 if typing.TYPE_CHECKING:
-    from wod_board.models.movement import MovementGoal
+    from wod_board.models.goal import Goal
 
 
 class RoundMovement(models.Base):
-    __tablename__ = "round_movement_goal"
+    __tablename__ = "round_goal"
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
-    movement_goal_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement_goal.id")
-    )
+    goal_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("goal.id"))
 
 
 class Round(models.Base):
@@ -36,9 +34,9 @@ class Round(models.Base):
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
         lazy="dynamic",
     )
-    movements: typing.List["MovementGoal"] = sqlalchemy.orm.relationship(
-        "MovementGoal",
-        secondary="round_movement_goal",
+    movements: typing.List["Goal"] = sqlalchemy.orm.relationship(
+        "Goal",
+        secondary="round_goal",
         lazy="dynamic",
     )
 
