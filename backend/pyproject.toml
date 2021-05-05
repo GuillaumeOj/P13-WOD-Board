@@ -10,7 +10,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-alembic = "^1.5.8"
+alembic = "^1.6.0"
 fastapi = {extras = ["all"], version = "^0.63.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-dotenv = "^0.17.1"
