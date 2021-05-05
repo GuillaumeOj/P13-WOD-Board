@@ -5,6 +5,7 @@ import pytest
 from wod_board import config
 from wod_board import models
 from wod_board import web
+from wod_board.models import goal
 from wod_board.models import movement
 from wod_board.models import unit
 from wod_board.models import user
@@ -115,7 +116,7 @@ def db_movement(db, db_unit):
 
 @pytest.fixture()
 def db_goal(db, db_round, db_movement):
-    new_goal = movement.MovementGoal(round_id=db_round.id, movement_id=db_movement.id)
+    new_goal = goal.Goal(round_id=db_round.id, movement_id=db_movement.id)
     db.add(new_goal)
     db.commit()
     db.refresh(new_goal)

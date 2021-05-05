@@ -38,34 +38,3 @@ class Movement(models.Base):
         secondary="movement_equipment",
         lazy="dynamic",
     )
-
-
-class MovementGoalEquipment(models.Base):
-    __tablename__ = "movement_goal_equipment"
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    movement_goal_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement_goal.id")
-    )
-    equipment_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id")
-    )
-
-
-class MovementGoal(models.Base):
-    __tablename__ = "movement_goal"
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    movement_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id")
-    )
-    round_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"))
-    repetition = sqlalchemy.Column(sqlalchemy.Integer)
-    duration_seconds = sqlalchemy.Column(sqlalchemy.Integer)
-
-    movement: "Movement" = sqlalchemy.orm.relationship("Movement")
-    equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(
-        "Equipment",
-        secondary="movement_goal_equipment",
-        lazy="dynamic",
-    )
