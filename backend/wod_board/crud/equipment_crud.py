@@ -1,3 +1,5 @@
+import typing
+
 import sqlalchemy.orm
 
 from wod_board import exceptions
@@ -26,7 +28,7 @@ def get_equipment_by_exact_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> equipment.Equipment:
-    db_equiment: equipment.Equipment = (
+    db_equiment: typing.Optional[equipment.Equipment] = (
         db.query(equipment.Equipment).filter(equipment.Equipment.name == name).first()
     )
 

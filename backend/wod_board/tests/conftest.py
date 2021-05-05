@@ -1,3 +1,5 @@
+import datetime
+
 import daiquiri
 from httpx import AsyncClient
 import pytest
@@ -76,7 +78,12 @@ def token_admin(admin):
 
 @pytest.fixture()
 def db_wod(db, db_user):
-    new_wod = wod.Wod(title="Murph", is_complete=True, author_id=db_user.id)
+    new_wod = wod.Wod(
+        title="Murph",
+        date=datetime.datetime.utcnow(),
+        is_complete=True,
+        author_id=db_user.id,
+    )
     db.add(new_wod)
     db.commit()
     db.refresh(new_wod)

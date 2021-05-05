@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from wod_board.models import wod
@@ -87,7 +89,14 @@ async def test_create_wod(db, client, db_user, token):
 
 @pytest.mark.asyncio
 async def test_update_wod(db, client, db_user, db_wod, token):
-    db.add(wod.Wod(title="Cindy", is_complete=True, author_id=db_user.id))
+    db.add(
+        wod.Wod(
+            title="Cindy",
+            is_complete=True,
+            author_id=db_user.id,
+            date=datetime.datetime.utcnow(),
+        )
+    )
     db.commit()
 
     assert db.query(wod.Wod).count() == 2

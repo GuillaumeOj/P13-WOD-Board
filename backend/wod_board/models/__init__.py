@@ -1,17 +1,10 @@
 import sqlalchemy
-from sqlalchemy.ext import declarative
 import sqlalchemy.orm
 
 from wod_board import config
 
 
-class ModelBase:
-    @property
-    def session(self) -> sqlalchemy.orm.Session:
-        return sqlalchemy.orm.object_session(self)  # type: ignore[no-any-return]
-
-
-Base = declarative.declarative_base(cls=ModelBase)
+Base = sqlalchemy.orm.declarative_base()
 
 engine = sqlalchemy.create_engine(config.DATABASE_URL)
 
