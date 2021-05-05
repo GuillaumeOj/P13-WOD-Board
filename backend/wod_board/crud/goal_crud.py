@@ -7,6 +7,7 @@ import sqlalchemy.orm
 from wod_board import exceptions
 from wod_board.models import goal
 from wod_board.schemas import goal_schemas
+from wod_board.utils import goal_utils
 
 
 LOG = daiquiri.getLogger(__name__)
@@ -15,7 +16,10 @@ LOG = daiquiri.getLogger(__name__)
 def create_goal(
     db: sqlalchemy.orm.Session,
     goal_data: goal_schemas.GoalCreate,
+    user_id: int,
 ) -> goal.Goal:
+    goal_utils.check_goal_author(db, goal_data.round_id, user_id)
+
     new_goal = goal.Goal(
         movement_id=goal_data.movement_id,
         round_id=goal_data.round_id,
@@ -28,11 +32,6 @@ def create_goal(
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
-        if (
-            'insert or update on table "goal" violates foreign '
-            'key constraint "goal_round_id_fkey"'
-        ) in str(error):
-            raise exceptions.UnknownRound
         if (
             'insert or update on table "goal" violates foreign '
             'key constraint "goal_movement_id_fkey"'
@@ -50,11 +49,14 @@ def update_goal(
     db: sqlalchemy.orm.Session,
     goal_data: goal_schemas.GoalCreate,
     goal_id: int,
+    user_id: int,
 ) -> goal.Goal:
-    db_goal: goal.Goal = db.get(goal.Goal, goal_id)
+    db_goal: typing.Optional[goal.Goal] = db.get(goal.Goal, goal_id)
 
     if db_goal is None:
         raise exceptions.UnknownGoal
+
+    goal_utils.check_goal_author(db, goal_data.round_id, user_id)
 
     db_goal.movement_id = goal_data.movement_id
     db_goal.round_id = goal_data.round_id
@@ -65,11 +67,6 @@ def update_goal(
         db.commit()
     except sqlalchemy.exc.IntegrityError as error:
         db.rollback()
-        if (
-            'insert or update on table "goal" violates foreign '
-            'key constraint "goal_round_id_fkey"'
-        ) in str(error):
-            raise exceptions.UnknownRound
         if (
             'insert or update on table "goal" violates foreign '
             'key constraint "goal_movement_id_fkey"'
@@ -92,11 +89,15 @@ def get_goal_by_id(db: sqlalchemy.orm.Session, goal_id: int) -> goal.Goal:
     return db_goal
 
 
-def delete_goal_by_id(db: sqlalchemy.orm.Session, goal_id: int) -> typing.Literal[True]:
-    db_goal: goal.Goal = db.get(goal.Goal, goal_id)
+def delete_goal_by_id(
+    db: sqlalchemy.orm.Session, goal_id: int, user_id: int
+) -> typing.Literal[True]:
+    db_goal: typing.Optional[goal.Goal] = db.get(goal.Goal, goal_id)
 
     if db_goal is None:
-        raise exceptions.UnknownMovement
+        raise exceptions.UnknownGoal
+
+    goal_utils.check_goal_author(db, db_goal.round_id, user_id)
 
     db.delete(db_goal)
     db.commit()
