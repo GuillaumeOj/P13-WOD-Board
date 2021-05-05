@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from wod_board import exceptions
@@ -63,7 +65,10 @@ def test_get_or_create_wod_type(db):
 
 def test_create_wod(db, db_user):
     wod_schema = wod_schemas.WodCreate(
-        title="Murph", wod_type_id=1, author_id=db_user.id
+        title="Murph",
+        wod_type_id=1,
+        author_id=db_user.id,
+        date=datetime.datetime.utcnow(),
     )
     with pytest.raises(exceptions.UnknownWodType):
         wod_crud.create_wod(db, wod_schema)
@@ -86,7 +91,14 @@ def test_create_wod(db, db_user):
 
 
 def test_update_wod(db, db_user, db_wod):
-    db.add(wod.Wod(title="Cindy", is_complete=True, author_id=db_user.id))
+    db.add(
+        wod.Wod(
+            title="Cindy",
+            is_complete=True,
+            author_id=db_user.id,
+            date=datetime.datetime.utcnow(),
+        )
+    )
     db.commit()
     assert db.query(wod.Wod).count() == 2
 

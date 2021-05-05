@@ -1,3 +1,5 @@
+import typing
+
 import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
@@ -55,7 +57,9 @@ def get_user_by_id(db: sqlalchemy.orm.Session, id: int) -> user.User:
 
 
 def get_user_by_email(db: sqlalchemy.orm.Session, email: str) -> user.User:
-    db_user: user.User = db.query(user.User).filter(user.User.email == email).first()
+    db_user: typing.Optional[user.User] = (
+        db.query(user.User).filter(user.User.email == email).first()
+    )
 
     if db_user is None:
         raise exceptions.UnknownUser

@@ -25,7 +25,7 @@ def create_wod_type(
 
 
 def get_wod_type_by_name(db: sqlalchemy.orm.Session, name: str) -> wod.WodType:
-    db_wod_type: wod.WodType = (
+    db_wod_type: typing.Optional[wod.WodType] = (
         db.query(wod.WodType).filter(wod.WodType.name == name).first()
     )
 

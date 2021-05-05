@@ -1,3 +1,5 @@
+import typing
+
 import sqlalchemy.orm
 
 from wod_board import exceptions
@@ -22,7 +24,9 @@ def get_unit_by_exact_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> unit.Unit:
-    db_unit: unit.Unit = db.query(unit.Unit).filter(unit.Unit.name == name).first()
+    db_unit: typing.Optional[unit.Unit] = (
+        db.query(unit.Unit).filter(unit.Unit.name == name).first()
+    )
 
     if db_unit is None:
         raise exceptions.UnknownUnit

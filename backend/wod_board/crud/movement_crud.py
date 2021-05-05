@@ -58,7 +58,7 @@ def get_movement_by_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> movement.Movement:
-    db_movement: movement.Movement = (
+    db_movement: typing.Optional[movement.Movement] = (
         db.query(movement.Movement).filter(movement.Movement.name == name).first()
     )
 

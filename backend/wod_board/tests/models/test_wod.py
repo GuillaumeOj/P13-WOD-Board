@@ -51,7 +51,7 @@ def test_wod(db, db_user):
     )
     assert db.query(wod.Wod).count() == 1
 
-    new_wod = wod.Wod(title="Karen", is_complete=True, author_id=2)
+    new_wod = wod.Wod(title="Karen", is_complete=True, author_id=2, date=NOW)
     with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
         db.add(new_wod)
         db.commit()
