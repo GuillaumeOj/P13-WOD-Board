@@ -6,6 +6,7 @@ from wod_board import config
 from wod_board import models
 from wod_board import web
 from wod_board.models import movement
+from wod_board.models import unit
 from wod_board.models import user
 from wod_board.models import wod
 from wod_board.models import wod_round
@@ -93,8 +94,18 @@ def db_round(db, db_wod):
 
 
 @pytest.fixture()
-def db_movement(db):
-    new_movement = movement.Movement(name="Devil Press")
+def db_unit(db):
+    new_unit = unit.Unit(name="Unit", symbol="u")
+    db.add(new_unit)
+    db.commit()
+    db.refresh(new_unit)
+
+    yield new_unit
+
+
+@pytest.fixture()
+def db_movement(db, db_unit):
+    new_movement = movement.Movement(name="Devil Press", unit_id=db_unit.id)
     db.add(new_movement)
     db.commit()
     db.refresh(new_movement)
