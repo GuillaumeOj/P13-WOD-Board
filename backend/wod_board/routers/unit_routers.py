@@ -5,6 +5,7 @@ import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
+from wod_board import exceptions_routers
 from wod_board.crud import unit_crud
 from wod_board.models import get_db
 from wod_board.models import unit
@@ -23,7 +24,7 @@ async def create_unit(
     current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> unit.Unit:
     if not current_user.is_admin:
-        raise user_utils.IsNotAdmin
+        raise exceptions_routers.IsNotAdmin
 
     return unit_crud.get_or_create_unit(db, unit_data)
 

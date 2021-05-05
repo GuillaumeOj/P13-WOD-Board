@@ -2,34 +2,17 @@ import datetime
 import typing
 
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 from jose import jwt
 from jose.exceptions import JWTError
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
+from wod_board import exceptions_routers
 from wod_board.crud import user_crud
 from wod_board.models import get_db
 from wod_board.models import user
 from wod_board.schemas import user_schemas
-
-
-class InvalidToken(HTTPException):
-    def __init__(self):
-        super().__init__(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        )
-
-
-class IsNotAdmin(HTTPException):
-    def __init__(self):
-        super().__init__(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Need admin rights",
-        )
 
 
 # NOTE: https://github.com/mpdavis/python-jose/issues/215
@@ -65,11 +48,11 @@ def get_user_with_token(
             algorithms=[config.ACCESS_TOKEN_ALGORITHM],
         )
     except JWTError:
-        raise InvalidToken
+        raise exceptions_routers.InvalidToken
 
     email: str = payload.get("sub")
 
     try:
         return user_schemas.UserSchema.from_orm(user_crud.get_user_by_email(db, email))
     except exceptions.UnknownUser:
-        raise InvalidToken
+        raise exceptions_routers.InvalidToken
