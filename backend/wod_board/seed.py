@@ -87,6 +87,9 @@ def seed_db():
 
     db = models.Session()
 
+    if config.WOD_BOARD_ENV == "production":
+        return
+
     users(db)
     units(db)
     equipments(db)
