@@ -74,6 +74,7 @@ def test_get_movements_by_name(db, db_unit):
 
     movements = movement_crud.get_movements_by_name(db, "push pres")
     assert len(movements) == 1
+    assert hasattr(movements[0], "name")
     assert movements[0].name == push_press.name
 
     movements = movement_crud.get_movements_by_name(db, "Burpee")

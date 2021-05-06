@@ -37,7 +37,7 @@ class Goal(models.Base):
     duration_seconds: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
 
     movement: "Movement" = sqlalchemy.orm.relationship("Movement")
-    equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(
+    equipments: typing.List[typing.Optional["Equipment"]] = sqlalchemy.orm.relationship(
         "Equipment",
         secondary="goal_equipment",
         lazy="dynamic",

@@ -1,40 +1,41 @@
+import datetime
 import typing
 
 import sqlalchemy
 import sqlalchemy.orm
 
 from wod_board import models
-from wod_board.models import user
 
 
 if typing.TYPE_CHECKING:
+    from wod_board.models.user import User
     from wod_board.models.wod_round import Round
 
 
 class WodType(models.Base):
     __tablename__ = "wod_type"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True)
+    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    name: str = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
 
 
 class Wod(models.Base):
     __tablename__ = "wod"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    title = sqlalchemy.Column(sqlalchemy.String, unique=True)
-    description = sqlalchemy.Column(sqlalchemy.String)
-    date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False)
-    is_complete = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
-    author_id = sqlalchemy.Column(
+    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    title: str = sqlalchemy.Column(sqlalchemy.String(250), unique=True, nullable=False)
+    description: typing.Optional[str] = sqlalchemy.Column(sqlalchemy.String(250))
+    date: datetime.datetime = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False)
+    is_complete: bool = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
+    author_id: int = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"), nullable=False
     )
-    wod_type_id = sqlalchemy.Column(
+    wod_type_id: typing.Optional[int] = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("wod_type.id")
     )
 
-    wod_type: WodType = sqlalchemy.orm.relationship("WodType")
-    author: user.User = sqlalchemy.orm.relationship("User")
+    wod_type: typing.Optional[WodType] = sqlalchemy.orm.relationship("WodType")
+    author: "User" = sqlalchemy.orm.relationship("User")
     rounds: typing.List["Round"] = sqlalchemy.orm.relationship(
         "Round", cascade="all, delete", backref="wod", lazy="dynamic"
     )
