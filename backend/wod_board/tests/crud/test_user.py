@@ -11,27 +11,24 @@ def test_create_user(db):
 
     user_schema = user_schemas.UserCreate(
         email="foo@bar.com",
-        password="hashed-password",
+        password="very-strong-password",
         username="foo",
     )
     assert user_crud.create_user(db, user_schema)
     assert db.query(user.User).count() == 1
 
-    user_schema = user_schemas.UserCreate(
-        email="foo@bar.com",
-        password="hashed-password",
-        username="bar",
-    )
     with pytest.raises(exceptions.DuplicatedEmail):
         user_crud.create_user(db, user_schema)
+    assert db.query(user.User).count() == 1
 
     user_schema = user_schemas.UserCreate(
         email="bar@foo.com",
-        password="hashed-password",
+        password="very-strong-password",
         username="foo",
     )
     with pytest.raises(exceptions.DuplicatedUsername):
         user_crud.create_user(db, user_schema)
+    assert db.query(user.User).count() == 1
 
 
 def test_get_user_by_id(db, db_user):

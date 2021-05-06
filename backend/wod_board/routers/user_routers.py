@@ -20,7 +20,7 @@ router_token = fastapi.APIRouter(prefix=f"{config.API_URL}", tags=["user"])
 router_user = fastapi.APIRouter(prefix=f"{config.API_URL}/user", tags=["user"])
 
 
-@router_user.post("/register", response_model=user_schemas.UserSchema)
+@router_user.post("/register", response_model=user_schemas.User)
 async def register(
     user_data: user_schemas.UserCreate = fastapi.Depends(
         user_schemas.UserCreate.as_form
@@ -58,13 +58,13 @@ async def login(
     except exceptions.UnknownUser:
         raise login_exception
 
-    if not config.PASSWORD_CTXT.verify(form_data.password, db_user.hashed_password):
+    if not config.PASSWORD_CTXT.verify(form_data.password, db_user.password):
         raise login_exception
 
     return user_utils.create_access_token(db_user)
 
 
-@router_user.get("/current", response_model=user_schemas.UserSchema)
+@router_user.get("/current", response_model=user_schemas.User)
 async def get_current_user(
     current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> user.User:

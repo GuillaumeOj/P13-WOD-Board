@@ -40,7 +40,7 @@ def create_access_token(
 def get_user_with_token(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
     token: str = fastapi.Depends(config.OAUTH2_SCHEME),
-) -> user_schemas.UserSchema:
+) -> user_schemas.User:
     try:
         payload = jwt.decode(
             token,
@@ -53,6 +53,6 @@ def get_user_with_token(
     email: str = payload.get("sub")
 
     try:
-        return user_schemas.UserSchema.from_orm(user_crud.get_user_by_email(db, email))
+        return user_schemas.User.from_orm(user_crud.get_user_by_email(db, email))
     except exceptions.UnknownUser:
         raise exceptions_routers.InvalidToken
