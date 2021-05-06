@@ -5,12 +5,14 @@ from __future__ import annotations
 import datetime
 import typing
 
+import pydantic
+
 from wod_board.schemas import OrmBase
 
 
 class WodBase(OrmBase):
-    title: str
-    description: typing.Optional[str]
+    title: str = pydantic.Field(..., max_length=250)
+    description: typing.Optional[str] = pydantic.Field(default="", max_length=250)
     date: datetime.datetime = datetime.datetime.utcnow()
     is_complete: bool = False
     author_id: int

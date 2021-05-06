@@ -23,9 +23,7 @@ router = fastapi.APIRouter(prefix=f"{config.API_URL}/round", tags=["round"])
 async def create_round(
     round_data: round_schemas.RoundCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> wod_round.Round:
     try:
         return round_crud.create_round(db, round_data, current_user.id)
@@ -51,9 +49,7 @@ async def update_round(
     round_data: round_schemas.RoundCreate,
     round_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> wod_round.Round:
     try:
         return round_crud.update_round(db, round_data, round_id, current_user.id)
@@ -97,9 +93,7 @@ async def get_round_by_id(
 async def delete_round_by_id(
     round_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> typing.Dict[str, str]:
     try:
         round_crud.delete_round_by_id(db, round_id, current_user.id)

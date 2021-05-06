@@ -12,7 +12,7 @@ WOD_TYPE = "AMRAP"
 
 
 def test_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
+    wod_type_schema = wod_schemas.WodTypeCreate(name=WOD_TYPE)
 
     wod_type = wod_crud.create_wod_type(db, wod_type_schema)
     assert wod_type.name == wod_type_schema.name
@@ -53,7 +53,7 @@ def test_get_wod_type_all(db):
 
 
 def test_get_or_create_wod_type(db):
-    wod_type_schema = wod_schemas.WodTypeBase(name=WOD_TYPE)
+    wod_type_schema = wod_schemas.WodTypeCreate(name=WOD_TYPE)
 
     wod_type = wod_crud.get_or_create_wod_type(db, wod_type_schema)
     assert wod_type.name == WOD_TYPE

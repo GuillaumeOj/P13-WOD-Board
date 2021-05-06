@@ -14,26 +14,26 @@ if typing.TYPE_CHECKING:
 class MovementEquipment(models.Base):
     __tablename__ = "movement_equipment"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    movement_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id")
+    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    movement_id: int = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id"), nullable=False
     )
-    equipment_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id")
+    equipment_id: int = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id"), nullable=False
     )
 
 
 class Movement(models.Base):
     __tablename__ = "movement"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
-    unit_id = sqlalchemy.Column(
+    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    name: str = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
+    unit_id: int = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id"), nullable=False
     )
 
     unit: "Unit" = sqlalchemy.orm.relationship("Unit")
-    equipments: typing.List["Equipment"] = sqlalchemy.orm.relationship(
+    equipments: typing.List[typing.Optional["Equipment"]] = sqlalchemy.orm.relationship(
         "Equipment",
         secondary="movement_equipment",
         lazy="dynamic",

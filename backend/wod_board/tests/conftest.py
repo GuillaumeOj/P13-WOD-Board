@@ -40,7 +40,10 @@ def db_user(db):
     password = "very-strong-password"
     hashed_password = config.PASSWORD_CTXT.hash(password)
     new_user = user.User(
-        email="foo@bar.com", hashed_password=hashed_password, username="foo-boy"
+        email="foo@bar.com",
+        password=hashed_password,
+        username="foo-boy",
+        is_admin=False,
     )
     db.add(new_user)
     db.commit()
@@ -55,7 +58,7 @@ def admin(db):
     hashed_password = config.PASSWORD_CTXT.hash(password)
     new_admin = user.User(
         email="admin@bar.com",
-        hashed_password=hashed_password,
+        password=hashed_password,
         username="admin",
         is_admin=True,
     )

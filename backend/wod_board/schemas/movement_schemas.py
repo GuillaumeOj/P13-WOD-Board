@@ -19,4 +19,4 @@ class MovementCreate(MovementBase):
 class Movement(MovementBase):
     id: int
     unit: unit_schemas.Unit
-    equipments: typing.Optional[typing.List[equipment_schemas.Equipment]]
+    equipments: typing.List[typing.Optional[equipment_schemas.Equipment]]

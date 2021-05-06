@@ -23,9 +23,7 @@ router = fastapi.APIRouter(prefix=f"{config.API_URL}/goal", tags=["goal"])
 async def create_goal(
     goal_data: goal_schemas.GoalCreate,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> goal.Goal:
     try:
         return goal_crud.create_goal(db, goal_data, current_user.id)
@@ -42,9 +40,7 @@ async def update_goal(
     goal_data: goal_schemas.GoalCreate,
     goal_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> goal.Goal:
     try:
         return goal_crud.update_goal(db, goal_data, goal_id, current_user.id)
@@ -76,9 +72,7 @@ async def get_goal_by_id(
 async def delete_goal_by_id(
     goal_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-    current_user: user_schemas.UserSchema = fastapi.Depends(
-        user_utils.get_user_with_token
-    ),
+    current_user: user_schemas.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> typing.Dict["str", "str"]:
     try:
         goal_crud.delete_goal_by_id(db, goal_id, current_user.id)
