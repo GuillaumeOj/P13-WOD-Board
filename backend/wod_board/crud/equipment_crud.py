@@ -1,30 +1,42 @@
 import typing
 
+import daiquiri
+import sqlalchemy.exc
 import sqlalchemy.orm
 
 from wod_board import exceptions
-from wod_board.crud import unit_crud
 from wod_board.models import equipment
 from wod_board.schemas import equipment_schemas
+
+
+LOG = daiquiri.getLogger(__name__)
 
 
 def create_equipment(
     db: sqlalchemy.orm.Session,
     equiment_data: equipment_schemas.EquipmentCreate,
 ) -> equipment.Equipment:
-    new_equipment = equipment.Equipment(name=equiment_data.name)
-
-    if equiment_data.unit:
-        new_equipment.unit = unit_crud.get_or_create_unit(db, equiment_data.unit)
+    new_equipment = equipment.Equipment(**equiment_data.dict())
 
     db.add(new_equipment)
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        db.rollback()
+        if (
+            'duplicate key value violates unique constraint "equipment_name_key"'
+            in str(error)
+        ):
+            raise exceptions.NameAlreadyUsed
+
+        LOG.error(str(error))
+
     db.refresh(new_equipment)
 
     return new_equipment
 
 
-def get_equipment_by_exact_name(
+def get_equipment_by_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> equipment.Equipment:
@@ -34,17 +46,5 @@ def get_equipment_by_exact_name(
 
     if db_equiment is None:
         raise exceptions.UnknownEquipment
-
-    return db_equiment
-
-
-def get_or_create_equipment(
-    db: sqlalchemy.orm.Session,
-    equipment_data: equipment_schemas.EquipmentCreate,
-) -> equipment.Equipment:
-    try:
-        db_equiment = get_equipment_by_exact_name(db, equipment_data.name)
-    except exceptions.UnknownEquipment:
-        db_equiment = create_equipment(db, equipment_data)
 
     return db_equiment

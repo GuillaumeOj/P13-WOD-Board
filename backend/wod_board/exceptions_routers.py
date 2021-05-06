@@ -48,3 +48,11 @@ class UnknownMovement(HTTPException):
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This movement doesn't exist",
         )
+
+
+class UnknownEquipment(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="This equipment doesn't exist",
+        )
