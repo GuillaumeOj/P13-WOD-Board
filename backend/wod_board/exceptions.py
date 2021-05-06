@@ -14,6 +14,10 @@ class DuplicatedUsername(Exception):
     pass
 
 
+class NameAlreadyUsed(Exception):
+    pass
+
+
 class TitleAlreadyUsed(Exception):
     pass
 
