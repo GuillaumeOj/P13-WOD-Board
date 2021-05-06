@@ -4,7 +4,6 @@ import daiquiri
 import sqlalchemy.exc
 import sqlalchemy.orm
 
-from wod_board import config
 from wod_board import exceptions
 from wod_board.models import user
 from wod_board.schemas import user_schemas
@@ -16,15 +15,7 @@ LOG = daiquiri.getLogger(__name__)
 def create_user(
     db: sqlalchemy.orm.Session, user_data: user_schemas.UserCreate
 ) -> user.User:
-    hashed_password = config.PASSWORD_CTXT.hash(user_data.password)
-
-    new_user = user.User(
-        email=user_data.email,
-        hashed_password=hashed_password,
-        username=user_data.username,
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-    )
+    new_user = user.User(**user_data.dict())
 
     db.add(new_user)
     try:

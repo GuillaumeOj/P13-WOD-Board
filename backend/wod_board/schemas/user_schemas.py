@@ -3,6 +3,9 @@ import typing
 from fastapi import Form
 from pydantic import BaseModel
 from pydantic import EmailStr
+from pydantic import validator
+
+from wod_board import config
 
 
 class Token(BaseModel):
@@ -38,8 +41,14 @@ class UserCreate(UserBase):
             password=password,
         )
 
+    @validator("password", pre=True, whole=True)
+    def hashed_password(cls, v):
+        if isinstance(v, str):
+            return config.PASSWORD_CTXT.hash(v)
+        return v
 
-class UserSchema(UserBase):
+
+class User(UserBase):
     id: int
 
     class Config:

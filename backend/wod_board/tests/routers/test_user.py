@@ -24,7 +24,7 @@ async def test_register(db, client):
     expected_response = user_json.copy()
     del expected_response["password"]
     expected_response["id"] = 1
-    expected_response["is_admin"] = None
+    expected_response["is_admin"] = False
     assert response.status_code == 200
     assert response.json() == expected_response
     assert db.query(user.User).count() == 1
