@@ -21,7 +21,7 @@ async def test_create_equipment(db, client, token):
     expected_response = {
         "id": 1,
         "name": "Dumbbel",
-        "unit_id": None,
+        "unitId": None,
         "unit": None,
     }
     assert response.status_code == 200
@@ -45,7 +45,7 @@ async def test_get_equipment_by_name(db, client):
     expected_response = {
         "id": 1,
         "name": "Dumbbel",
-        "unit_id": None,
+        "unitId": None,
         "unit": None,
     }
     assert response.status_code == 200

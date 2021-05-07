@@ -13,23 +13,19 @@ async def test_create_round(db, client, db_wod, token, admin):
 
     round_json = {
         "position": 1,
-        "duration_seconds": 60,
+        "durationSeconds": 60,
         "repetition": 5,
-        "wod_id": db_wod.id,
+        "wodId": db_wod.id,
     }
     response = await client.post(
         "/api/round",
         json=round_json,
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
-    expected_response = {
+    expected_response = round_json | {
         "id": 1,
-        "position": 1,
-        "duration_seconds": 60,
-        "repetition": 5,
-        "wod_id": db_wod.id,
-        "parent_id": None,
-        "sub_rounds": [],
+        "parentId": None,
+        "subRounds": [],
         "movements": [],
     }
     assert response.status_code == 200
@@ -38,8 +34,8 @@ async def test_create_round(db, client, db_wod, token, admin):
 
     round_json = {
         "position": 1,
-        "wod_id": 0,
-        "sub_rounds": [],
+        "wodId": 0,
+        "subRounds": [],
         "movements": [],
     }
     response = await client.post(
@@ -53,7 +49,7 @@ async def test_create_round(db, client, db_wod, token, admin):
 
     round_json = {
         "position": 1,
-        "wod_id": db_wod.id,
+        "wodId": db_wod.id,
     }
     response = await client.post(
         "/api/round",
@@ -91,23 +87,19 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
 
     round_json = {
         "position": db_round.position,
-        "duration_seconds": 60,
+        "durationSeconds": 60,
         "repetition": 5,
-        "wod_id": db_round.wod_id,
+        "wodId": db_round.wod_id,
     }
     response = await client.put(
         f"/api/round/{db_round.id}",
         json=round_json,
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
-    expected_response = {
+    expected_response = round_json | {
         "id": db_round.id,
-        "position": round_json["position"],
-        "duration_seconds": round_json["duration_seconds"],
-        "repetition": round_json["repetition"],
-        "wod_id": round_json["wod_id"],
-        "parent_id": None,
-        "sub_rounds": [],
+        "parentId": None,
+        "subRounds": [],
         "movements": [],
     }
     assert response.status_code == 200
@@ -133,9 +125,9 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
 
     round_json = {
         "position": db_round.position,
-        "duration_seconds": 60,
+        "durationSeconds": 60,
         "repetition": 5,
-        "wod_id": 0,
+        "wodId": 0,
     }
     response = await client.put(
         f"/api/round/{db_round.id}",
@@ -152,10 +144,10 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
 
     round_json = {
         "position": 2,
-        "duration_seconds": 60,
+        "durationSeconds": 60,
         "repetition": 5,
-        "wod_id": db_round.wod_id,
-        "sub_rounds": [],
+        "wodId": db_round.wod_id,
+        "subRounds": [],
     }
     response = await client.put(
         f"/api/round/{db_round.id}",
@@ -233,11 +225,11 @@ async def test_get_round_by_id(db, client, db_round):
     expected_response = {
         "id": db_round.id,
         "position": db_round.position,
-        "duration_seconds": db_round.duration_seconds,
+        "durationSeconds": db_round.duration_seconds,
         "repetition": db_round.repetition,
-        "wod_id": db_round.wod_id,
-        "parent_id": db_round.parent_id,
-        "sub_rounds": [],
+        "wodId": db_round.wod_id,
+        "parentId": db_round.parent_id,
+        "subRounds": [],
         "movements": [],
     }
     assert response.status_code == 200
