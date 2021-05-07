@@ -52,10 +52,10 @@ async def create_wod(
         )
 
 
-@router.put("/{id}", response_model=wod_schemas.Wod)
+@router.put("/{wod_id}", response_model=wod_schemas.Wod)
 async def update_wod(
     wod_data: wod_schemas.WodCreate,
-    id: int,
+    wod_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
     current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
 ) -> wod.Wod:
@@ -63,7 +63,7 @@ async def update_wod(
         raise exceptions_routers.AuthorNotUser
 
     try:
-        return wod_crud.update_wod(db, wod_data, id)
+        return wod_crud.update_wod(db, wod_data, wod_id)
     except exceptions.UnknownWodType:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -81,13 +81,13 @@ async def update_wod(
         )
 
 
-@router.get("/{id}", response_model=wod_schemas.Wod)
+@router.get("/{wod_id}", response_model=wod_schemas.Wod)
 async def get_wod_by_id(
-    id: int,
+    wod_id: int,
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> wod.Wod:
     try:
-        return wod_crud.get_wod_by_id(db, id)
+        return wod_crud.get_wod_by_id(db, wod_id)
     except exceptions.UnknownWod:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

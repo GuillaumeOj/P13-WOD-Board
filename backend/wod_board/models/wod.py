@@ -34,7 +34,7 @@ class Wod(models.Base):
         sqlalchemy.Integer, sqlalchemy.ForeignKey("wod_type.id")
     )
 
-    wod_type: typing.Optional[WodType] = sqlalchemy.orm.relationship("WodType")
+    wod_type: typing.Optional["WodType"] = sqlalchemy.orm.relationship("WodType")
     author: "User" = sqlalchemy.orm.relationship("User")
     rounds: typing.List["Round"] = sqlalchemy.orm.relationship(
         "Round", cascade="all, delete", backref="wod", lazy="dynamic"
