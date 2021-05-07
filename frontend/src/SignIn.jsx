@@ -22,9 +22,7 @@ export default function SignIn() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('username', email);
-    formData.append('password', password);
+    const formData = new FormData(event.target);
 
     axios
       .post('/api/user/token', formData)
@@ -66,8 +64,6 @@ export default function SignIn() {
           <form onSubmit={handleSubmit}>
             <div className="field">
               <label htmlFor="username">Email:&nbsp;</label>
-              {/* The field is named username
-            because we use the 'email' as an 'username' */}
               <input
                 type="text"
                 name="username"
@@ -88,7 +84,7 @@ export default function SignIn() {
                 required
               />
             </div>
-            <input type="submit" onClick={handleSubmit} value="Sign In" className="button primary" />
+            <input type="submit" value="Sign In" className="button primary" />
             <p>
               Don&apos;t have any account?{' '}
               <Link to="/register">Register</Link> now.
