@@ -9,6 +9,7 @@ from wod_board.models import equipment
 from wod_board.models import movement
 from wod_board.models import unit
 from wod_board.models import user
+from wod_board.models import w_type
 
 
 def users(db: sqlalchemy.orm.Session) -> None:
@@ -108,6 +109,15 @@ def movements(db: sqlalchemy.orm.Session) -> None:
     db.commit()
 
 
+def types(db: sqlalchemy.orm.Session) -> None:
+    types = ["AMRAP", "EMOM", "For Time", "For Load", "TABATA"]
+
+    for wod_type in types:
+        db.add(w_type.WodType(name=wod_type))
+
+    db.commit()
+
+
 def seed_db() -> None:
     models.drop_all()
     models.create_all()
@@ -121,6 +131,7 @@ def seed_db() -> None:
     units(db)
     equipments(db)
     movements(db)
+    types(db)
 
 
 if __name__ == "__main__":

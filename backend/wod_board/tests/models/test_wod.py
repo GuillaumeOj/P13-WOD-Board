@@ -9,25 +9,6 @@ from wod_board.models import wod
 NOW = datetime.datetime.utcnow()
 
 
-def test_wod_type(db):
-    wod_type = wod.WodType(name="AMRAP")
-    db.add(wod_type)
-    db.commit()
-    db.refresh(wod_type)
-
-    assert wod_type.id == 1
-    assert wod_type.name == "AMRAP"
-
-    wod_type = wod.WodType(name="AMRAP")
-    db.add(wod_type)
-    with pytest.raises(sqlalchemy.exc.IntegrityError) as error:
-        db.commit()
-
-    assert 'duplicate key value violates unique constraint "wod_type_name_key"' in str(
-        error
-    )
-
-
 def test_wod(db, db_user):
     assert db.query(wod.Wod).count() == 0
 

@@ -9,14 +9,8 @@ from wod_board import models
 
 if typing.TYPE_CHECKING:
     from wod_board.models.user import User
+    from wod_board.models.w_type import WodType
     from wod_board.models.wod_round import Round
-
-
-class WodType(models.Base):
-    __tablename__ = "wod_type"
-
-    id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name: str = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
 
 
 class Wod(models.Base):
