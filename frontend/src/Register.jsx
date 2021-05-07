@@ -28,16 +28,11 @@ export default function Register() {
     event.preventDefault();
 
     if (password !== password2) {
-      addAlert({ message: 'Passwords don&apos;t match.', alertType: 'error' });
+      addAlert({ message: 'Passwords don\'t match.', alertType: 'error' });
       return;
     }
 
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
+    const formData = new FormData(event.target);
 
     axios
       .post('/api/user/register', formData)
@@ -80,24 +75,22 @@ export default function Register() {
         <div className="subContent">
           <form onSubmit={handleSubmit}>
             <div className="field">
-              <label htmlFor="username">Email*:&nbsp;</label>
-              {/* The field is named username
-            because we use the 'email' as an 'username' */}
+              <label htmlFor="email">Email*:&nbsp;</label>
               <input
                 type="text"
-                name="username"
-                id="username"
+                name="email"
+                id="email"
                 value={email}
                 onChange={setEmail}
                 required
               />
             </div>
             <div className="field">
-              <label htmlFor="username2">Username*:&nbsp;</label>
+              <label htmlFor="username">Username*:&nbsp;</label>
               <input
                 type="text"
-                name="username2"
-                id="username2"
+                name="username"
+                id="username"
                 value={username}
                 onChange={setUsername}
                 required
