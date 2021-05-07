@@ -4,6 +4,39 @@ from wod_board.models import w_type
 
 
 @pytest.mark.asyncio
+async def test_create_wod_type(db, client, token):
+    assert db.query(w_type.WodType).count() == 0
+
+    type_json = {"name": "AMRAP"}
+    response = await client.post(
+        "/api/type/",
+        json=type_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
+    excpected_response = type_json | {"id": 1}
+    assert response.status_code == 200
+    assert response.json() == excpected_response
+    assert db.query(w_type.WodType).count() == 1
+
+    response = await client.post(
+        "/api/type/",
+        json=type_json,
+    )
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
+    assert db.query(w_type.WodType).count() == 1
+
+    response = await client.post(
+        "/api/type/",
+        json=type_json,
+        headers={"Authorization": f"Bearer {token.access_token}"},
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This type already exists"}
+    assert db.query(w_type.WodType).count() == 1
+
+
+@pytest.mark.asyncio
 async def test_get_wod_types_by_name(db, client):
     response = await client.get("/api/type/list/AMRAP")
     assert response.status_code == 200
