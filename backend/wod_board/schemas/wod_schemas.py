@@ -25,23 +25,12 @@ class WodCreate(WodBase):
 
 class Wod(WodBase):
     id: int
-    wod_type: typing.Optional[WodType]
+    wod_type: "typing.Optional[WodType]"
     rounds: "typing.List[Round]"
 
 
-class WodTypeBase(OrmBase):
-    name: str
-
-
-class WodTypeCreate(WodTypeBase):
-    pass
-
-
-class WodType(WodTypeBase):
-    id: int
-
-
 from wod_board.schemas.round_schemas import Round  # noqa
+from wod_board.schemas.type_schemas import WodType  # noqa
 
 
 WodCreate.update_forward_refs()

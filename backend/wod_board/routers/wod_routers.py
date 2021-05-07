@@ -1,5 +1,3 @@
-import typing
-
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -17,16 +15,6 @@ from wod_board.utils import user_utils
 
 
 router = fastapi.APIRouter(prefix=f"{config.API_URL}/wod", tags=["wod"])
-
-
-@router.get(
-    "/types/{name}", response_model=typing.List[typing.Optional[wod_schemas.WodType]]
-)
-async def get_wod_types_by_name(
-    name: str,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> typing.List[typing.Optional[wod.WodType]]:
-    return wod_crud.get_wod_types_by_name(db, name)
 
 
 @router.post("/", response_model=wod_schemas.Wod)

@@ -182,22 +182,3 @@ async def test_get_wod_by_id(db, client, db_wod):
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod.Wod).count() == 1
-
-
-@pytest.mark.asyncio
-async def test_get_wod_types_by_name(db, client):
-    response = await client.get("/api/wod/types/AMRAP")
-    assert response.status_code == 200
-    assert response.json() == []
-
-    db.add(wod.WodType(name="For Time"))
-    db.add(wod.WodType(name="For Load"))
-    db.commit()
-
-    response = await client.get("/api/wod/types/for")
-    assert response.status_code == 200
-    assert len(response.json()) == 2
-
-    response = await client.get("/api/wod/types/loa")
-    assert response.status_code == 200
-    assert len(response.json()) == 1
