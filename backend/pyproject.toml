@@ -17,7 +17,7 @@ python-dotenv = "^0.17.1"
 python-jose = {extras = ["cryptography"], version = "^3.2.0"}
 python-multipart = "^0.0.5"
 sentry-sdk = "^1.1.0"
-SQLAlchemy = {extras = ["postgresql"], version = "^1.4.13"}
+SQLAlchemy = {extras = ["postgresql"], version = "^1.4.14"}
 uvicorn = {extras = ["standard"], version = "^0.13.4"}
 daiquiri = "^3.0.0"
 
