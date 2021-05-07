@@ -12,8 +12,8 @@ async def test_register(db, client):
     user_json = {
         "email": "foo@bar.com",
         "username": "foo_bar",
-        "first_name": "foo",
-        "last_name": "bar",
+        "firstName": "foo",
+        "lastName": "bar",
         "password": "strong-password",
     }
     response = await client.post(
@@ -21,10 +21,11 @@ async def test_register(db, client):
         headers={"X-Token": "foobar"},
         data=user_json,
     )
-    expected_response = user_json.copy()
+    expected_response = user_json | {
+        "id": 1,
+        "isAdmin": False,
+    }
     del expected_response["password"]
-    expected_response["id"] = 1
-    expected_response["is_admin"] = False
     assert response.status_code == 200
     assert response.json() == expected_response
     assert db.query(user.User).count() == 1
@@ -38,8 +39,7 @@ async def test_register(db, client):
     assert response.json() == {"detail": "Email already used"}
     assert db.query(user.User).count() == 1
 
-    user_json2 = user_json.copy()
-    user_json2["email"] = "foo2@bar.com"
+    user_json2 = user_json | {"email": "foo2@bar.com"}
     response = await client.post(
         "/api/user/register",
         headers={"X-Token": "foobar"},
@@ -64,7 +64,7 @@ async def test_login(client, db_user):
             data=user_data,
         )
     assert response.status_code == 200
-    assert response.json() == {"access_token": foo_token, "token_type": "bearer"}
+    assert response.json() == {"accessToken": foo_token, "tokenType": "bearer"}
 
     user_data = {
         "username": "bar@foo.com",
@@ -102,9 +102,9 @@ async def test_get_current_user(client, db_user, token):
         "id": db_user.id,
         "username": db_user.username,
         "email": db_user.email,
-        "first_name": db_user.first_name,
-        "last_name": db_user.last_name,
-        "is_admin": db_user.is_admin,
+        "firstName": db_user.first_name,
+        "lastName": db_user.last_name,
+        "isAdmin": db_user.is_admin,
     }
     assert response.status_code == 200
     assert response.json() == expected_response

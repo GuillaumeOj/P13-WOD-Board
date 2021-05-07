@@ -8,10 +8,10 @@ async def test_create_goal(db, client, db_round, db_movement, token, token_admin
     assert db.query(goal.Goal).count() == 0
 
     goal_json = {
-        "movement_id": db_movement.id,
-        "round_id": db_round.id,
+        "movementId": db_movement.id,
+        "roundId": db_round.id,
         "repetition": 10,
-        "duration_seconds": 60 * 5,
+        "durationSeconds": 60 * 5,
     }
     response = await client.post(
         "/api/goal",
@@ -30,7 +30,7 @@ async def test_create_goal(db, client, db_round, db_movement, token, token_admin
                 "name": db_movement.unit.name,
                 "symbol": db_movement.unit.symbol,
             },
-            "unit_id": db_movement.unit.id,
+            "unitId": db_movement.unit.id,
         },
     }
     assert response.status_code == 200
@@ -52,8 +52,8 @@ async def test_create_goal(db, client, db_round, db_movement, token, token_admin
     assert db.query(goal.Goal).count() == 1
 
     goal_json = {
-        "movement_id": db_movement.id,
-        "round_id": 2,
+        "movementId": db_movement.id,
+        "roundId": 2,
         "repetition": 10,
     }
     response = await client.post(
@@ -81,10 +81,10 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
     assert db.query(goal.Goal).count() == 1
 
     goal_json = {
-        "movement_id": db_goal.movement_id,
-        "round_id": db_goal.round_id,
+        "movementId": db_goal.movement_id,
+        "roundId": db_goal.round_id,
         "repetition": 10,
-        "duration_seconds": 60 * 5,
+        "durationSeconds": 60 * 5,
     }
     response = await client.put(
         f"/api/goal/{db_goal.id}",
@@ -103,7 +103,7 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
                 "name": db_goal.movement.unit.name,
                 "symbol": db_goal.movement.unit.symbol,
             },
-            "unit_id": db_goal.movement.unit.id,
+            "unitId": db_goal.movement.unit.id,
         },
     }
     assert response.status_code == 200
@@ -131,10 +131,10 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
     assert response.json() == {"detail": "This goal doesn't exist"}
 
     goal_json = {
-        "movement_id": 2,
-        "round_id": db_goal.round_id,
+        "movementId": 2,
+        "roundId": db_goal.round_id,
         "repetition": 10,
-        "duration_seconds": 60 * 5,
+        "durationSeconds": 60 * 5,
     }
     response = await client.put(
         f"/api/goal/{db_goal.id}",
@@ -145,10 +145,10 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
     assert response.json() == {"detail": "This movement doesn't exist"}
 
     goal_json = {
-        "movement_id": db_goal.movement_id,
-        "round_id": 2,
+        "movementId": db_goal.movement_id,
+        "roundId": 2,
         "repetition": 10,
-        "duration_seconds": 60 * 5,
+        "durationSeconds": 60 * 5,
     }
     response = await client.put(
         f"/api/goal/{db_goal.id}",
@@ -168,10 +168,10 @@ async def test_get_goal_by_id(client, db_goal):
     response = await client.get(f"/api/goal/{db_goal.id}")
     expected_response = {
         "id": 1,
-        "round_id": db_goal.round_id,
-        "movement_id": db_goal.movement_id,
+        "roundId": db_goal.round_id,
+        "movementId": db_goal.movement_id,
         "repetition": None,
-        "duration_seconds": None,
+        "durationSeconds": None,
         "equipments": [],
         "movement": {
             "equipments": db_goal.movement.equipments.all(),
@@ -182,7 +182,7 @@ async def test_get_goal_by_id(client, db_goal):
                 "name": db_goal.movement.unit.name,
                 "symbol": db_goal.movement.unit.symbol,
             },
-            "unit_id": db_goal.movement.unit.id,
+            "unitId": db_goal.movement.unit.id,
         },
     }
 

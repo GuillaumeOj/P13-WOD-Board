@@ -1,19 +1,19 @@
 import typing
 
 from fastapi import Form
-from pydantic import BaseModel
 from pydantic import EmailStr
 from pydantic import validator
 
 from wod_board import config
+from wod_board.schemas import Base
 
 
-class Token(BaseModel):
+class Token(Base):
     access_token: str
     token_type: str = "bearer"
 
 
-class UserBase(BaseModel):
+class UserBase(Base):
     email: EmailStr
     username: str
     first_name: typing.Optional[str]
@@ -29,15 +29,15 @@ class UserCreate(UserBase):
         cls,
         email: EmailStr = Form(...),
         username: str = Form(...),
-        first_name: typing.Optional[str] = Form(None),
-        last_name: typing.Optional[str] = Form(None),
+        firstName: typing.Optional[str] = Form(None),
+        lastName: typing.Optional[str] = Form(None),
         password: str = Form(...),
     ) -> "UserCreate":
         return cls(
             email=email,
             username=username,
-            first_name=first_name,
-            last_name=last_name,
+            first_name=firstName,
+            last_name=lastName,
             password=password,
         )
 

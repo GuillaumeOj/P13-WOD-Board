@@ -11,23 +11,19 @@ async def test_create_wod(db, client, db_user, token):
         "title": "Murph",
         "description": "Murph Day!",
         "date": "2021-03-24T14:42:46.580110",
-        "author_id": db_user.id,
+        "authorId": db_user.id,
     }
     response = await client.post(
         "/api/wod",
         json=wod_json,
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
-    expected_response = {
+    expected_response = wod_json | {
         "id": 1,
-        "title": "Murph",
-        "description": "Murph Day!",
-        "date": "2021-03-24T14:42:46.580110",
-        "is_complete": False,
-        "author_id": db_user.id,
-        "wod_type_id": None,
+        "isComplete": False,
+        "wodTypeId": None,
         "rounds": [],
-        "wod_type": None,
+        "wodType": None,
     }
     assert response.status_code == 200
     assert response.json() == expected_response
@@ -45,7 +41,7 @@ async def test_create_wod(db, client, db_user, token):
         "title": "Murph",
         "description": "Murph Day!",
         "date": "2021-03-24T14:42:46.580110",
-        "author_id": 2,
+        "authorId": 2,
     }
     response = await client.post(
         "/api/wod",
@@ -60,7 +56,7 @@ async def test_create_wod(db, client, db_user, token):
         "title": "Murph",
         "description": "Murph Day!",
         "date": "2021-03-24T14:42:46.580110",
-        "author_id": db_user.id,
+        "authorId": db_user.id,
     }
     response = await client.post(
         "/api/wod",
@@ -74,8 +70,8 @@ async def test_create_wod(db, client, db_user, token):
     wod_json = {
         "title": "Cindy",
         "date": "2021-03-24T14:42:46.580110",
-        "author_id": db_user.id,
-        "wod_type_id": 2,
+        "authorId": db_user.id,
+        "wodTypeId": 2,
     }
     response = await client.post(
         "/api/wod",
@@ -103,7 +99,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
 
     wod_json = {
         "title": "Karen",
-        "author_id": db_user.id,
+        "authorId": db_user.id,
     }
     response = await client.put(
         f"/api/wod/{db_wod.id}",
@@ -125,8 +121,8 @@ async def test_update_wod(db, client, db_user, db_wod, token):
 
     wod_json = {
         "title": "Karen",
-        "author_id": db_user.id,
-        "wod_type_id": 1,
+        "authorId": db_user.id,
+        "wodTypeId": 1,
     }
     response = await client.put(
         f"/api/wod/{db_wod.id}",
@@ -139,7 +135,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
 
     wod_json = {
         "title": "Karen",
-        "author_id": 2,
+        "authorId": 2,
     }
     response = await client.put(
         f"/api/wod/{db_wod.id}",
@@ -157,7 +153,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
 
     wod_json = {
         "title": "Cindy",
-        "author_id": db_user.id,
+        "authorId": db_user.id,
     }
     response = await client.put(
         f"/api/wod/{db_wod.id}",

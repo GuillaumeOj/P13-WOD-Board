@@ -8,7 +8,7 @@ from wod_board.schemas import movement_schemas
 async def test_create_movement(db, client, db_unit, token):
     assert db.query(movement.Movement).count() == 0
 
-    movement_json = {"name": "Devil Press", "unit_id": db_unit.id}
+    movement_json = {"name": "Devil Press", "unitId": db_unit.id}
     response = await client.post(
         "/api/movement/",
         json=movement_json,
@@ -39,15 +39,15 @@ async def test_get_movements_by_name(db, client, db_unit):
 
     response = await client.get("/api/movement/Pres")
     expected_response = [
-        movement_schemas.Movement.from_orm(devil_press),
-        movement_schemas.Movement.from_orm(push_press),
+        movement_schemas.Movement.from_orm(devil_press).dict(by_alias=True),
+        movement_schemas.Movement.from_orm(push_press).dict(by_alias=True),
     ]
     assert response.status_code == 200
     assert response.json() == expected_response
 
     response = await client.get("/api/movement/Devil Pres")
     expected_response = [
-        movement_schemas.Movement.from_orm(devil_press),
+        movement_schemas.Movement.from_orm(devil_press).dict(by_alias=True),
     ]
     assert response.status_code == 200
     assert response.json() == expected_response
