@@ -111,17 +111,16 @@ def update_wod(
     wod_data: wod_schemas.WodCreate,
     wod_id: int,
 ) -> wod.Wod:
+    db_wod: typing.Optional[wod.Wod] = db.get(wod.Wod, wod_id)
 
-    wod_to_update: wod.Wod = db.get(wod.Wod, wod_id)
-
-    if wod_to_update is None:
+    if db_wod is None:
         raise exceptions.UnknownWod
 
-    wod_to_update.title = wod_data.title
-    wod_to_update.description = wod_data.description
-    wod_to_update.date = wod_data.date
-    wod_to_update.author_id = wod_data.author_id
-    wod_to_update.wod_type_id = wod_data.wod_type_id
+    db_wod.title = wod_data.title
+    db_wod.description = wod_data.description
+    db_wod.date = wod_data.date
+    db_wod.author_id = wod_data.author_id
+    db_wod.wod_type_id = wod_data.wod_type_id
 
     try:
         db.commit()
@@ -143,6 +142,15 @@ def update_wod(
             raise exceptions.TitleAlreadyUsed
         LOG.error(error)
 
-    db.refresh(wod_to_update)
+    db.refresh(db_wod)
 
-    return wod_to_update
+    return db_wod
+
+
+def get_wod_by_id(db: sqlalchemy.orm.Session, wod_id: int) -> wod.Wod:
+    db_wod: typing.Optional[wod.Wod] = db.get(wod.Wod, wod_id)
+
+    if db_wod is None:
+        raise exceptions.UnknownWod
+
+    return db_wod
