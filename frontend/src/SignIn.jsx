@@ -1,23 +1,18 @@
 import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import {
-  Link, Redirect, useLocation,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useAlert } from './Alert';
 import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function SignIn() {
-  const location = useLocation();
   const auth = useAuth();
   const { addAlert } = useAlert();
 
   const [email, setEmail] = useInput('');
   const [password, setPassword] = useInput('');
-
-  const { from } = location.state || { from: { pathname: '/' } };
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -45,10 +40,6 @@ export default function SignIn() {
           addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
-  }
-
-  if (auth.user) {
-    return <Redirect to={from.pathname} />;
   }
 
   return (

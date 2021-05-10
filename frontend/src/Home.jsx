@@ -1,12 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { Redirect, Link } from 'react-router-dom';
-
-import { useAuth } from './Auth';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
-  const auth = useAuth();
-  return (auth.user ? <Redirect to="/dashboard" /> : (
+  return (
     <>
       <Helmet>
         <title>Welcome to WOD Board!</title>
@@ -48,5 +45,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  ));
+  );
 }
