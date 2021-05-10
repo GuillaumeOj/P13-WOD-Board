@@ -10,7 +10,7 @@ from wod_board.schemas import Base
 
 class Token(Base):
     access_token: str
-    token_type: str = "bearer"
+    token_type: str = "Bearer"
 
 
 class UserBase(Base):
