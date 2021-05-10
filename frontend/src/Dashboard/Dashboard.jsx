@@ -1,22 +1,16 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import {
-  Redirect, Route, Switch, useLocation, useRouteMatch,
+  Switch, useRouteMatch,
 } from 'react-router-dom';
 
-import { useAuth } from '../Auth';
+import { PrivateRoute } from '../CustomRoute';
 
 import SideNav from './SideNav';
 import Wod from './WodComposer/Wod';
 
 export default function Dashboard() {
   const { path } = useRouteMatch();
-  const location = useLocation();
-  const auth = useAuth();
-
-  if (!auth.user) {
-    return <Redirect to="/signin" from={location.state} />;
-  }
 
   return (
     <>
@@ -26,14 +20,14 @@ export default function Dashboard() {
       <section id="dashboard">
         <SideNav />
         <Switch>
-          <Route exact path={path}>
+          <PrivateRoute exact path={path}>
             <div className="subContent">
               <h2 className="title">Welcome to your Dashboard</h2>
             </div>
-          </Route>
-          <Route path={`${path}/create-wod`}>
+          </PrivateRoute>
+          <PrivateRoute path={`${path}/create-wod`}>
             <Wod />
-          </Route>
+          </PrivateRoute>
         </Switch>
       </section>
     </>

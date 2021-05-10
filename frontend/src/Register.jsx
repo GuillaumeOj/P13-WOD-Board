@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import {
-  Link, Redirect, useHistory, useLocation,
+  Link, useHistory, useLocation,
 } from 'react-router-dom';
 
 import { useAlert } from './Alert';
@@ -56,10 +56,6 @@ export default function Register() {
           addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
-  }
-
-  if (auth.user) {
-    return <Redirect to={from.pathname} />;
   }
 
   return (

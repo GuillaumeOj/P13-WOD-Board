@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import { DisplayAlerts } from './Alert';
+import { AnonymRoute, PrivateRoute } from './CustomRoute';
 import Dashboard from './Dashboard/Dashboard';
 import Home from './Home';
 import NavBar from './Nav';
@@ -16,21 +17,21 @@ function App() {
       <DisplayAlerts />
       <div id="content">
         <Switch>
-          <Route exact path="/">
+          <AnonymRoute exact path="/">
             <Home />
-          </Route>
-          <Route path="/profile">
+          </AnonymRoute>
+          <PrivateRoute path="/profile">
             <Home />
-          </Route>
-          <Route path="/register">
+          </PrivateRoute>
+          <AnonymRoute path="/register">
             <Register />
-          </Route>
-          <Route path="/signin">
+          </AnonymRoute>
+          <AnonymRoute path="/signin">
             <SignIn />
-          </Route>
-          <Route path="/dashboard">
+          </AnonymRoute>
+          <PrivateRoute path="/dashboard">
             <Dashboard />
-          </Route>
+          </PrivateRoute>
           <Route path="*">
             <NotFound />
           </Route>
