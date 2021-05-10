@@ -12,8 +12,8 @@ dayjs.extend(utc);
 
 export default function Wod() {
   const [id, setId] = useState(0);
+  const [title, setTitle] = useInput('');
   const [description, setDescription] = useInput('');
-  const [note, setNote] = useInput('');
   const date = dayjs.utc().format();
 
   const [wod, setWod] = useState();
@@ -21,8 +21,8 @@ export default function Wod() {
   const updateWod = () => {
     const updatedWod = {
       id,
+      title,
       description,
-      note,
       date,
     };
     setWod(updatedWod);
@@ -30,7 +30,7 @@ export default function Wod() {
 
   useEffect(() => {
     updateWod();
-  }, [date, id, description, note]);
+  }, [date, id, description, title]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -49,6 +49,18 @@ export default function Wod() {
         <h2 className="title">Create a new WOD</h2>
         <form onSubmit={handleSubmit}>
           <div className="field">
+            <label htmlFor="title">Title*:&nbsp;</label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              value={title}
+              onChange={setTitle}
+              required
+              placeholder="Murph, Cindy, etc."
+            />
+          </div>
+          <div className="field">
             <label htmlFor="description">Description:&nbsp;</label>
             <input
               type="text"
@@ -56,11 +68,8 @@ export default function Wod() {
               id="description"
               value={description}
               onChange={setDescription}
+              placeholder="Murph Day!"
             />
-          </div>
-          <div className="field">
-            <label htmlFor="note">Note:&nbsp;</label>
-            <input type="text" name="note" id="note" value={note} onChange={setNote} />
           </div>
           <WodType />
           <Rounds wod={wod} />
