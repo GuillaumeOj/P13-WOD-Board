@@ -1,6 +1,7 @@
 import typing
 
 from fastapi import Form
+import pydantic
 from pydantic import EmailStr
 from pydantic import validator
 
@@ -8,7 +9,7 @@ from wod_board import config
 from wod_board.schemas import Base
 
 
-class Token(Base):
+class Token(pydantic.BaseModel):
     access_token: str
     token_type: str = "Bearer"
 

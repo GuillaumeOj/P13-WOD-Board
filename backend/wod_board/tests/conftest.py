@@ -84,7 +84,7 @@ def db_wod(db, db_user):
     new_wod = wod.Wod(
         title="Murph",
         date=datetime.datetime.utcnow(),
-        is_complete=True,
+        is_complete=False,
         author_id=db_user.id,
     )
     db.add(new_wod)

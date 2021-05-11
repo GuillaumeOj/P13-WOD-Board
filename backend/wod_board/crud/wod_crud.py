@@ -91,3 +91,14 @@ def get_wod_by_id(db: sqlalchemy.orm.Session, wod_id: int) -> wod.Wod:
         raise exceptions.UnknownWod
 
     return db_wod
+
+
+def get_wod_incomplete(db: sqlalchemy.orm.Session, author_id: int) -> wod.Wod:
+    db_wod: typing.Optional[wod.Wod] = (
+        db.query(wod.Wod).filter_by(author_id=author_id, is_complete=False).first()
+    )
+
+    if db_wod is None:
+        raise exceptions.UnknownWod
+
+    return db_wod

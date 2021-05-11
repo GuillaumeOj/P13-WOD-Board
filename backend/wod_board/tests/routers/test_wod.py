@@ -1,8 +1,10 @@
 import datetime
+import json
 
 import pytest
 
 from wod_board.models import wod
+from wod_board.schemas import wod_schemas
 
 
 @pytest.mark.asyncio
@@ -177,4 +179,36 @@ async def test_get_wod_by_id(db, client, db_wod):
     response = await client.get("/api/wod/2")
     assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
+    assert db.query(wod.Wod).count() == 1
+
+
+@pytest.mark.asyncio
+async def test_get_wod_incomplete(db, client, db_wod, token, token_admin):
+    assert db.query(wod.Wod).count() == 1
+
+    response = await client.get(
+        "/api/wod/incomplete/",
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
+    )
+    assert response.status_code == 200
+    assert response.json() == json.loads(
+        wod_schemas.Wod.from_orm(db_wod).json(by_alias=True)
+    )
+    assert db.query(wod.Wod).count() == 1
+
+    response = await client.get(
+        "/api/wod/incomplete/",
+    )
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
+    assert db.query(wod.Wod).count() == 1
+
+    response = await client.get(
+        "/api/wod/incomplete/",
+        headers={
+            "Authorization": f"{token_admin.token_type} {token_admin.access_token}"
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() is None
     assert db.query(wod.Wod).count() == 1

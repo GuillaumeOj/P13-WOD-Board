@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 from fastapi import status
 from fastapi.exceptions import HTTPException
@@ -38,6 +40,17 @@ async def create_wod(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="This title is already used",
         )
+
+
+@router.get("/incomplete", response_model=wod_schemas.Wod)
+async def get_wod_incomplete(
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+    current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
+) -> typing.Optional[wod.Wod]:
+    try:
+        return wod_crud.get_wod_incomplete(db, current_user.id)
+    except exceptions.UnknownWod:
+        return None
 
 
 @router.put("/{wod_id}", response_model=wod_schemas.Wod)
