@@ -11,10 +11,11 @@ import WodType from './WodType';
 dayjs.extend(utc);
 
 export default function Wod() {
-  const [id, setId] = useState(0);
+  const [id, setId] = useState();
   const [title, setTitle] = useInput('');
   const [description, setDescription] = useInput('');
   const date = dayjs.utc().format();
+  const [wodTypeId, setWodTypeId] = useState();
 
   const [wod, setWod] = useState();
 
@@ -24,13 +25,14 @@ export default function Wod() {
       title,
       description,
       date,
+      wodTypeId,
     };
     setWod(updatedWod);
   };
 
   useEffect(() => {
     updateWod();
-  }, [date, id, description, title]);
+  }, [date, id, description, title, wodTypeId]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,7 +73,7 @@ export default function Wod() {
               placeholder="Murph Day!"
             />
           </div>
-          <WodType />
+          <WodType setWodTypeId={setWodTypeId} />
           <Rounds wod={wod} />
           <p>All fields marked with * are required.</p>
           <input type="submit" value="New WOD" className="button primary" />

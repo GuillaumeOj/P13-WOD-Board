@@ -1,26 +1,24 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 
 import { useAlert } from '../../Alert';
-import { useAuth } from '../../Auth';
 
-export default function Wod() {
+export default function WodType({ setWodTypeId }) {
   const { addAlert } = useAlert();
-  const { user } = useAuth();
-  const headers = { Authorization: `${user.tokenType} ${user.accessToken}` };
-  const config = { headers };
 
-  const [id, setId] = useState(-1);
+  const [id, setId] = useState();
   const [name, setName] = useState('');
 
   const [wodTypes, setWodTypes] = useState([]);
 
   const searchWodTypes = (event) => {
     const currentValue = event.target.value;
+    setId();
     setName(currentValue);
     if (currentValue) {
       axios
-        .get(`/api/type/list/${currentValue}`, config)
+        .get(`/api/type/list/${currentValue}`)
         .then((response) => setWodTypes(response.data))
         .catch((error) => {
           if (error) {
@@ -45,6 +43,14 @@ export default function Wod() {
     } else { setWodTypes([]); }
   };
 
+  const selectWodType = (itemId, itemName) => {
+    setId(itemId);
+    setName(itemName);
+    setWodTypes([]);
+  };
+
+  useEffect(() => { setWodTypeId(id); }, [id]);
+
   return (
     <div className="field">
       <label htmlFor="wodType">Type of WOD*:&nbsp;</label>
@@ -53,9 +59,6 @@ export default function Wod() {
         id="wodType"
         value={name}
         onChange={searchWodTypes}
-        onBlur={() => {
-          console.log(id);
-        }}
         required
         placeholder="AMRAP, EMOM, etc."
       />
@@ -68,11 +71,7 @@ export default function Wod() {
               type="button"
               key={item.id}
               value={item.name}
-              onClick={() => {
-                setId(item.id);
-                setName(item.name);
-                setWodTypes([]);
-              }}
+              onClick={() => selectWodType(item.id, item.name)}
             >
               {item.name}
             </button>
@@ -83,3 +82,6 @@ export default function Wod() {
     </div>
   );
 }
+WodType.propTypes = {
+  setWodTypeId: PropTypes.func.isRequired,
+};
