@@ -76,3 +76,22 @@ def test_get_wod_by_id(db, db_wod):
 
     wanted_wod = wod_crud.get_wod_by_id(db, db_wod.id)
     assert wanted_wod.title == db_wod.title
+
+
+def test_get_wod_incomplete(db, db_user, db_wod):
+    db.add(
+        wod.Wod(
+            title="Dummy WOD",
+            date=datetime.datetime.utcnow(),
+            is_complete=True,
+            author_id=db_user.id,
+        )
+    )
+    db.commit()
+    assert db.query(wod.Wod).count() == 2
+    assert not db_wod.is_complete
+    assert db_wod.author_id == db_user.id
+
+    uncomplete_wod = wod_crud.get_wod_incomplete(db, db_user.id)
+    assert isinstance(uncomplete_wod, wod.Wod)
+    assert uncomplete_wod.id == db_wod.id
