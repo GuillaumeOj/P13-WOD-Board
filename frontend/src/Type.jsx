@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 
 export const TokenPropType = PropTypes.shape({
-  accessToken: PropTypes.string.isRequired,
-  tokenType: PropTypes.string.isRequired,
+  access_token: PropTypes.string.isRequired,
+  token_type: PropTypes.string.isRequired,
 });
 
 export const UnitPropType = PropTypes.shape({
