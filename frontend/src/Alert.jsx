@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState, useContext, createContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,6 +22,10 @@ function useProvideAlert() {
       id,
     });
     setMessages(updatedAlerts);
+  };
+  addAlert.propTypes = {
+    message: PropTypes.string.isRequired,
+    alertType: PropTypes.oneOf(['error', 'success', 'warning']).isRequired,
   };
 
   return {
