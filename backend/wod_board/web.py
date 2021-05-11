@@ -1,5 +1,6 @@
 import daiquiri
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
@@ -24,6 +25,13 @@ app.include_router(unit_routers.router)
 app.include_router(user_routers.router_user)
 app.include_router(user_routers.router_token)
 app.include_router(wod_routers.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if config.WOD_BOARD_ENV != "test":
     sentry_sdk.init(

@@ -36,3 +36,5 @@ if WOD_BOARD_ENV == "test":
     LOGGING_LEVEL = logging.INFO
 else:
     LOGGING_LEVEL = logging.WARNING
+
+ORIGINS = ["http://localhost:3000", "https://projet-13.ojardias.io"]
