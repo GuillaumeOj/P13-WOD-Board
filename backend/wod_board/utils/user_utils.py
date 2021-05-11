@@ -34,7 +34,7 @@ def create_access_token(
         to_encode, config.SECRET_KEY, algorithm=config.ACCESS_TOKEN_ALGORITHM
     )
 
-    return user_schemas.Token(access_token=encoded_jwt, token_type="bearer")
+    return user_schemas.Token(access_token=encoded_jwt)
 
 
 def get_user_with_token(
