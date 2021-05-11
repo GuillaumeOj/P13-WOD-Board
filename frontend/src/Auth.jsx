@@ -1,3 +1,4 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, {
   createContext, useEffect, useState, useContext,
@@ -26,6 +27,38 @@ function useProvideAuth() {
     addAlert({ message: 'You are logged in.', alertType: 'success' });
   };
 
+  const userId = async () => {
+    if (!user.access_token && !user.token_type) {
+      return '';
+    }
+
+    const config = {
+      headers: { Authorization: `${user.token_type} ${user.access_token}` },
+    };
+
+    return axios
+      .get('/api/user/current/', config)
+      .then((response) => response.data.id)
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.data) {
+            const { detail } = error.response.data;
+
+            if (typeof detail === 'string') {
+              addAlert({ message: detail, alertType: 'error' });
+            } else {
+              detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
+            }
+          }
+        } else {
+          addAlert({
+            message: 'Impossible to retrieve user\'s id',
+            alertType: 'error',
+          });
+        }
+      });
+  };
+
   useEffect(() => {
     setUser(cookies.user);
   }, []);
@@ -40,6 +73,7 @@ function useProvideAuth() {
 
   return {
     user,
+    userId,
     signIn,
     signOut,
   };
