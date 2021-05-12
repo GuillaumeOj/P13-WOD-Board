@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useAlert } from '../../Alert';
 
-export default function WodType({ setWodTypeId }) {
+export default function WodType({ wodTypeId, setWodTypeId }) {
   const { addAlert } = useAlert();
 
   const [id, setId] = useState();
@@ -51,6 +51,14 @@ export default function WodType({ setWodTypeId }) {
 
   useEffect(() => { setWodTypeId(id); }, [id]);
 
+  useEffect(() => {
+    if (wodTypeId !== -1 && !name) {
+      axios
+        .get(`/api/type/${wodTypeId}`)
+        .then((response) => { setName(response.data.name); setId(wodTypeId); });
+    }
+  }, [wodTypeId]);
+
   return (
     <div className="field">
       <label htmlFor="wodType">Type of WOD*:&nbsp;</label>
@@ -84,4 +92,8 @@ export default function WodType({ setWodTypeId }) {
 }
 WodType.propTypes = {
   setWodTypeId: PropTypes.func.isRequired,
+  wodTypeId: PropTypes.number,
+};
+WodType.defaultProps = {
+  wodTypeId: -1,
 };

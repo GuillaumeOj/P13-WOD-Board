@@ -1,12 +1,11 @@
+import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
 import { v4 as uuidV4 } from 'uuid';
 
-import { WodPropType } from '../../Type';
-
 import Round from './Round';
 
-export default function Rounds({ wod }) {
+export default function Rounds({ wodId }) {
   const [rounds, setRounds] = useState([]);
 
   const removeRound = (uuid) => {
@@ -26,7 +25,7 @@ export default function Rounds({ wod }) {
       repetition: 0,
       durationMinutes: 0,
       durationSeconds: 0,
-      wodId: wod.id,
+      wodId,
     });
 
     setRounds(newRounds);
@@ -55,12 +54,18 @@ export default function Rounds({ wod }) {
 
   useEffect(() => {
     const updatedRounds = [...rounds];
-    setRounds(updatedRounds.map((item) => ({ ...item, wodId: wod.id })));
-  }, [wod]);
+    setRounds(updatedRounds.map((item) => ({ ...item, wodId })));
+  }, [wodId]);
 
   return (
     <div className="rounds">
-      <button className="button primary" type="button" onClick={addRound}>
+      <button
+        className="button primary"
+        type="button"
+        onClick={addRound}
+        disabled={wodId === -1}
+        title={(wodId === -1) ? 'Add a title first' : 'Add a new round'}
+      >
         Round +
       </button>
       {rounds
@@ -78,5 +83,8 @@ export default function Rounds({ wod }) {
   );
 }
 Rounds.propTypes = {
-  wod: WodPropType.isRequired,
+  wodId: PropTypes.number,
+};
+Rounds.defaultProps = {
+  wodId: -1,
 };
