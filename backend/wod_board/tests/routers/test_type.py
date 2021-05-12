@@ -1,6 +1,7 @@
 import pytest
 
 from wod_board.models import w_type
+from wod_board.schemas import type_schemas
 
 
 @pytest.mark.asyncio
@@ -53,3 +54,16 @@ async def test_get_wod_types_by_name(db, client):
     response = await client.get("/api/type/list/loa")
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+@pytest.mark.asyncio
+async def test_get_type_by_id(db, client, db_type):
+    assert db.query(w_type.WodType).count() == 1
+
+    response = await client.get(f"/api/type/{db_type.id}")
+    assert response.status_code == 200
+    assert response.json() == type_schemas.WodType.from_orm(db_type).dict(by_alias=True)
+
+    response = await client.get("/api/type/2")
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This type doesn't exist"}
