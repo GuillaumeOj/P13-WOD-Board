@@ -51,10 +51,11 @@ export const WodTypePropType = PropTypes.shape({
 });
 
 export const WodPropType = PropTypes.shape({
-  id: PropTypes.number,
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
   description: PropTypes.string,
-  note: PropTypes.string,
   date: PropTypes.string.isRequired,
-  wodTypeId: PropTypes.number.isRequired,
-  wodType: WodTypePropType,
+  wodTypeId: PropTypes.number,
+  authorId: PropTypes.number.isRequired,
+  isComplete: PropTypes.bool.isRequired,
 });
