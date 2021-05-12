@@ -7,6 +7,7 @@ import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
+from wod_board import exceptions_routers
 from wod_board.crud import type_crud
 from wod_board.models import get_db
 from wod_board.models import w_type
@@ -25,6 +26,17 @@ async def get_wod_types_by_name(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> typing.List[typing.Optional[w_type.WodType]]:
     return type_crud.get_wod_types_by_name(db, name)
+
+
+@router.get("/{type_id}", response_model=type_schemas.WodType)
+async def get_type_by_id(
+    type_id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> w_type.WodType:
+    try:
+        return type_crud.get_type_by_id(db, type_id)
+    except exceptions.UnknownWodType:
+        raise exceptions_routers.UnknownType
 
 
 @router.post(

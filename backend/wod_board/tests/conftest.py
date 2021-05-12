@@ -11,6 +11,7 @@ from wod_board.models import goal
 from wod_board.models import movement
 from wod_board.models import unit
 from wod_board.models import user
+from wod_board.models import w_type
 from wod_board.models import wod
 from wod_board.models import wod_round
 from wod_board.utils import user_utils
@@ -50,6 +51,16 @@ def db_user(db):
     db.refresh(new_user)
 
     yield new_user
+
+
+@pytest.fixture()
+def db_type(db):
+    new_type = w_type.WodType(name="AMRAP")
+    db.add(new_type)
+    db.commit()
+    db.refresh(new_type)
+
+    yield new_type
 
 
 @pytest.fixture()

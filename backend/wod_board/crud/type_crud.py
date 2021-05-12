@@ -52,3 +52,12 @@ def get_wod_types_by_name(
     )
 
     return db_wod_types
+
+
+def get_type_by_id(db: sqlalchemy.orm.Session, type_id: int) -> w_type.WodType:
+    db_type: w_type.WodType = db.get(w_type.WodType, type_id)
+
+    if db_type is None:
+        raise exceptions.UnknownWodType
+
+    return db_type

@@ -39,3 +39,15 @@ def test_get_wod_types_by_name(db):
 
     wod_types = type_crud.get_wod_types_by_name(db, "loa")
     assert len(wod_types) == 1
+
+
+def test_get_type_by_id(db, db_type):
+    assert db.query(w_type.WodType).count() == 1
+
+    wod_type = type_crud.get_type_by_id(db, db_type.id)
+    assert wod_type.id == db_type.id
+    assert isinstance(wod_type, w_type.WodType)
+    assert db.query(w_type.WodType).count() == 1
+
+    with pytest.raises(exceptions.UnknownWodType):
+        type_crud.get_type_by_id(db, 2)
