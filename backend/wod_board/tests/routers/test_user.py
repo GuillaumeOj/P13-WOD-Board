@@ -64,7 +64,7 @@ async def test_login(client, db_user):
             data=user_data,
         )
     assert response.status_code == 200
-    assert response.json() == {"accessToken": foo_token, "tokenType": "bearer"}
+    assert response.json() == {"access_token": foo_token, "token_type": "Bearer"}
 
     user_data = {
         "username": "bar@foo.com",
