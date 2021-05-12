@@ -118,6 +118,13 @@ a:hover {
   &:hover {
     color: $sandy-brown;
   }
+
+  &[disabled] {
+    background-color: $yellow-orange-crayola;
+    &:hover {
+      color: $secondary;
+    }
+  }
 }
 
 .button-close {
