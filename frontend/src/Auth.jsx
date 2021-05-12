@@ -15,6 +15,7 @@ function useProvideAuth() {
   const { addAlert } = useAlert();
   const [cookies, setCookies, removeCookies] = useCookies();
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState();
 
   const signOut = () => {
     setUser(null);
@@ -27,37 +28,35 @@ function useProvideAuth() {
     addAlert({ message: 'You are logged in.', alertType: 'success' });
   };
 
-  const userId = async () => {
-    if (!user.access_token && !user.token_type) {
-      return '';
-    }
+  useEffect(() => {
+    if (user) {
+      const config = {
+        headers: { Authorization: `${user.token_type} ${user.access_token}` },
+      };
 
-    const config = {
-      headers: { Authorization: `${user.token_type} ${user.access_token}` },
-    };
+      axios
+        .get('/api/user/current/', config)
+        .then((response) => setUserId(response.data.id))
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.data) {
+              const { detail } = error.response.data;
 
-    return axios
-      .get('/api/user/current/', config)
-      .then((response) => response.data.id)
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.data) {
-            const { detail } = error.response.data;
-
-            if (typeof detail === 'string') {
-              addAlert({ message: detail, alertType: 'error' });
-            } else {
-              detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
+              if (typeof detail === 'string') {
+                addAlert({ message: detail, alertType: 'error' });
+              } else {
+                detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
+              }
             }
+          } else {
+            addAlert({
+              message: 'Impossible to retrieve user\'s id',
+              alertType: 'error',
+            });
           }
-        } else {
-          addAlert({
-            message: 'Impossible to retrieve user\'s id',
-            alertType: 'error',
-          });
-        }
-      });
-  };
+        });
+    }
+  }, [user]);
 
   useEffect(() => {
     setUser(cookies.user);
