@@ -29,17 +29,10 @@ def create_round(
     db: sqlalchemy.orm.Session,
     round_data: round_schemas.RoundCreate,
     user_id: int,
-    parent_id: typing.Optional[int] = None,
 ) -> wod_round.Round:
     round_utils.check_round_author(db, round_data.wod_id, user_id)
 
-    new_round = wod_round.Round(
-        position=round_data.position,
-        duration_seconds=round_data.duration_seconds,
-        repetition=round_data.repetition,
-        wod_id=round_data.wod_id,
-        parent_id=parent_id,
-    )
+    new_round = wod_round.Round(**round_data.dict())
 
     db.add(new_round)
 
