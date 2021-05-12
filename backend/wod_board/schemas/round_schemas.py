@@ -13,16 +13,15 @@ class RoundBase(OrmBase):
     duration_seconds: typing.Optional[int]
     repetition: typing.Optional[int]
     wod_id: int
+    parent_id: typing.Optional[int]
 
 
 class RoundCreate(RoundBase):
-    sub_rounds: typing.Optional[typing.List[RoundCreate]]
-    movements: typing.Optional[typing.List[goal_schemas.GoalCreate]]
+    pass
 
 
 class Round(RoundBase):
     id: int
-    parent_id: typing.Optional[int]
 
     sub_rounds: typing.Optional[typing.List[Round]]
     movements: typing.Optional[typing.List[goal_schemas.Goal]]
