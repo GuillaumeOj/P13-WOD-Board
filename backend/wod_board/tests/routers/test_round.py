@@ -210,28 +210,3 @@ async def test_delete_round_by_id(db, client, db_round, db_wod, db_user, admin, 
     assert response.status_code == 200
     assert response.json() == {"detail": "Round successfully deleted"}
     assert db.query(wod_round.Round).count() == 0
-
-
-@pytest.mark.asyncio
-async def test_get_round_by_id(db, client, db_round):
-    assert db.query(wod_round.Round).count() == 1
-
-    response = await client.get("api/round/2")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "This round doesn't exist"}
-    assert db.query(wod_round.Round).count() == 1
-
-    response = await client.get(f"api/round/{db_round.id}")
-    expected_response = {
-        "id": db_round.id,
-        "position": db_round.position,
-        "durationSeconds": db_round.duration_seconds,
-        "repetition": db_round.repetition,
-        "wodId": db_round.wod_id,
-        "parentId": db_round.parent_id,
-        "subRounds": [],
-        "movements": [],
-    }
-    assert response.status_code == 200
-    assert response.json() == expected_response
-    assert db.query(wod_round.Round).count() == 1

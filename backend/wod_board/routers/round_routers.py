@@ -75,20 +75,6 @@ async def update_round(
         )
 
 
-@router.get("/{round_id}", response_model=round_schemas.Round)
-async def get_round_by_id(
-    round_id: int,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> wod_round.Round:
-    try:
-        return round_crud.get_round_by_id(db, round_id)
-    except exceptions.UnknownRound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="This round doesn't exist",
-        )
-
-
 @router.delete("/{round_id}")
 async def delete_round_by_id(
     round_id: int,
