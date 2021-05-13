@@ -64,50 +64,10 @@ export default function Wod() {
     if (title && user) {
       if (!id) {
         axios.post('/api/wod/', wod, config)
-          .then((response) => setId(response.data.id))
-          .catch((error) => {
-            if (error) {
-              if (error.response) {
-                if (error.response.data) {
-                  const { detail } = error.response.data;
-
-                  if (typeof detail === 'string') {
-                    addAlert({ message: detail, alertType: 'error' });
-                  } else {
-                    detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-                  }
-                }
-              } else {
-                addAlert({
-                  message: 'Impossible to save this WOD',
-                  alertType: 'error',
-                });
-              }
-            }
-          });
+          .then((response) => setId(response.data.id));
       } else {
         axios.put(`/api/wod/${id}`, wod, config)
-          .then(() => (isComplete ? addAlert('WOD saved!', 'success') : ''))
-          .catch((error) => {
-            if (error) {
-              if (error.response) {
-                if (error.response.data) {
-                  const { detail } = error.response.data;
-
-                  if (typeof detail === 'string') {
-                    addAlert({ message: detail, alertType: 'error' });
-                  } else {
-                    detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-                  }
-                }
-              } else {
-                addAlert({
-                  message: 'Impossible to retrieve user\'s id',
-                  alertType: 'error',
-                });
-              }
-            }
-          });
+          .then(() => (isComplete ? addAlert('WOD saved!', 'success') : ''));
       }
     }
   }, [wod]);
