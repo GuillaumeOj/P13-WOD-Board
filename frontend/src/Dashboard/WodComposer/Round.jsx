@@ -1,76 +1,50 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { v4 as uuidV4 } from 'uuid';
-
 import { RoundPropType } from '../../Type';
-import { useInput } from '../../Utils';
+import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 
-import Goal from './Goal';
+import Goals from './Goals';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const { position, uuid, id } = round;
+  const { uuid } = round;
 
-  const [repetition, setRepetition] = useInput(round.repetition);
-  const [durationMinutes, setDurationMinutes] = useInput(round.durationMinutes);
-  const [durationSeconds, setDurationSeconds] = useInput(round.durationSeconds);
+  const [id, setId] = useState(round.id);
+  const [position, setPosition] = useState(round.position);
+  const [durationSeconds, setDurationSeconds] = useState(round.durationSeconds);
+  const [repetition, setRepetition] = useState(round.repetition);
+  const [wodId, setWodId] = useState(round.wodId);
 
-  const [goals, setGoals] = useState([]);
-
-  const removeGoal = (goalUuid) => {
-    const updatedGoals = goals.filter((goal) => goal.uuid !== goalUuid);
-    setGoals(updatedGoals);
-  };
-
-  const addGoal = () => {
-    const updatedGoals = [...goals];
-    updatedGoals.push({
-      uuid: uuidV4(),
-      id: 0,
-      movementId: null,
-      movement: null,
-      roundId: null,
-      name: '',
-      equipments: null,
-      repetition: 0,
-      durationMinutes: 0,
-      durationSeconds: 0,
-    });
-
-    setGoals(updatedGoals);
-  };
-
-  const updatedGoal = (goal) => {
-    const updatedGoals = [...goals];
-
-    if (goal) {
-      setGoals(
-        updatedGoals.map((item) => {
-          if (item.uuid === goal.uuid) {
-            return {
-              ...item,
-              name: goal.name,
-              movementId: goal.movementId,
-              repetition: goal.repetition,
-              durationMinutes: goal.durationMinutes,
-              durationSeconds: goal.durationSeconds,
-            };
-          }
-          return item;
-        }),
-      );
-    }
-  };
+  const [displayMinutes, setDisplayMinutes] = useState();
+  const [displaySeconds, setDisplaySeconds] = useState();
 
   useEffect(() => {
+    if (round.id !== id) { setId(round.id); }
+    if (round.position !== position) { setPosition(round.position); }
+    if (round.durationSeconds !== durationSeconds) { setDurationSeconds(round.durationSeconds); }
+    if (round.repetition !== repetition) { setRepetition(round.repetition); }
+    if (round.wodId !== wodId) { setWodId(round.wodId); }
+  }, [round]);
+
+  useEffect(() => {
+    const { minutes, seconds } = SecondsToMinutesSeconds(durationSeconds);
+
+    if (minutes !== displayMinutes) { setDisplayMinutes(minutes); }
+    if (seconds !== displaySeconds) { setDisplaySeconds(seconds); }
+  }, [durationSeconds]);
+
+  useEffect(() => {
+    const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
+
     updateRound({
       uuid,
       id,
-      repetition: parseInt(repetition, 10),
-      durationMinutes: parseInt(durationMinutes, 10),
-      durationSeconds: parseInt(durationSeconds, 10),
+      position,
+      durationSeconds: seconds,
+      repetition,
+      wodId,
     });
-  }, [repetition, durationMinutes, durationSeconds]);
+  }, [position, repetition, displayMinutes, displaySeconds]);
 
   return (
     round && (
@@ -94,37 +68,29 @@ export default function Round({ round, removeRound, updateRound }) {
             />
           </div>
           <div className="field">
-            <label htmlFor={`durationMinutes-${position}`}>Minutes:&nbsp;</label>
+            <label htmlFor={`displayMinutes-${position}`}>Minutes:&nbsp;</label>
             <input
               type="number"
-              id={`durationMinutes-${position}`}
-              name={`durationMinutes-${position}`}
-              value={durationMinutes}
-              onChange={setDurationMinutes}
+              id={`displayMinutes-${position}`}
+              name={`displayMinutes-${position}`}
+              value={displayMinutes}
+              onChange={(event) => setDisplayMinutes(event.target.value)}
               min="0"
             />
           </div>
           <div className="field">
-            <label htmlFor={`durationSeconds-${position}`}>Seconds:&nbsp;</label>
+            <label htmlFor={`displaySeconds-${position}`}>Seconds:&nbsp;</label>
             <input
               type="number"
-              id={`durationSeconds-${position}`}
-              name={`durationSeconds-${position}`}
-              value={durationSeconds}
-              onChange={setDurationSeconds}
+              id={`displaySeconds-${position}`}
+              name={`displaySeconds-${position}`}
+              value={displaySeconds}
+              onChange={(event) => setDisplaySeconds(event.target.value)}
               min="0"
             />
           </div>
         </div>
-        <button className="button primary" type="button" onClick={addGoal}>
-          Movement +
-        </button>
-        <div className="movements">
-          {goals
-            && goals.map((goal) => (
-              <Goal key={goal.uuid} goal={goal} removeGoal={removeGoal} updateGoal={updatedGoal} />
-            ))}
-        </div>
+        <Goals roundId={id} />
       </div>
     )
   );

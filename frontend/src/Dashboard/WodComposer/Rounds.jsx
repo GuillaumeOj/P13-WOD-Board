@@ -20,10 +20,9 @@ export default function Rounds({ wodId }) {
 
     newRounds.push({
       uuid: uuidV4(),
-      id: 0,
+      id: null,
       position,
       repetition: 0,
-      durationMinutes: 0,
       durationSeconds: 0,
       wodId,
     });
@@ -41,9 +40,10 @@ export default function Rounds({ wodId }) {
             return {
               ...item,
               id: round.id,
-              repetition: round.repetition,
-              durationMinutes: round.durationMinutes,
+              position: round.position,
               durationSeconds: round.durationSeconds,
+              repetition: round.repetition,
+              wodId: round.wodId,
             };
           }
           return item;
