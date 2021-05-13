@@ -13,18 +13,6 @@ from wod_board.utils import round_utils
 LOG = daiquiri.getLogger(__name__)
 
 
-def get_round_by_id(
-    db: sqlalchemy.orm.Session,
-    id: int,
-) -> wod_round.Round:
-    wanted_round: wod_round.Round = db.get(wod_round.Round, id)
-
-    if wanted_round is None:
-        raise exceptions.UnknownRound
-
-    return wanted_round
-
-
 def create_round(
     db: sqlalchemy.orm.Session,
     round_data: round_schemas.RoundCreate,
