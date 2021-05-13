@@ -1,30 +1,24 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
+import { useAuth } from '../../Auth';
 import { RoundPropType } from '../../Type';
 import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 
 import Goals from './Goals';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const { uuid } = round;
+  const { user } = useAuth();
 
-  const [id, setId] = useState(round.id);
-  const [position, setPosition] = useState(round.position);
-  const [durationSeconds, setDurationSeconds] = useState(round.durationSeconds);
-  const [repetition, setRepetition] = useState(round.repetition);
-  const [wodId, setWodId] = useState(round.wodId);
+  const { uuid, position, wodId } = round;
 
-  const [displayMinutes, setDisplayMinutes] = useState();
-  const [displaySeconds, setDisplaySeconds] = useState();
+  const [id, setId] = useState();
+  const [durationSeconds, setDurationSeconds] = useState(0);
+  const [repetition, setRepetition] = useState(0);
 
-  useEffect(() => {
-    if (round.id !== id) { setId(round.id); }
-    if (round.position !== position) { setPosition(round.position); }
-    if (round.durationSeconds !== durationSeconds) { setDurationSeconds(round.durationSeconds); }
-    if (round.repetition !== repetition) { setRepetition(round.repetition); }
-    if (round.wodId !== wodId) { setWodId(round.wodId); }
-  }, [round]);
+  const [displayMinutes, setDisplayMinutes] = useState(0);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
 
   useEffect(() => {
     const { minutes, seconds } = SecondsToMinutesSeconds(durationSeconds);
@@ -34,17 +28,38 @@ export default function Round({ round, removeRound, updateRound }) {
   }, [durationSeconds]);
 
   useEffect(() => {
-    const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
+    const intMinutes = parseInt(displayMinutes, 10);
+    const intSeconds = parseInt(displaySeconds, 10);
+    const { seconds } = MinutesSecondsToSeconds(intMinutes, intSeconds);
 
+    if (seconds !== durationSeconds) { setDurationSeconds(seconds); }
+  }, [displayMinutes, displaySeconds]);
+
+  useEffect(() => {
     updateRound({
       uuid,
       id,
-      position,
-      durationSeconds: seconds,
+      durationSeconds,
       repetition,
-      wodId,
     });
-  }, [position, repetition, displayMinutes, displaySeconds]);
+  }, [id, repetition, durationSeconds]);
+
+  useEffect(() => {
+    if (position && wodId && user) {
+      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+      const data = {
+        position, durationSeconds, repetition, wodId,
+      };
+      if (!id) {
+        axios
+          .post('/api/round/', data, config)
+          .then((response) => setId(response.data.id));
+      } else {
+        axios
+          .put(`/api/round/${id}`, data, config);
+      }
+    }
+  }, [round]);
 
   return (
     round && (
