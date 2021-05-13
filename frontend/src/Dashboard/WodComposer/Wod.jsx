@@ -26,19 +26,6 @@ export default function Wod() {
 
   const [wod, setWod] = useState();
 
-  const updateWod = () => {
-    const updatedWod = {
-      id,
-      title,
-      description,
-      date,
-      wodTypeId,
-      authorId,
-      isComplete,
-    };
-    setWod(updatedWod);
-  };
-
   useEffect(() => {
     const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
     axios.get('/api/wod/incomplete', config)
@@ -60,7 +47,16 @@ export default function Wod() {
   }, [user]);
 
   useEffect(() => {
-    updateWod();
+    const updatedWod = {
+      id,
+      title,
+      description,
+      date,
+      wodTypeId,
+      authorId,
+      isComplete,
+    };
+    setWod(updatedWod);
   }, [date, id, description, title, wodTypeId, authorId, isComplete]);
 
   useEffect(() => {
