@@ -162,7 +162,7 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
 @pytest.mark.asyncio
 async def test_get_goal_by_id(client, db_goal):
     response = await client.get("/api/goal/2")
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json() == {"detail": "This goal doesn't exist"}
 
     response = await client.get(f"/api/goal/{db_goal.id}")

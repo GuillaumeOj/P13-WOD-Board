@@ -1,13 +1,10 @@
 import typing
 
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
-from wod_board import exceptions_routers
 from wod_board.crud import type_crud
 from wod_board.models import get_db
 from wod_board.models import w_type
@@ -35,8 +32,8 @@ async def get_type_by_id(
 ) -> w_type.WodType:
     try:
         return type_crud.get_type_by_id(db, type_id)
-    except exceptions.UnknownWodType:
-        raise exceptions_routers.UnknownType
+    except exceptions.UnknownWodType as error:
+        raise exceptions.RouterException(error)
 
 
 @router.post(
@@ -50,8 +47,5 @@ async def create_wod_type(
 ) -> w_type.WodType:
     try:
         return type_crud.create_wod_type(db, wod_type)
-    except exceptions.NameAlreadyUsed:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="This type already exists",
-        )
+    except exceptions.NameAlreadyUsed as error:
+        raise exceptions.RouterException(error)

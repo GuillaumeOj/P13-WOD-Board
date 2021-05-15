@@ -27,7 +27,7 @@ def create_equipment(
             'duplicate key value violates unique constraint "equipment_name_key"'
             in str(error)
         ):
-            raise exceptions.NameAlreadyUsed
+            raise exceptions.NameAlreadyUsed(equiment_data.name)
 
         LOG.error(str(error))
 
@@ -45,6 +45,6 @@ def get_equipment_by_name(
     )
 
     if db_equiment is None:
-        raise exceptions.UnknownEquipment
+        raise exceptions.UnknownEquipment(name)
 
     return db_equiment

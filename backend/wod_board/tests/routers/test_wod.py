@@ -66,7 +66,7 @@ async def test_create_wod(db, client, db_user, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This title is already used"}
+    assert response.json() == {"detail": "Title already used"}
     assert db.query(wod.Wod).count() == 1
 
     wod_json = {
@@ -81,7 +81,7 @@ async def test_create_wod(db, client, db_user, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This WOD Type doesn't exist"}
+    assert response.json() == {"detail": "This type doesn't exist"}
     assert db.query(wod.Wod).count() == 1
 
 
@@ -117,7 +117,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
         json=wod_json,
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod.Wod).count() == 2
 
@@ -132,7 +132,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This WOD Type doesn't exist"}
+    assert response.json() == {"detail": "This type doesn't exist"}
     assert db.query(wod.Wod).count() == 2
 
     wod_json = {
@@ -163,7 +163,7 @@ async def test_update_wod(db, client, db_user, db_wod, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This title is already used"}
+    assert response.json() == {"detail": "Title already used"}
     assert db.query(wod.Wod).count() == 2
 
 

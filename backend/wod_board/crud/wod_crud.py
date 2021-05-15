@@ -27,16 +27,16 @@ def create_wod(
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_wod_type_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownWodType
+            raise exceptions.UnknownWodType(str(wod_data.wod_type_id))
         if (
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_author_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownUser
+            raise exceptions.UnknownUser(str(wod_data.author_id))
         if ('duplicate key value violates unique constraint "wod_title_key"') in str(
             error
         ):
-            raise exceptions.TitleAlreadyUsed
+            raise exceptions.TitleAlreadyUsed(wod_data.title)
         LOG.error(error)
     db.refresh(new_wod)
 
@@ -51,7 +51,7 @@ def update_wod(
     db_wod: typing.Optional[wod.Wod] = db.get(wod.Wod, wod_id)
 
     if db_wod is None:
-        raise exceptions.UnknownWod
+        raise exceptions.UnknownWod(str(wod_id))
 
     db_wod.title = wod_data.title
     db_wod.description = wod_data.description
@@ -67,16 +67,16 @@ def update_wod(
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_wod_type_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownWodType
+            raise exceptions.UnknownWodType(str(wod_data.wod_type_id))
         if (
             'insert or update on table "wod" violates foreign '
             'key constraint "wod_author_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownUser
+            raise exceptions.UnknownUser(str(wod_data.author_id))
         if ('duplicate key value violates unique constraint "wod_title_key"') in str(
             error
         ):
-            raise exceptions.TitleAlreadyUsed
+            raise exceptions.TitleAlreadyUsed(wod_data.title)
         LOG.error(error)
 
     db.refresh(db_wod)
@@ -88,7 +88,7 @@ def get_wod_by_id(db: sqlalchemy.orm.Session, wod_id: int) -> wod.Wod:
     db_wod: typing.Optional[wod.Wod] = db.get(wod.Wod, wod_id)
 
     if db_wod is None:
-        raise exceptions.UnknownWod
+        raise exceptions.UnknownWod(str(wod_id))
 
     return db_wod
 
@@ -99,6 +99,6 @@ def get_wod_incomplete(db: sqlalchemy.orm.Session, author_id: int) -> wod.Wod:
     )
 
     if db_wod is None:
-        raise exceptions.UnknownWod
+        raise exceptions.UnknownWod("No incomplete wod found")
 
     return db_wod

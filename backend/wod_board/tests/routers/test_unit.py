@@ -1,6 +1,7 @@
 import pytest
 
 from wod_board.models import unit
+from wod_board.schemas import unit_schemas
 
 
 @pytest.mark.asyncio
@@ -38,26 +39,16 @@ async def test_create_unit(db, client, token, token_admin):
 
 
 @pytest.mark.asyncio
-async def test_get_unit_by_exact_name(db, client):
-    name = "Kilograms"
-    response = await client.get(f"/api/unit/{name}")
+async def test_get_unit_by_exact_name(db, client, db_unit):
+    assert db.query(unit.Unit).count() == 1
 
-    expected_response = {"detail": f"{name} doesn't exist yet"}
-
-    assert response.status_code == 404
-    assert response.json() == expected_response
-
-    wanted_unit = unit.Unit(name=name, symbol="kg")
-    db.add(wanted_unit)
-    db.commit()
-
-    response = await client.get(f"/api/unit/{name}")
-
-    expected_response = {
-        "id": 1,
-        "name": "Kilograms",
-        "symbol": "kg",
-    }
-
+    response = await client.get(f"/api/unit/{db_unit.name}")
+    expected_response = unit_schemas.Unit.from_orm(db_unit).dict(by_alias=True)
     assert response.status_code == 200
     assert response.json() == expected_response
+    assert db.query(unit.Unit).count() == 1
+
+    response = await client.get("/api/unit/Kilograms")
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This unit doesn't exist"}
+    assert db.query(unit.Unit).count() == 1

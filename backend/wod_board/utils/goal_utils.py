@@ -15,6 +15,6 @@ def check_goal_author(
     db_round: typing.Optional[wod_round.Round] = db.get(wod_round.Round, round_id)
 
     if db_round is None:
-        raise exceptions.UnknownRound
+        raise exceptions.UnknownRound(str(round_id))
 
     round_utils.check_round_author(db, db_round.wod_id, user_id)

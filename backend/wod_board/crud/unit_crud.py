@@ -7,7 +7,7 @@ from wod_board.models import unit
 from wod_board.schemas import unit_schemas
 
 
-def _create_unit(
+def create_unit(
     db: sqlalchemy.orm.Session,
     unit_schema: unit_schemas.UnitCreate,
 ) -> unit.Unit:
@@ -20,7 +20,7 @@ def _create_unit(
     return new_unit
 
 
-def get_unit_by_exact_name(
+def get_unit_by_name(
     db: sqlalchemy.orm.Session,
     name: str,
 ) -> unit.Unit:
@@ -29,7 +29,7 @@ def get_unit_by_exact_name(
     )
 
     if db_unit is None:
-        raise exceptions.UnknownUnit
+        raise exceptions.UnknownUnit(name)
 
     return db_unit
 
@@ -39,8 +39,8 @@ def get_or_create_unit(
     wanted_unit: unit_schemas.UnitCreate,
 ) -> unit.Unit:
     try:
-        db_unit = get_unit_by_exact_name(db, wanted_unit.name)
+        db_unit = get_unit_by_name(db, wanted_unit.name)
     except exceptions.UnknownUnit:
-        db_unit = _create_unit(db, wanted_unit)
+        db_unit = create_unit(db, wanted_unit)
 
     return db_unit

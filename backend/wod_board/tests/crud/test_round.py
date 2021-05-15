@@ -101,3 +101,15 @@ def test_delete_round_by_id(db, db_round, db_user):
 
     assert round_crud.delete_round_by_id(db, db_round.id, db_user.id)
     assert db.query(wod_round.Round).count() == 0
+
+
+def test_get_rounds_by_wod_id(db, db_round):
+    assert db.query(wod_round.Round).count() == 1
+
+    rounds = round_crud.get_rounds_by_wod_id(db, db_round.id)
+    assert len(rounds) == 1
+    assert db.query(wod_round.Round).count() == 1
+
+    rounds = round_crud.get_rounds_by_wod_id(db, 2)
+    assert len(rounds) == 0
+    assert db.query(wod_round.Round).count() == 1

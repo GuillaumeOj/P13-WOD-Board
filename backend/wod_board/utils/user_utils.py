@@ -1,6 +1,7 @@
 import datetime
 import typing
 
+import daiquiri
 import fastapi
 from jose import jwt
 from jose.exceptions import JWTError
@@ -8,11 +9,13 @@ import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
-from wod_board import exceptions_routers
 from wod_board.crud import user_crud
 from wod_board.models import get_db
 from wod_board.models import user
 from wod_board.schemas import user_schemas
+
+
+LOG = daiquiri.getLogger(__name__)
 
 
 # NOTE: https://github.com/mpdavis/python-jose/issues/215
@@ -48,11 +51,15 @@ def get_user_with_token(
             algorithms=[config.ACCESS_TOKEN_ALGORITHM],
         )
     except JWTError:
-        raise exceptions_routers.InvalidToken
+        error = exceptions.InvalidToken(token)
+        LOG.error(error)
+        raise exceptions.RouterException(error)
 
     email: str = payload.get("sub")
 
     try:
         return user_schemas.User.from_orm(user_crud.get_user_by_email(db, email))
     except exceptions.UnknownUser:
-        raise exceptions_routers.InvalidToken
+        error = exceptions.InvalidToken(token)
+        LOG.error(error)
+        raise exceptions.RouterException(error)

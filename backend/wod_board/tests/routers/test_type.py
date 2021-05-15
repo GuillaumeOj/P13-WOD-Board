@@ -33,7 +33,7 @@ async def test_create_wod_type(db, client, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "This type already exists"}
+    assert response.json() == {"detail": "Name already used"}
     assert db.query(w_type.WodType).count() == 1
 
 

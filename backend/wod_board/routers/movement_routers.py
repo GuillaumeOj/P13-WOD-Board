@@ -1,8 +1,6 @@
 import typing
 
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
@@ -30,11 +28,8 @@ async def create_movement(
 ) -> movement.Movement:
     try:
         return movement_crud.create_movement(db, movement_data)
-    except exceptions.DuplicatedMovement:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="This movement already exist",
-        )
+    except exceptions.DuplicatedMovement as error:
+        raise exceptions.RouterException(error)
 
 
 @router.get(

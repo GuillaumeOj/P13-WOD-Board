@@ -1,14 +1,13 @@
 import typing
 
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 import sqlalchemy.exc
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
 from wod_board.crud import round_crud
+from wod_board.crud import wod_crud
 from wod_board.models import get_db
 from wod_board.models import wod_round
 from wod_board.schemas import round_schemas
@@ -27,21 +26,27 @@ async def create_round(
 ) -> wod_round.Round:
     try:
         return round_crud.create_round(db, round_data, current_user.id)
-    except exceptions.DuplicatedRoundPosition:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Rounds have the same position",
-        )
-    except exceptions.UnknownWod:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The given WOD id is unknown",
-        )
-    except exceptions.UserIsNotAuthor:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Author don't match with authenticated user",
-        )
+    except exceptions.DuplicatedRoundPosition as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownWod as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
+
+
+@router.get(
+    "/rounds/{wod_id}", response_model=typing.List[typing.Optional[round_schemas.Round]]
+)
+async def get_rounds_by_wod_id(
+    wod_id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.List[typing.Optional[wod_round.Round]]:
+    try:
+        wod_crud.get_wod_by_id(db, wod_id)
+    except exceptions.UnknownWod as error:
+        raise exceptions.RouterException(error)
+
+    return round_crud.get_rounds_by_wod_id(db, wod_id)
 
 
 @router.put("/{round_id}", response_model=round_schemas.Round)
@@ -53,26 +58,14 @@ async def update_round(
 ) -> wod_round.Round:
     try:
         return round_crud.update_round(db, round_data, round_id, current_user.id)
-    except exceptions.DuplicatedRoundPosition:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Rounds have the same position",
-        )
-    except exceptions.UnknownWod:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The given WOD id is unknown",
-        )
-    except exceptions.UnknownRound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="This round doesn't exist",
-        )
-    except exceptions.UserIsNotAuthor:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Author don't match with authenticated user",
-        )
+    except exceptions.DuplicatedRoundPosition as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownWod as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownRound as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
 
 
 @router.delete("/{round_id}")
@@ -83,15 +76,9 @@ async def delete_round_by_id(
 ) -> typing.Dict[str, str]:
     try:
         round_crud.delete_round_by_id(db, round_id, current_user.id)
-    except exceptions.UnknownRound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="This round doesn't exist",
-        )
-    except exceptions.UserIsNotAuthor:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Author don't match with authenticated user",
-        )
+    except exceptions.UnknownRound as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
 
     return {"detail": "Round successfully deleted"}
