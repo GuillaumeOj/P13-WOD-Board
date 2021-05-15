@@ -70,7 +70,7 @@ def test_get_goal_by_id(db, db_goal):
     wanted_goal = goal_crud.get_goal_by_id(db, db_goal.id)
     assert wanted_goal.id == db_goal.id
 
-    with pytest.raises(exceptions.UnknownMovement):
+    with pytest.raises(exceptions.UnknownGoal):
         goal_crud.get_goal_by_id(db, 2)
 
 

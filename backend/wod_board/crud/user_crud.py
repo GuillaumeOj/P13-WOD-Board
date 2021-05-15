@@ -25,11 +25,11 @@ def create_user(
         if 'duplicate key value violates unique constraint "user_email_key"' in str(
             error
         ):
-            raise exceptions.DuplicatedEmail
+            raise exceptions.DuplicatedEmail(user_data.email)
         if (
             'duplicate key value violates unique constraint "user_username_key"'
         ) in str(error):
-            raise exceptions.DuplicatedUsername
+            raise exceptions.DuplicatedUsername(user_data.username)
 
         LOG.error(error)
     else:
@@ -38,11 +38,11 @@ def create_user(
     return new_user
 
 
-def get_user_by_id(db: sqlalchemy.orm.Session, id: int) -> user.User:
-    db_user: user.User = db.get(user.User, id)
+def get_user_by_id(db: sqlalchemy.orm.Session, user_id: int) -> user.User:
+    db_user: user.User = db.get(user.User, user_id)
 
     if db_user is None:
-        raise exceptions.UnknownUser
+        raise exceptions.UnknownUser(str(user_id))
 
     return db_user
 
@@ -53,6 +53,6 @@ def get_user_by_email(db: sqlalchemy.orm.Session, email: str) -> user.User:
     )
 
     if db_user is None:
-        raise exceptions.UnknownUser
+        raise exceptions.UnknownUser(email)
 
     return db_user

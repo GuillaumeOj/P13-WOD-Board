@@ -2,6 +2,7 @@ import daiquiri
 import pytest
 
 from wod_board.models import wod_round
+from wod_board.schemas import round_schemas
 
 
 LOG = daiquiri.getLogger(__name__)
@@ -44,7 +45,7 @@ async def test_create_round(db, client, db_wod, token, admin):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "The given WOD id is unknown"}
+    assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod_round.Round).count() == 1
 
     round_json = {
@@ -111,7 +112,7 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
         json=round_json,
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json() == {"detail": "This round doesn't exist"}
     assert db.query(wod_round.Round).count() == 1
 
@@ -135,7 +136,7 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
         headers={"Authorization": f"Bearer {token.access_token}"},
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "The given WOD id is unknown"}
+    assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod_round.Round).count() == 1
 
     db.add(wod_round.Round(position=2, wod_id=db_round.wod_id))
@@ -178,7 +179,7 @@ async def test_delete_round_by_id(db, client, db_round, db_wod, db_user, admin, 
     response = await client.delete(
         "api/round/2", headers={"Authorization": f"Bearer {token.access_token}"}
     )
-    assert response.status_code == 404
+    assert response.status_code == 422
     assert response.json() == {"detail": "This round doesn't exist"}
     assert db.query(wod_round.Round).count() == 1
 
@@ -210,3 +211,18 @@ async def test_delete_round_by_id(db, client, db_round, db_wod, db_user, admin, 
     assert response.status_code == 200
     assert response.json() == {"detail": "Round successfully deleted"}
     assert db.query(wod_round.Round).count() == 0
+
+
+@pytest.mark.asyncio
+async def test_get_rounds_by_wod_id(db, client, db_round, db_wod):
+    assert db.query(wod_round.Round).count() == 1
+
+    response = await client.get(f"/api/round/rounds/{db_wod.id}")
+    assert response.status_code == 200
+    assert response.json() == [
+        round_schemas.Round.from_orm(db_round).dict(by_alias=True)
+    ]
+
+    response = await client.get("/api/round/rounds/2")
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This WOD doesn't exist"}

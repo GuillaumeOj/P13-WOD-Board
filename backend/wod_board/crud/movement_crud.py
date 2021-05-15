@@ -16,9 +16,7 @@ def create_movement(
     db: sqlalchemy.orm.Session,
     movement_data: movement_schemas.MovementCreate,
 ) -> movement.Movement:
-    new_movement = movement.Movement(
-        name=movement_data.name, unit_id=movement_data.unit_id
-    )
+    new_movement = movement.Movement(**movement_data.dict())
     db.add(new_movement)
 
     try:
@@ -29,11 +27,11 @@ def create_movement(
             'insert or update on table "movement" violates foreign '
             'key constraint "movement_unit_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownUnit
+            raise exceptions.UnknownUnit(str(movement_data.unit_id))
         if (
             'duplicate key value violates unique constraint "movement_name_key"'
         ) in str(error):
-            raise exceptions.DuplicatedMovement
+            raise exceptions.DuplicatedMovement(movement_data.name)
 
         LOG.error(str(error))
 
@@ -44,12 +42,12 @@ def create_movement(
 
 def get_movement_by_id(
     db: sqlalchemy.orm.Session,
-    id: int,
+    movement_id: int,
 ) -> movement.Movement:
-    db_movement: movement.Movement = db.get(movement.Movement, id)
+    db_movement: movement.Movement = db.get(movement.Movement, movement_id)
 
     if db_movement is None:
-        raise exceptions.UnknownMovement
+        raise exceptions.UnknownMovement(str(movement_id))
 
     return db_movement
 
@@ -63,7 +61,7 @@ def get_movement_by_name(
     )
 
     if db_movement is None:
-        raise exceptions.UnknownMovement
+        raise exceptions.UnknownMovement(name)
 
     return db_movement
 

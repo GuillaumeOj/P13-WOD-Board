@@ -1,13 +1,10 @@
 import typing
 
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
-from wod_board import exceptions_routers
 from wod_board.crud import goal_crud
 from wod_board.models import get_db
 from wod_board.models import goal
@@ -27,12 +24,12 @@ async def create_goal(
 ) -> goal.Goal:
     try:
         return goal_crud.create_goal(db, goal_data, current_user.id)
-    except exceptions.UnknownMovement:
-        raise exceptions_routers.UnknownMovement
-    except exceptions.UnknownRound:
-        raise exceptions_routers.UnknownRound
-    except exceptions.UserIsNotAuthor:
-        raise exceptions_routers.AuthorNotUser
+    except exceptions.UnknownMovement as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownRound as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
 
 
 @router.put("/{goal_id}", response_model=goal_schemas.Goal)
@@ -44,14 +41,14 @@ async def update_goal(
 ) -> goal.Goal:
     try:
         return goal_crud.update_goal(db, goal_data, goal_id, current_user.id)
-    except exceptions.UnknownGoal:
-        raise exceptions_routers.UnknownGoal
-    except exceptions.UnknownMovement:
-        raise exceptions_routers.UnknownMovement
-    except exceptions.UnknownRound:
-        raise exceptions_routers.UnknownRound
-    except exceptions.UserIsNotAuthor:
-        raise exceptions_routers.AuthorNotUser
+    except exceptions.UnknownGoal as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownMovement as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UnknownRound as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
 
 
 @router.get("/{goal_id}", response_model=goal_schemas.Goal)
@@ -61,11 +58,8 @@ async def get_goal_by_id(
 ) -> goal.Goal:
     try:
         return goal_crud.get_goal_by_id(db, goal_id)
-    except exceptions.UnknownMovement:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="This goal doesn't exist",
-        )
+    except exceptions.UnknownGoal as error:
+        raise exceptions.RouterException(error)
 
 
 @router.delete("/{goal_id}")
@@ -76,11 +70,9 @@ async def delete_goal_by_id(
 ) -> typing.Dict["str", "str"]:
     try:
         goal_crud.delete_goal_by_id(db, goal_id, current_user.id)
-    except exceptions.UnknownGoal:
-        raise exceptions_routers.UnknownGoal
-    except exceptions.UnknownMovement:
-        raise exceptions_routers.UnknownMovement
-    except exceptions.UserIsNotAuthor:
-        raise exceptions_routers.AuthorNotUser
+    except exceptions.UnknownGoal as error:
+        raise exceptions.RouterException(error)
+    except exceptions.UserIsNotAuthor as error:
+        raise exceptions.RouterException(error)
 
     return {"detail": "Goal successfully deleted"}

@@ -36,7 +36,7 @@ def create_goal(
             'insert or update on table "goal" violates foreign '
             'key constraint "goal_movement_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownMovement
+            raise exceptions.UnknownMovement(str(goal_data.movement_id))
 
         LOG.error(str(error))
 
@@ -54,7 +54,7 @@ def update_goal(
     db_goal: typing.Optional[goal.Goal] = db.get(goal.Goal, goal_id)
 
     if db_goal is None:
-        raise exceptions.UnknownGoal
+        raise exceptions.UnknownGoal(str(goal_id))
 
     goal_utils.check_goal_author(db, goal_data.round_id, user_id)
 
@@ -71,7 +71,7 @@ def update_goal(
             'insert or update on table "goal" violates foreign '
             'key constraint "goal_movement_id_fkey"'
         ) in str(error):
-            raise exceptions.UnknownMovement
+            raise exceptions.UnknownMovement(str(goal_data.movement_id))
 
         LOG.error(str(error))
 
@@ -84,7 +84,7 @@ def get_goal_by_id(db: sqlalchemy.orm.Session, goal_id: int) -> goal.Goal:
     db_goal: goal.Goal = db.get(goal.Goal, goal_id)
 
     if db_goal is None:
-        raise exceptions.UnknownMovement
+        raise exceptions.UnknownGoal(str(goal_id))
 
     return db_goal
 
@@ -95,7 +95,7 @@ def delete_goal_by_id(
     db_goal: typing.Optional[goal.Goal] = db.get(goal.Goal, goal_id)
 
     if db_goal is None:
-        raise exceptions.UnknownGoal
+        raise exceptions.UnknownGoal(str(goal_id))
 
     goal_utils.check_goal_author(db, db_goal.round_id, user_id)
 

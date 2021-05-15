@@ -13,7 +13,7 @@ UNIT_SYMBOL = "kg"
 def test_create_unit(db):
     unit_schema = unit_schemas.UnitCreate(name=UNIT_NAME, symbol=UNIT_SYMBOL)
 
-    created_unit = unit_crud._create_unit(db, unit_schema)
+    created_unit = unit_crud.create_unit(db, unit_schema)
     assert created_unit.name == unit_schema.name
     assert created_unit.symbol == unit_schema.symbol
 
@@ -24,12 +24,12 @@ def test_get_unit_by_exact_name(db):
     db.add(unit.Unit(**unit_schema.dict()))
     db.commit()
 
-    wanted_unit = unit_crud.get_unit_by_exact_name(db, unit_schema.name)
+    wanted_unit = unit_crud.get_unit_by_name(db, unit_schema.name)
     assert wanted_unit.name == unit_schema.name
     assert wanted_unit.symbol == unit_schema.symbol
 
     with pytest.raises(exceptions.UnknownUnit):
-        unit_crud.get_unit_by_exact_name(db, "Unit")
+        unit_crud.get_unit_by_name(db, "Unit")
 
 
 def test_get_or_create_unit(db):

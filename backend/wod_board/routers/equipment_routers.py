@@ -1,11 +1,8 @@
 import fastapi
-from fastapi import status
-from fastapi.exceptions import HTTPException
 import sqlalchemy.orm
 
 from wod_board import config
 from wod_board import exceptions
-from wod_board import exceptions_routers
 from wod_board.crud import equipment_crud
 from wod_board.models import equipment
 from wod_board.models import get_db
@@ -27,11 +24,8 @@ async def create_equipment(
 ) -> equipment.Equipment:
     try:
         return equipment_crud.create_equipment(db, equipment_data)
-    except exceptions.NameAlreadyUsed:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="This equipment already exists",
-        )
+    except exceptions.NameAlreadyUsed as error:
+        raise exceptions.RouterException(error)
 
 
 @router.get("/{name}", response_model=equipment_schemas.Equipment)
@@ -41,5 +35,5 @@ async def get_equipment_by_name(
 ) -> equipment.Equipment:
     try:
         return equipment_crud.get_equipment_by_name(db, name)
-    except exceptions.UnknownEquipment:
-        raise exceptions_routers.UnknownEquipment
+    except exceptions.UnknownEquipment as error:
+        raise exceptions.RouterException(error)

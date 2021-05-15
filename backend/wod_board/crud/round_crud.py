@@ -31,7 +31,7 @@ def create_round(
         if 'duplicate key value violates unique constraint "wod_id_position"' in str(
             error
         ):
-            raise exceptions.DuplicatedRoundPosition
+            raise exceptions.DuplicatedRoundPosition(f"Position: {round_data.position}")
 
         LOG.error(error)
 
@@ -52,7 +52,7 @@ def update_round(
     db_round: wod_round.Round = db.get(wod_round.Round, round_id)
 
     if db_round is None:
-        raise exceptions.UnknownRound
+        raise exceptions.UnknownRound(str(round_id))
 
     db_round.position = round_data.position
     db_round.duration_seconds = round_data.duration_seconds
@@ -67,7 +67,9 @@ def update_round(
         if 'duplicate key value violates unique constraint "wod_id_position"' in str(
             error
         ):
-            raise exceptions.DuplicatedRoundPosition
+            raise exceptions.DuplicatedRoundPosition(
+                f"Id: {round_id}, Position: {round_data.position}"
+            )
 
         LOG.error(error)
 
@@ -84,7 +86,7 @@ def delete_round_by_id(
     db_round = db.get(wod_round.Round, round_id)
 
     if db_round is None:
-        raise exceptions.UnknownRound
+        raise exceptions.UnknownRound(str(round_id))
 
     round_utils.check_round_author(db, db_round.wod_id, user_id)
 
@@ -92,3 +94,13 @@ def delete_round_by_id(
     db.commit()
 
     return True
+
+
+def get_rounds_by_wod_id(
+    db: sqlalchemy.orm.Session, wod_id: int
+) -> typing.List[typing.Optional[wod_round.Round]]:
+    db_rounds: typing.List[typing.Optional[wod_round.Round]] = (
+        db.query(wod_round.Round).filter_by(wod_id=wod_id).all()
+    )
+
+    return db_rounds

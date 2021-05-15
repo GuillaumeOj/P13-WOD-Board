@@ -25,7 +25,7 @@ def create_wod_type(
         if 'duplicate key value violates unique constraint "wod_type_name_key"' in str(
             error
         ):
-            raise exceptions.NameAlreadyUsed
+            raise exceptions.NameAlreadyUsed(wod_type.name)
         LOG.error(str(error))
 
     db.refresh(new_type)
@@ -39,7 +39,7 @@ def get_wod_type_by_name(db: sqlalchemy.orm.Session, name: str) -> w_type.WodTyp
     )
 
     if db_wod_type is None:
-        raise exceptions.UnknownWodType
+        raise exceptions.UnknownWodType(name)
 
     return db_wod_type
 
@@ -58,6 +58,6 @@ def get_type_by_id(db: sqlalchemy.orm.Session, type_id: int) -> w_type.WodType:
     db_type: w_type.WodType = db.get(w_type.WodType, type_id)
 
     if db_type is None:
-        raise exceptions.UnknownWodType
+        raise exceptions.UnknownWodType(type_id)
 
     return db_type

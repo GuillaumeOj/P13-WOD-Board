@@ -29,16 +29,10 @@ async def register(
 ) -> user.User:
     try:
         new_user = user_crud.create_user(db, user_data)
-    except exceptions.DuplicatedEmail:
-        raise HTTPException(
-            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Email already used",
-        )
-    except exceptions.DuplicatedUsername:
-        raise HTTPException(
-            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Username already used",
-        )
+    except exceptions.DuplicatedEmail as error:
+        raise exceptions.RouterException(error)
+    except exceptions.DuplicatedUsername as error:
+        raise exceptions.RouterException(error)
 
     return new_user
 
