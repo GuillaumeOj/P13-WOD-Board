@@ -1,3 +1,4 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
@@ -6,7 +7,7 @@ import { v4 as uuidV4 } from 'uuid';
 import Round from './Round';
 
 export default function Rounds({ wodId }) {
-  const [rounds, setRounds] = useState([]);
+  const [rounds, setRounds] = useState();
 
   const removeRound = (uuid) => {
     const updatedRounds = rounds.filter((item) => item.uuid !== uuid);
@@ -37,7 +38,6 @@ export default function Rounds({ wodId }) {
             return {
               ...item,
               id: round.id,
-              position: round.position,
               durationSeconds: round.durationSeconds,
               repetition: round.repetition,
             };
@@ -49,8 +49,16 @@ export default function Rounds({ wodId }) {
   };
 
   useEffect(() => {
-    const updatedRounds = [...rounds];
-    setRounds(updatedRounds.map((item) => ({ ...item, wodId })));
+    if (wodId) {
+      if (rounds) {
+        const updatedRounds = [...rounds];
+        setRounds(updatedRounds.map((round) => ({ ...round, wodId })));
+      } else {
+        axios
+          .get(`/api/round/rounds/${wodId}`)
+          .then((response) => setRounds(response.data));
+      }
+    }
   }, [wodId]);
 
   return (
@@ -59,8 +67,8 @@ export default function Rounds({ wodId }) {
         className="button primary"
         type="button"
         onClick={addRound}
-        disabled={wodId === -1}
-        title={(wodId === -1) ? 'Add a title first' : 'Add a new round'}
+        disabled={!wodId}
+        title={(!wodId) ? 'Add a title first' : 'Add a new round'}
       >
         Round +
       </button>
@@ -82,5 +90,5 @@ Rounds.propTypes = {
   wodId: PropTypes.number,
 };
 Rounds.defaultProps = {
-  wodId: -1,
+  wodId: null,
 };
