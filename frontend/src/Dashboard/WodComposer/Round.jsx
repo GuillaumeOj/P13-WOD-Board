@@ -1,17 +1,15 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { useAuth } from '../../Auth';
 import { RoundPropType } from '../../Type';
 import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 
 import Goals from './Goals';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const { user } = useAuth();
-
-  const { uuid, position, wodId } = round;
+  const {
+    uuid, position, wodId,
+  } = round;
 
   const [id, setId] = useState();
   const [durationSeconds, setDurationSeconds] = useState(0);
@@ -21,45 +19,30 @@ export default function Round({ round, removeRound, updateRound }) {
   const [displaySeconds, setDisplaySeconds] = useState(0);
 
   useEffect(() => {
-    const { minutes, seconds } = SecondsToMinutesSeconds(durationSeconds);
-
-    if (minutes !== displayMinutes) { setDisplayMinutes(minutes); }
-    if (seconds !== displaySeconds) { setDisplaySeconds(seconds); }
-  }, [durationSeconds]);
+    if (round.id) { setId(round.id); }
+    if (round.repetition) { setRepetition(round.repetition); }
+    if (round.durationSeconds) {
+      const { minutes, seconds } = SecondsToMinutesSeconds(round.durationSeconds);
+      if (minutes !== displayMinutes) { setDisplayMinutes(minutes); }
+      if (seconds !== displaySeconds) { setDisplaySeconds(seconds); }
+    }
+  }, [round]);
 
   useEffect(() => {
-    const intMinutes = parseInt(displayMinutes, 10);
-    const intSeconds = parseInt(displaySeconds, 10);
-    const { seconds } = MinutesSecondsToSeconds(intMinutes, intSeconds);
-
+    const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
     if (seconds !== durationSeconds) { setDurationSeconds(seconds); }
   }, [displayMinutes, displaySeconds]);
 
   useEffect(() => {
-    updateRound({
-      uuid,
-      id,
-      durationSeconds,
-      repetition,
-    });
-  }, [id, repetition, durationSeconds]);
-
-  useEffect(() => {
-    if (position && wodId && user) {
-      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
-      const data = {
-        position, durationSeconds, repetition, wodId,
-      };
-      if (!id) {
-        axios
-          .post('/api/round/', data, config)
-          .then((response) => setId(response.data.id));
-      } else {
-        axios
-          .put(`/api/round/${id}`, data, config);
-      }
+    if (position && wodId) {
+      updateRound({
+        uuid,
+        id,
+        durationSeconds,
+        repetition,
+      });
     }
-  }, [round]);
+  }, [id, repetition, durationSeconds]);
 
   return (
     round && (
@@ -72,13 +55,13 @@ export default function Round({ round, removeRound, updateRound }) {
         </div>
         <div className="group">
           <div className="field">
-            <label htmlFor={`repetitionRound-${position}`}>Repetition:&nbsp;</label>
+            <label htmlFor={`repetition-${position}`}>Repetition:&nbsp;</label>
             <input
               type="number"
               id={`repetition-${position}`}
               name={`repetition-${position}`}
               value={repetition}
-              onChange={setRepetition}
+              onChange={(event) => setRepetition(parseInt(event.target.value, 10))}
               min="0"
             />
           </div>
@@ -89,7 +72,7 @@ export default function Round({ round, removeRound, updateRound }) {
               id={`displayMinutes-${position}`}
               name={`displayMinutes-${position}`}
               value={displayMinutes}
-              onChange={(event) => setDisplayMinutes(event.target.value)}
+              onChange={(event) => setDisplayMinutes(parseInt(event.target.value, 10))}
               min="0"
             />
           </div>
@@ -100,7 +83,7 @@ export default function Round({ round, removeRound, updateRound }) {
               id={`displaySeconds-${position}`}
               name={`displaySeconds-${position}`}
               value={displaySeconds}
-              onChange={(event) => setDisplaySeconds(event.target.value)}
+              onChange={(event) => setDisplaySeconds(parseInt(event.target.value, 10))}
               min="0"
             />
           </div>
