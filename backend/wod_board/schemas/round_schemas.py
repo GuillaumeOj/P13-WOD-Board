@@ -10,8 +10,8 @@ from wod_board.schemas import goal_schemas
 
 class RoundBase(OrmBase):
     position: int
-    duration_seconds: typing.Optional[int]
-    repetition: typing.Optional[int]
+    duration_seconds: typing.Optional[int] = 0
+    repetition: typing.Optional[int] = 0
     wod_id: int
     parent_id: typing.Optional[int]
 
