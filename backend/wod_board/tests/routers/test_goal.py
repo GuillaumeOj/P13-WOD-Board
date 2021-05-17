@@ -1,6 +1,7 @@
 import pytest
 
 from wod_board.models import goal
+from wod_board.schemas import goal_schemas
 
 
 @pytest.mark.asyncio
@@ -160,37 +161,6 @@ async def test_update_goal(db, client, db_goal, token, token_admin):
 
 
 @pytest.mark.asyncio
-async def test_get_goal_by_id(client, db_goal):
-    response = await client.get("/api/goal/2")
-    assert response.status_code == 422
-    assert response.json() == {"detail": "This goal doesn't exist"}
-
-    response = await client.get(f"/api/goal/{db_goal.id}")
-    expected_response = {
-        "id": 1,
-        "roundId": db_goal.round_id,
-        "movementId": db_goal.movement_id,
-        "repetition": None,
-        "durationSeconds": None,
-        "equipments": [],
-        "movement": {
-            "equipments": db_goal.movement.equipments.all(),
-            "id": db_goal.movement.id,
-            "name": db_goal.movement.name,
-            "unit": {
-                "id": db_goal.movement.unit.id,
-                "name": db_goal.movement.unit.name,
-                "symbol": db_goal.movement.unit.symbol,
-            },
-            "unitId": db_goal.movement.unit.id,
-        },
-    }
-
-    assert response.status_code == 200
-    assert response.json() == expected_response
-
-
-@pytest.mark.asyncio
 async def test_delete_goal_by_id(db, client, db_goal, token, token_admin):
     assert db.query(goal.Goal).count() == 1
 
@@ -221,3 +191,16 @@ async def test_delete_goal_by_id(db, client, db_goal, token, token_admin):
     assert response.status_code == 200
     assert response.json() == {"detail": "Goal successfully deleted"}
     assert db.query(goal.Goal).count() == 0
+
+
+@pytest.mark.asyncio
+async def test_get_goals_by_round_id(db, client, db_goal):
+    assert db.query(goal.Goal).count() == 1
+
+    response = await client.get(f"/api/goal/goals/{db_goal.round_id}")
+    assert response.status_code == 200
+    assert response.json() == [goal_schemas.Goal.from_orm(db_goal).dict(by_alias=True)]
+
+    response = await client.get(f"/api/goal/goals/{db_goal.round_id + 1}")
+    assert response.status_code == 200
+    assert response.json() == []

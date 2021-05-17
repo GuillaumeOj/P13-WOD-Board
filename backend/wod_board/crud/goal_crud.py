@@ -80,13 +80,13 @@ def update_goal(
     return db_goal
 
 
-def get_goal_by_id(db: sqlalchemy.orm.Session, goal_id: int) -> goal.Goal:
-    db_goal: goal.Goal = db.get(goal.Goal, goal_id)
-
-    if db_goal is None:
-        raise exceptions.UnknownGoal(str(goal_id))
-
-    return db_goal
+def get_goals_by_round_id(
+    db: sqlalchemy.orm.Session, round_id: int
+) -> typing.List[typing.Optional[goal.Goal]]:
+    db_goals: typing.List[typing.Optional[goal.Goal]] = (
+        db.query(goal.Goal).filter_by(round_id=round_id).all()
+    )
+    return db_goals
 
 
 def delete_goal_by_id(
