@@ -7,14 +7,10 @@ import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 import Goals from './Goals';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const {
-    uuid, position, wodId,
-  } = round;
+  const { position, wodId } = round;
 
-  const [id, setId] = useState();
-  const [durationSeconds, setDurationSeconds] = useState(0);
+  const [id, setId] = useState(round.id);
   const [repetition, setRepetition] = useState(0);
-
   const [displayMinutes, setDisplayMinutes] = useState(0);
   const [displaySeconds, setDisplaySeconds] = useState(0);
 
@@ -29,27 +25,24 @@ export default function Round({ round, removeRound, updateRound }) {
   }, [round]);
 
   useEffect(() => {
-    const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
-    if (seconds !== durationSeconds) { setDurationSeconds(seconds); }
-  }, [displayMinutes, displaySeconds]);
-
-  useEffect(() => {
-    if (position && wodId) {
+    if (id) {
+      const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
       updateRound({
-        uuid,
         id,
-        durationSeconds,
+        position,
+        durationSeconds: seconds,
         repetition,
+        wodId,
       });
     }
-  }, [id, repetition, durationSeconds]);
+  }, [id, repetition, displayMinutes, displaySeconds, wodId]);
 
   return (
     round && (
       <div className="round">
         <div className="lead">
           <p>{`Round number ${position}`}</p>
-          <button className="button warning" type="button" onClick={() => removeRound(uuid)}>
+          <button className="button warning" type="button" onClick={() => removeRound(id)}>
             X
           </button>
         </div>

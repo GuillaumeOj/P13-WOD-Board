@@ -2,49 +2,68 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { v4 as uuidV4 } from 'uuid';
+import { useAuth } from '../../Auth';
 
 import Round from './Round';
 
 export default function Rounds({ wodId }) {
+  const { user } = useAuth();
+
   const [rounds, setRounds] = useState();
 
-  const removeRound = (uuid) => {
-    const updatedRounds = rounds.filter((item) => item.uuid !== uuid);
+  const getRounds = () => {
+    axios
+      .get(`/api/round/rounds/${wodId}`)
+      .then((response) => {
+        if (response.data) {
+          setRounds(
+            response.data.map((item, index) => (
+              { ...item, position: index + 1 }
+            )),
+          );
+        }
+      });
+  };
 
-    setRounds(updatedRounds.map((item, index) => ({ ...item, position: index + 1 })));
+  const removeRound = (id) => {
+    if (id && user) {
+      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+      axios
+        .delete(`/api/round/${id}`, config)
+        .then(() => getRounds());
+    }
   };
 
   const addRound = () => {
-    const newRounds = [...rounds];
-    const position = newRounds.length + 1;
+    const updatedRounds = [...rounds];
+    const position = updatedRounds.length + 1;
 
-    newRounds.push({
-      uuid: uuidV4(),
-      position,
-      wodId,
-    });
-
-    setRounds(newRounds);
+    if (wodId && user) {
+      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+      const payload = {
+        position,
+        durationSeconds: 0,
+        repetition: 0,
+        wodId,
+      };
+      axios
+        .post('/api/round/', payload, config)
+        .then(() => getRounds());
+    }
   };
 
   const updateRound = (round) => {
-    const updatedRounds = [...rounds];
-
-    if (round) {
-      setRounds(
-        updatedRounds.map((item) => {
-          if (item.uuid === round.uuid) {
-            return {
-              ...item,
-              id: round.id,
-              durationSeconds: round.durationSeconds,
-              repetition: round.repetition,
-            };
-          }
-          return item;
-        }),
-      );
+    if (round.id) {
+      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+      const payload = {
+        position: round.position,
+        durationSeconds: round.durationSeconds,
+        repetition: round.repetition,
+        wodId,
+      };
+      axios
+        .put(`/api/round/${round.id}`, payload, config)
+        .then(() => getRounds());
     }
   };
 
@@ -54,9 +73,7 @@ export default function Rounds({ wodId }) {
         const updatedRounds = [...rounds];
         setRounds(updatedRounds.map((round) => ({ ...round, wodId })));
       } else {
-        axios
-          .get(`/api/round/rounds/${wodId}`)
-          .then((response) => setRounds(response.data));
+        getRounds();
       }
     }
   }, [wodId]);
@@ -74,9 +91,9 @@ export default function Rounds({ wodId }) {
       </button>
       {rounds
         && rounds.map(
-          (round) => round && (
+          (round) => round.id && (
           <Round
-            key={round.uuid}
+            key={round.id}
             round={round}
             removeRound={removeRound}
             updateRound={updateRound}
