@@ -32,6 +32,16 @@ async def create_goal(
         raise exceptions.RouterException(error)
 
 
+@router.get(
+    "/goals/{round_id}", response_model=typing.List[typing.Optional[goal_schemas.Goal]]
+)
+async def get_goals_by_round_id(
+    round_id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> typing.List[typing.Optional[goal.Goal]]:
+    return goal_crud.get_goals_by_round_id(db, round_id)
+
+
 @router.put("/{goal_id}", response_model=goal_schemas.Goal)
 async def update_goal(
     goal_data: goal_schemas.GoalCreate,
@@ -48,17 +58,6 @@ async def update_goal(
     except exceptions.UnknownRound as error:
         raise exceptions.RouterException(error)
     except exceptions.UserIsNotAuthor as error:
-        raise exceptions.RouterException(error)
-
-
-@router.get("/{goal_id}", response_model=goal_schemas.Goal)
-async def get_goal_by_id(
-    goal_id: int,
-    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> goal.Goal:
-    try:
-        return goal_crud.get_goal_by_id(db, goal_id)
-    except exceptions.UnknownGoal as error:
         raise exceptions.RouterException(error)
 
 

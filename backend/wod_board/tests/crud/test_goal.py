@@ -64,14 +64,16 @@ def test_update_goal(db, db_goal, db_user, admin):
         goal_crud.update_goal(db, goal_schema, db_goal.id, db_user.id)
 
 
-def test_get_goal_by_id(db, db_goal):
+def test_get_goals_by_round_id(db, db_goal):
     assert db.query(goal.Goal).count() == 1
 
-    wanted_goal = goal_crud.get_goal_by_id(db, db_goal.id)
-    assert wanted_goal.id == db_goal.id
+    goals = goal_crud.get_goals_by_round_id(db, db_goal.round_id)
+    assert len(goals) == 1
+    assert db.query(goal.Goal).count() == 1
 
-    with pytest.raises(exceptions.UnknownGoal):
-        goal_crud.get_goal_by_id(db, 2)
+    goals = goal_crud.get_goals_by_round_id(db, db_goal.round_id + 1)
+    assert len(goals) == 0
+    assert db.query(goal.Goal).count() == 1
 
 
 def test_delete_goal_by_id(db, db_goal, db_user, admin):
