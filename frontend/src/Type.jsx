@@ -37,7 +37,6 @@ export const GoalPropType = PropTypes.shape({
 });
 
 export const RoundPropType = PropTypes.shape({
-  uuid: PropTypes.string.isRequired,
   id: PropTypes.number,
   position: PropTypes.number.isRequired,
   repetition: PropTypes.number,
