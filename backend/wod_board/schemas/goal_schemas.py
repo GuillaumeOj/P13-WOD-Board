@@ -8,8 +8,8 @@ from wod_board.schemas import movement_schemas
 class GoalBase(OrmBase):
     movement_id: int
     round_id: int
-    repetition: typing.Optional[int]
-    duration_seconds: typing.Optional[int]
+    repetition: int = 0
+    duration_seconds: int = 0
 
 
 class GoalCreate(GoalBase):
