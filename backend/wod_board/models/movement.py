@@ -16,10 +16,14 @@ class MovementEquipment(models.Base):
 
     id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     movement_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("movement.id", ondelete="CASCADE"),
+        nullable=False,
     )
     equipment_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("equipment.id", ondelete="CASCADE"),
+        nullable=False,
     )
 
 
@@ -29,7 +33,7 @@ class Movement(models.Base):
     id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     name: str = sqlalchemy.Column(sqlalchemy.String(250), nullable=False, unique=True)
     unit_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id"), nullable=False
+        sqlalchemy.Integer, sqlalchemy.ForeignKey("unit.id")
     )
 
     unit: "Unit" = sqlalchemy.orm.relationship("Unit")

@@ -14,8 +14,6 @@ async def test_create_round(db, client, db_wod, token, admin):
 
     round_json = {
         "position": 1,
-        "durationSeconds": 60,
-        "repetition": 5,
         "wodId": db_wod.id,
     }
     response = await client.post(
@@ -26,8 +24,10 @@ async def test_create_round(db, client, db_wod, token, admin):
     expected_response = round_json | {
         "id": 1,
         "parentId": None,
+        "durationSeconds": 0,
+        "repetition": 0,
         "subRounds": [],
-        "movements": [],
+        "goals": [],
     }
     assert response.status_code == 200
     assert response.json() == expected_response
@@ -36,8 +36,6 @@ async def test_create_round(db, client, db_wod, token, admin):
     round_json = {
         "position": 1,
         "wodId": 0,
-        "subRounds": [],
-        "movements": [],
     }
     response = await client.post(
         "/api/round",
@@ -101,7 +99,7 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
         "id": db_round.id,
         "parentId": None,
         "subRounds": [],
-        "movements": [],
+        "goals": [],
     }
     assert response.status_code == 200
     assert response.json() == expected_response
@@ -139,7 +137,14 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
     assert response.json() == {"detail": "This WOD doesn't exist"}
     assert db.query(wod_round.Round).count() == 1
 
-    db.add(wod_round.Round(position=2, wod_id=db_round.wod_id))
+    db.add(
+        wod_round.Round(
+            position=2,
+            repetition=0,
+            duration_seconds=0,
+            wod_id=db_round.wod_id,
+        )
+    )
     db.commit()
     assert db.query(wod_round.Round).count() == 2
 
@@ -148,7 +153,6 @@ async def test_update_round(db, client, db_round, db_wod, admin, token):
         "durationSeconds": 60,
         "repetition": 5,
         "wodId": db_round.wod_id,
-        "subRounds": [],
     }
     response = await client.put(
         f"/api/round/{db_round.id}",

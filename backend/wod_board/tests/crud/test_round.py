@@ -73,7 +73,11 @@ def test_update_round(db, db_round, db_user):
         round_crud.update_round(db, round_schema, db_round.id, db_user.id)
     assert db.query(wod_round.Round).count() == 1
 
-    db.add(wod_round.Round(position=2, wod_id=db_round.wod_id))
+    db.add(
+        wod_round.Round(
+            position=2, repetition=0, duration_seconds=0, wod_id=db_round.wod_id
+        )
+    )
     db.commit()
     assert db.query(wod_round.Round).count() == 2
 

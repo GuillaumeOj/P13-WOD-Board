@@ -42,3 +42,7 @@ def test_wod(db, db_user):
         'constraint "wod_author_id_fkey"' in str(error)
     )
     assert db.query(wod.Wod).count() == 1
+
+    db.delete(db_user)
+    db.commit()
+    assert db.query(wod.Wod).count() == 0
