@@ -41,3 +41,17 @@ async def get_movements_by_name(
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
 ) -> typing.List[typing.Optional[movement.Movement]]:
     return movement_crud.get_movements_by_name(db, name)
+
+
+@router.get(
+    "/{movement_id}",
+    response_model=movement_schemas.Movement,
+)
+async def get_movement_by_id(
+    movement_id: int,
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+) -> movement.Movement:
+    try:
+        return movement_crud.get_movement_by_id(db, movement_id)
+    except exceptions.UnknownMovement as error:
+        raise exceptions.RouterException(error)
