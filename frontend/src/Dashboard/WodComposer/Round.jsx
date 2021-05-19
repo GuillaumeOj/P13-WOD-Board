@@ -7,15 +7,13 @@ import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 import Goals from './Goals';
 
 export default function Round({ round, removeRound, updateRound }) {
-  const { position, wodId } = round;
+  const { id, position, wodId } = round;
 
-  const [id, setId] = useState(round.id);
   const [repetition, setRepetition] = useState(0);
   const [displayMinutes, setDisplayMinutes] = useState(0);
   const [displaySeconds, setDisplaySeconds] = useState(0);
 
   useEffect(() => {
-    if (round.id) { setId(round.id); }
     if (round.repetition) { setRepetition(round.repetition); }
     if (round.durationSeconds) {
       const { minutes, seconds } = SecondsToMinutesSeconds(round.durationSeconds);
