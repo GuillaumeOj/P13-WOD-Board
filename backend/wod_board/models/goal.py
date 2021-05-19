@@ -39,8 +39,8 @@ class Goal(models.Base):
         sqlalchemy.ForeignKey("round.id", ondelete="CASCADE"),
         nullable=False,
     )
-    repetition: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
-    duration_seconds: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
+    repetition: int = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
+    duration_seconds: int = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
 
     movement: "Movement" = sqlalchemy.orm.relationship("Movement")
     equipments: typing.List[typing.Optional["Equipment"]] = sqlalchemy.orm.relationship(

@@ -139,7 +139,12 @@ def db_movement(db, db_unit):
 
 @pytest.fixture()
 def db_goal(db, db_round, db_movement):
-    new_goal = goal.Goal(round_id=db_round.id, movement_id=db_movement.id)
+    new_goal = goal.Goal(
+        round_id=db_round.id,
+        movement_id=db_movement.id,
+        repetition=0,
+        duration_seconds=0,
+    )
     db.add(new_goal)
     db.commit()
     db.refresh(new_goal)
