@@ -2,11 +2,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { useAlert } from '../../Alert';
-
 export default function WodType({ wodTypeId, setWodTypeId }) {
-  const { addAlert } = useAlert();
-
   const [id, setId] = useState();
   const [name, setName] = useState('');
 
@@ -19,27 +15,7 @@ export default function WodType({ wodTypeId, setWodTypeId }) {
     if (currentValue) {
       axios
         .get(`/api/type/list/${currentValue}`)
-        .then((response) => setWodTypes(response.data))
-        .catch((error) => {
-          if (error) {
-            if (error.response) {
-              if (error.response.data) {
-                const { detail } = error.response.data;
-
-                if (typeof detail === 'string') {
-                  addAlert({ message: detail, alertType: 'error' });
-                } else {
-                  detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-                }
-              }
-            } else {
-              addAlert({
-                message: 'Impossible to retrieve WOD types',
-                alertType: 'error',
-              });
-            }
-          }
-        });
+        .then((response) => setWodTypes(response.data));
     } else { setWodTypes([]); }
   };
 
@@ -49,15 +25,15 @@ export default function WodType({ wodTypeId, setWodTypeId }) {
     setWodTypes([]);
   };
 
-  useEffect(() => { setWodTypeId(id); }, [id]);
+  useEffect(() => { if (wodTypeId !== id) { setId(wodTypeId); } }, [wodTypeId]);
 
   useEffect(() => {
-    if (wodTypeId !== -1 && !name) {
+    if (id) {
       axios
-        .get(`/api/type/${wodTypeId}`)
-        .then((response) => { setName(response.data.name); setId(wodTypeId); });
+        .get(`/api/type/${id}`)
+        .then((response) => { setName(response.data.name); setId(id); setWodTypeId(id); });
     }
-  }, [wodTypeId]);
+  }, [id]);
 
   return (
     <div className="field">
@@ -95,5 +71,5 @@ WodType.propTypes = {
   wodTypeId: PropTypes.number,
 };
 WodType.defaultProps = {
-  wodTypeId: -1,
+  wodTypeId: null,
 };
