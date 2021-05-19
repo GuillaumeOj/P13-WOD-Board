@@ -37,7 +37,7 @@ async def test_get_movements_by_name(db, client, db_unit):
     db.refresh(devil_press)
     db.refresh(push_press)
 
-    response = await client.get("/api/movement/Pres")
+    response = await client.get("/api/movement/movements/Pres")
     expected_response = [
         movement_schemas.Movement.from_orm(devil_press).dict(by_alias=True),
         movement_schemas.Movement.from_orm(push_press).dict(by_alias=True),
@@ -45,13 +45,13 @@ async def test_get_movements_by_name(db, client, db_unit):
     assert response.status_code == 200
     assert response.json() == expected_response
 
-    response = await client.get("/api/movement/Devil Pres")
+    response = await client.get("/api/movement/movements/Devil Pres")
     expected_response = [
         movement_schemas.Movement.from_orm(devil_press).dict(by_alias=True),
     ]
     assert response.status_code == 200
     assert response.json() == expected_response
 
-    response = await client.get("/api/movement/Burpee")
+    response = await client.get("/api/movement/movements/Burpee")
     assert response.status_code == 200
     assert response.json() == []
