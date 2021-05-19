@@ -55,3 +55,18 @@ async def test_get_movements_by_name(db, client, db_unit):
     response = await client.get("/api/movement/movements/Burpee")
     assert response.status_code == 200
     assert response.json() == []
+
+
+@pytest.mark.asyncio
+async def test_get_movement_by_id(db, client, db_movement):
+    assert db.query(movement.Movement).count() == 1
+
+    response = await client.get(f"/api/movement/{db_movement.id}")
+    assert response.status_code == 200
+    assert response.json() == movement_schemas.Movement.from_orm(db_movement).dict(
+        by_alias=True
+    )
+
+    response = await client.get(f"/api/movement/{db_movement.id + 1}")
+    assert response.status_code == 422
+    assert response.json() == {"detail": "This movement doesn't exist"}
