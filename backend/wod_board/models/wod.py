@@ -22,7 +22,9 @@ class Wod(models.Base):
     date: datetime.datetime = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False)
     is_complete: bool = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
     author_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
     )
     wod_type_id: typing.Optional[int] = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey("wod_type.id")

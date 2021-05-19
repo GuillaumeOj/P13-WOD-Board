@@ -10,8 +10,8 @@ from wod_board.schemas import goal_schemas
 
 class RoundBase(OrmBase):
     position: int
-    duration_seconds: typing.Optional[int] = 0
-    repetition: typing.Optional[int] = 0
+    duration_seconds: int = 0
+    repetition: int = 0
     wod_id: int
     parent_id: typing.Optional[int]
 
@@ -23,8 +23,8 @@ class RoundCreate(RoundBase):
 class Round(RoundBase):
     id: int
 
-    sub_rounds: typing.Optional[typing.List[Round]]
-    movements: typing.Optional[typing.List[goal_schemas.Goal]]
+    sub_rounds: typing.List[typing.Optional[Round]]
+    goals: typing.List[typing.Optional[goal_schemas.Goal]]
 
 
 RoundCreate.update_forward_refs()

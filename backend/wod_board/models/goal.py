@@ -16,10 +16,14 @@ class GoalEquipment(models.Base):
 
     id: int = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, nullable=False)
     goal_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("goal.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("goal.id", ondelete="CASCADE"),
+        nullable=False,
     )
     equipment_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("equipment.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("equipment.id", ondelete="CASCADE"),
+        nullable=False,
     )
 
 
@@ -31,7 +35,9 @@ class Goal(models.Base):
         sqlalchemy.Integer, sqlalchemy.ForeignKey("movement.id"), nullable=False
     )
     round_id: int = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("round.id"), nullable=False
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey("round.id", ondelete="CASCADE"),
+        nullable=False,
     )
     repetition: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)
     duration_seconds: typing.Optional[int] = sqlalchemy.Column(sqlalchemy.Integer)

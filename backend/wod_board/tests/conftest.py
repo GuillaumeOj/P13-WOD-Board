@@ -107,7 +107,9 @@ def db_wod(db, db_user):
 
 @pytest.fixture()
 def db_round(db, db_wod):
-    new_round = wod_round.Round(position=1, wod_id=db_wod.id)
+    new_round = wod_round.Round(
+        position=1, repetition=0, duration_seconds=0, wod_id=db_wod.id
+    )
     db.add(new_round)
     db.commit()
     db.refresh(new_round)
