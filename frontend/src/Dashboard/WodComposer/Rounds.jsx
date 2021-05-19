@@ -35,8 +35,7 @@ export default function Rounds({ wodId }) {
   };
 
   const addRound = () => {
-    const updatedRounds = [...rounds];
-    const position = updatedRounds.length + 1;
+    const position = rounds.length + 1;
 
     if (wodId && user) {
       const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
