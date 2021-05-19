@@ -48,7 +48,7 @@ class Round(models.Base):
         backref=sqlalchemy.orm.backref("parent", remote_side=[id]),
         lazy="dynamic",
     )
-    goals: typing.List["Goal"] = sqlalchemy.orm.relationship(
+    goals: typing.List[typing.Optional["Goal"]] = sqlalchemy.orm.relationship(
         "Goal",
         secondary="round_goal",
         lazy="dynamic",
