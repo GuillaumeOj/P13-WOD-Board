@@ -33,7 +33,8 @@ async def create_movement(
 
 
 @router.get(
-    "/{name}", response_model=typing.List[typing.Optional[movement_schemas.Movement]]
+    "/movements/{name}",
+    response_model=typing.List[typing.Optional[movement_schemas.Movement]],
 )
 async def get_movements_by_name(
     name: str,
