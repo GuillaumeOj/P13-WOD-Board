@@ -69,12 +69,12 @@
         }
       }
     }
-    .movements {
-      .movement {
+    .goals {
+      .goal {
         &:first-of-type {
           margin-top: $spacer;
         }
-        .lead.field {
+        .movement {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
@@ -83,7 +83,7 @@
           label {
             margin: 0;
           }
-          .input {
+          .movementInput {
             flex-grow: 2;
             margin-left: $spacer;
             margin-right: $spacer;
@@ -93,6 +93,9 @@
               width: 100%;
               box-sizing: border-box;
             }
+          }
+          .button {
+            margin-right: $spacer;
           }
         }
       }

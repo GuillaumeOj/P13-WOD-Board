@@ -1,60 +1,91 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { v4 as uuidV4 } from 'uuid';
+import { useAuth } from '../../Auth';
 
 import Goal from './Goal';
 
 export default function Goals({ roundId }) {
+  const { user } = useAuth();
+
   const [goals, setGoals] = useState([]);
 
-  const removeGoal = (goalUuid) => {
-    const updatedGoals = goals.filter((goal) => goal.uuid !== goalUuid);
-    setGoals(updatedGoals);
+  const getGoals = () => {
+    axios
+      .get(`/api/goal/goals/${roundId}`)
+      .then((response) => {
+        if (response.data) {
+          setGoals(response.data);
+        }
+      });
+  };
+
+  const removeGoal = (index) => {
+    const updatedGoals = [...goals];
+    const itemToDelete = updatedGoals[index];
+
+    if (itemToDelete.id) {
+      if (user) {
+        const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+        axios
+          .delete(`/api/goal/${itemToDelete.id}`, config)
+          .then(() => getGoals());
+      }
+    } else {
+      updatedGoals.splice(index, 1);
+      setGoals(updatedGoals);
+    }
   };
 
   const addGoal = () => {
-    const updatedGoals = [...goals];
-    updatedGoals.push({
-      uuid: uuidV4(),
-      id: 0,
-      movementId: null,
-      movement: null,
-      roundId,
-      name: '',
-      equipments: null,
-      repetition: 0,
-      durationSeconds: 0,
-    });
-
-    setGoals(updatedGoals);
+    if (roundId && user) {
+      const updatedGoals = [...goals];
+      updatedGoals.push({
+        roundId,
+        repetition: 0,
+        durationSeconds: 0,
+      });
+      setGoals(updatedGoals);
+    }
   };
 
-  const updatedGoal = (goal) => {
-    const updatedGoals = [...goals];
-
-    if (goal) {
-      setGoals(
-        updatedGoals.map((item) => {
-          if (item.uuid === goal.uuid) {
-            return {
-              ...item,
-              name: goal.name,
-              movementId: goal.movementId,
-              repetition: goal.repetition,
-              durationMinutes: goal.durationMinutes,
-              durationSeconds: goal.durationSeconds,
-            };
-          }
-          return item;
-        }),
-      );
+  const updateGoal = (goal) => {
+    if (user) {
+      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+      const payload = {
+        movementId: goal.movementId,
+        roundId,
+        repetition: goal.repetition,
+        durationSeconds: goal.durationSeconds,
+      };
+      if (goal.id && goal.movementId) {
+        axios
+          .put(`/api/goal/${goal.id}`, payload, config)
+          .then(() => getGoals());
+      } else if (!goal.id && goal.movementId) {
+        axios
+          .post('/api/goal/', payload, config)
+          .then(() => getGoals());
+      }
     }
   };
 
   useEffect(() => {
-    const updatedGoals = [...goals];
-    setGoals(updatedGoals.map((item) => ({ ...item, roundId })));
+    if (roundId) {
+      getGoals();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (roundId) {
+      if (goals) {
+        const updatedGoals = [...goals];
+        setGoals(updatedGoals.map((goal) => ({ ...goal, roundId })));
+      } else {
+        getGoals();
+      }
+    }
   }, [roundId]);
 
   return (
@@ -62,10 +93,16 @@ export default function Goals({ roundId }) {
       <button className="button primary" type="button" onClick={addGoal}>
         Movement +
       </button>
-      <div className="movements">
+      <div className="goals">
         {goals
-            && goals.map((goal) => (
-              <Goal key={goal.uuid} goal={goal} removeGoal={removeGoal} updateGoal={updatedGoal} />
+            && goals.map((goal, index) => (
+              <Goal
+                key={`goal-${index.toString()}`}
+                index={index}
+                goal={goal}
+                removeGoal={removeGoal}
+                updateGoal={updateGoal}
+              />
             ))}
       </div>
     </>

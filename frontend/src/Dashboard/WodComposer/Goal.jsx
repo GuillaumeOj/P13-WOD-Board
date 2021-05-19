@@ -1,145 +1,89 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
-import { useAlert } from '../../Alert';
 import { GoalPropType } from '../../Type';
-import { useInput } from '../../Utils';
+import { MinutesSecondsToSeconds, SecondsToMinutesSeconds } from '../../Utils';
 
-export default function Goal({ goal, removeGoal, updateGoal }) {
-  const { uuid, id } = goal;
+import Movement from './Movement';
 
-  const { addAlert } = useAlert();
+export default function Goal({
+  index, goal, removeGoal, updateGoal,
+}) {
+  const { id } = goal;
 
-  const [movementId, setMovementId] = useState(goal.movementId);
-  const [name, setName] = useState(goal.name);
-  const [repetition, setRepetition] = useInput(goal.repetition);
-  const [durationMinutes, setDurationMinutes] = useInput(goal.durationMinutes);
-  const [durationSeconds, setDurationSeconds] = useInput(goal.durationSeconds);
+  const [movementId, setMovementId] = useState();
+  const [repetition, setRepetition] = useState(0);
+  const [displayMinutes, setDisplayMinutes] = useState(0);
+  const [displaySeconds, setDisplaySeconds] = useState(0);
 
-  const [movements, setMovements] = useState([]);
-
-  useEffect(() => {
-    updateGoal({
-      id,
-      uuid,
-      movementId: parseInt(movementId, 10),
-      name,
-      repetition: parseInt(repetition, 10),
-      durationMinutes: parseInt(durationMinutes, 10),
-      durationSeconds: parseInt(durationSeconds, 10),
-    });
-  }, [movementId, name, repetition, durationMinutes, durationSeconds]);
-
-  const searchMovement = (movementName) => {
-    axios
-      .get(`/api/movement/${movementName}`)
-      .then((response) => setMovements(response.data))
-      .catch((error) => {
-        if (error) {
-          if (error.response) {
-            if (error.response.data) {
-              const { detail } = error.response.data;
-
-              if (typeof detail === 'string') {
-                addAlert({ message: detail, alertType: 'error' });
-              } else {
-                detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-              }
-            }
-          } else {
-            addAlert({
-              message: 'Impossible to retrieve movements',
-              alertType: 'error',
-            });
-          }
-        }
-      });
-  };
-
-  const selectMovement = (event) => {
-    const movementName = event.target.value;
-    if (movementName) {
-      searchMovement(movementName);
-      setName(movementName);
-    } else {
-      setMovements([]);
-      setName('');
+  const updateMovement = (value) => {
+    if (value) {
+      setMovementId(value);
     }
   };
+
+  useEffect(() => {
+    if (goal.movementId) { setRepetition(goal.movementId); }
+    if (goal.repetition) { setRepetition(goal.repetition); }
+    if (goal.durationSeconds) {
+      const { minutes, seconds } = SecondsToMinutesSeconds(goal.durationSeconds);
+      if (minutes !== displayMinutes) { setDisplayMinutes(minutes); }
+      if (seconds !== displaySeconds) { setDisplaySeconds(seconds); }
+    }
+  }, [goal]);
+
+  useEffect(() => {
+    const { seconds } = MinutesSecondsToSeconds(displayMinutes, displaySeconds);
+    updateGoal({
+      id,
+      movementId,
+      repetition,
+      durationSeconds: seconds,
+    });
+  }, [movementId, repetition, displayMinutes, displaySeconds]);
 
   return (
     goal && (
       <>
         <hr className="divider" />
-        <div className="movement">
-          <div className="lead field">
-            <label htmlFor={`movementName-${uuid}`}>Name:&nbsp;</label>
-            <div className="input">
-              <input
-                type="text"
-                id={`movementName-${uuid}`}
-                name={`movementName-${uuid}`}
-                value={name}
-                onChange={selectMovement}
-              />
-              <div className="completion">
-                {movements && (
-                  <div className="types">
-                    {movements.map((item) => (
-                      <button
-                        className="button type"
-                        type="button"
-                        key={item.id}
-                        value={item.name}
-                        onClick={() => {
-                          setMovementId(item.movement_id);
-                          setName(item.name);
-                          setMovements([]);
-                        }}
-                      >
-                        {item.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button className="button warning" type="button" onClick={() => removeGoal(uuid)}>
-              X
-            </button>
-          </div>
+        <div className="goal">
+          <Movement
+            index={index}
+            movementId={movementId}
+            updateMovement={updateMovement}
+            removeGoal={removeGoal}
+          />
           <div className="group">
             <div className="field">
-              <label htmlFor={`repetitionMovement-${uuid}`}>Repetition:&nbsp;</label>
+              <label htmlFor={`repetitionGoal-${index}`}>Repetition:&nbsp;</label>
               <input
                 type="number"
-                id={`repetitionMovement-${uuid}`}
-                name={`repetitionMovement-${uuid}`}
+                id={`repetitionGoal-${index}`}
+                name={`repetitionGoal-${index}`}
                 value={repetition}
-                onChange={setRepetition}
+                onChange={(event) => setRepetition(parseInt(event.target.value, 10))}
                 min="0"
               />
             </div>
             <div className="field">
-              <label htmlFor={`durationMinutes-${uuid}`}>Minutes:&nbsp;</label>
+              <label htmlFor={`minutesGoal-${index}`}>Minutes:&nbsp;</label>
               <input
                 type="number"
-                id={`durationMinutes-${uuid}`}
-                name={`durationMinutes-${uuid}`}
-                value={durationMinutes}
-                onChange={setDurationMinutes}
+                id={`minutesGoal-${index}`}
+                name={`minutesGoal-${index}`}
+                value={displayMinutes}
+                onChange={(event) => setDisplayMinutes(parseInt(event.target.value, 10))}
                 min="0"
               />
             </div>
             <div className="field">
-              <label htmlFor={`durationSeconds-${uuid}`}>Seconds:&nbsp;</label>
+              <label htmlFor={`secondsGoal-${index}`}>Seconds:&nbsp;</label>
               <input
                 type="number"
-                id={`durationSeconds-${uuid}`}
-                name={`durationSeconds-${uuid}`}
-                value={durationSeconds}
-                onChange={setDurationSeconds}
+                id={`secondsGoal-${index}`}
+                name={`secondsGoal-${index}`}
+                value={displaySeconds}
+                onChange={(event) => setDisplaySeconds(parseInt(event.target.value, 10))}
                 min="0"
               />
             </div>
@@ -150,6 +94,7 @@ export default function Goal({ goal, removeGoal, updateGoal }) {
   );
 }
 Goal.propTypes = {
+  index: PropTypes.number.isRequired,
   goal: GoalPropType.isRequired,
   removeGoal: PropTypes.func.isRequired,
   updateGoal: PropTypes.func.isRequired,
