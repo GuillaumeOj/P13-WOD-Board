@@ -17,8 +17,8 @@ export default function Wod() {
   const { addAlert } = useAlert();
 
   const [id, setId] = useState();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState();
+  const [description, setDescription] = useState();
   const date = dayjs.utc().format();
   const [wodTypeId, setWodTypeId] = useState();
   const [authorId, setAuthorId] = useState();
@@ -61,7 +61,7 @@ export default function Wod() {
 
   useEffect(() => {
     const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
-    if (title && user) {
+    if (wod && wod.title && user) {
       if (!id) {
         axios.post('/api/wod/', wod, config)
           .then((response) => setId(response.data.id));
