@@ -27,12 +27,13 @@ export const MovementPropType = PropTypes.shape({
 });
 
 export const GoalPropType = PropTypes.shape({
+  uuid: PropTypes.string.isRequired,
   id: PropTypes.number,
   movementId: PropTypes.number,
-  roundId: PropTypes.number,
-  repetition: PropTypes.number.isRequired,
-  durationSeconds: PropTypes.number.isRequired,
-  movement: MovementPropType.isRequired,
+  roundId: PropTypes.number.isRequired,
+  repetition: PropTypes.number,
+  durationSeconds: PropTypes.number,
+  movement: MovementPropType,
   equipments: PropTypes.arrayOf(EquipementPropType),
 });
 

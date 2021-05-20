@@ -1,6 +1,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useAuth } from '../../Auth';
 
@@ -16,24 +17,27 @@ export default function Goals({ roundId }) {
       .get(`/api/goal/goals/${roundId}`)
       .then((response) => {
         if (response.data) {
-          setGoals(response.data);
+          setGoals(response.data.map((goal) => ({ ...goal, uuid: uuidv4() })));
         }
       });
   };
 
-  const removeGoal = (index) => {
+  const removeGoal = (uuid) => {
     const updatedGoals = [...goals];
-    const itemToDelete = updatedGoals[index];
+    const goalToDelete = updatedGoals.find((goal) => goal.uuid === uuid);
 
-    if (itemToDelete.id) {
+    updatedGoals.splice(updatedGoals.findIndex((goal) => goal.uuid === uuid), 1);
+
+    if (goalToDelete && goalToDelete.id) {
       if (user) {
         const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
         axios
-          .delete(`/api/goal/${itemToDelete.id}`, config)
-          .then(() => getGoals());
+          .delete(`/api/goal/${goalToDelete.id}`, config)
+          .then(() => {
+            setGoals(updatedGoals);
+          });
       }
     } else {
-      updatedGoals.splice(index, 1);
       setGoals(updatedGoals);
     }
   };
@@ -42,6 +46,8 @@ export default function Goals({ roundId }) {
     if (roundId && user) {
       const updatedGoals = [...goals];
       updatedGoals.push({
+        uuid: uuidv4(),
+        id: null,
         roundId,
         repetition: 0,
         durationSeconds: 0,
@@ -51,7 +57,8 @@ export default function Goals({ roundId }) {
   };
 
   const updateGoal = (goal) => {
-    if (user) {
+    if (user && goal.uuid && goal.movementId && roundId) {
+      const updatedGoals = [...goals];
       const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
       const payload = {
         movementId: goal.movementId,
@@ -59,14 +66,29 @@ export default function Goals({ roundId }) {
         repetition: goal.repetition,
         durationSeconds: goal.durationSeconds,
       };
-      if (goal.id && goal.movementId) {
+
+      if (goal.id) {
         axios
           .put(`/api/goal/${goal.id}`, payload, config)
-          .then(() => getGoals());
-      } else if (!goal.id && goal.movementId) {
+          .then((response) => {
+            setGoals(updatedGoals.map((item) => {
+              if (item.uuid === goal.uuid) {
+                return { ...response.data, uuid: goal.uuid };
+              }
+              return item;
+            }));
+          });
+      } else {
         axios
           .post('/api/goal/', payload, config)
-          .then(() => getGoals());
+          .then((response) => {
+            setGoals(updatedGoals.map((item) => {
+              if (item.uuid === goal.uuid) {
+                return { ...response.data, uuid: goal.uuid };
+              }
+              return item;
+            }));
+          });
       }
     }
   };
@@ -82,8 +104,6 @@ export default function Goals({ roundId }) {
       if (goals) {
         const updatedGoals = [...goals];
         setGoals(updatedGoals.map((goal) => ({ ...goal, roundId })));
-      } else {
-        getGoals();
       }
     }
   }, [roundId]);
@@ -95,22 +115,20 @@ export default function Goals({ roundId }) {
       </button>
       <div className="goals">
         {goals
-            && goals.map((goal, index) => (
+            && goals.map((goal) => (
+              goal.uuid && (
               <Goal
-                key={`goal-${index.toString()}`}
-                index={index}
+                key={goal.uuid}
                 goal={goal}
                 removeGoal={removeGoal}
                 updateGoal={updateGoal}
               />
+              )
             ))}
       </div>
     </>
   );
 }
 Goals.propTypes = {
-  roundId: PropTypes.number,
-};
-Goals.defaultProps = {
-  roundId: -1,
+  roundId: PropTypes.number.isRequired,
 };
