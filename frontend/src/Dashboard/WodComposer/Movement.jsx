@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 
 export default function Movement({
-  index, movementId, removeGoal, updateMovement,
+  uuid, movementId, removeGoal, setMovementId,
 }) {
-  const [id, setId] = useState(movementId);
-  const [name, setName] = useState('');
+  const [id, setId] = useState();
+  const [name, setName] = useState();
 
   const [movements, setMovements] = useState([]);
 
@@ -22,30 +22,29 @@ export default function Movement({
     } else { setMovements([]); }
   };
 
-  const selectMovement = (itemId, itemName) => {
-    setId(itemId);
-    setName(itemName);
+  const selectMovement = (itemId) => {
     setMovements([]);
+    setMovementId(itemId);
   };
 
-  useEffect(() => { updateMovement(id); }, [id]);
-  useEffect(() => { if (movementId !== id) { setId(movementId); } }, [movementId]);
-
   useEffect(() => {
-    if (id) {
+    if (movementId && movementId !== id) {
       axios
-        .get(`/api/movement/${id}`)
-        .then((response) => { setName(response.data.name); setId(response.data.id); });
+        .get(`/api/movement/${movementId}`)
+        .then((response) => {
+          if (response.data.name !== name) { setName(response.data.name); }
+          setId(movementId);
+        });
     }
-  }, [id]);
+  }, [movementId]);
 
-  return (
+  return uuid && (
     <div className="field movement">
-      <label htmlFor={`movementName-${index}`}>Name*:&nbsp;</label>
+      <label htmlFor={`movementName-${uuid}`}>Name*:&nbsp;</label>
       <div className="movementInput">
         <input
-          name={`movementName-${index}`}
-          id={`movementName-${index}`}
+          name={`movementName-${uuid}`}
+          id={`movementName-${uuid}`}
           value={name}
           onChange={searchMovements}
           required
@@ -58,9 +57,9 @@ export default function Movement({
               <button
                 className="button type"
                 type="button"
-                key={`movements-${item.id}`}
+                key={`movements-${item.name}`}
                 value={item.name}
-                onClick={() => selectMovement(item.id, item.name)}
+                onClick={() => selectMovement(item.id)}
               >
                 {item.name}
               </button>
@@ -69,7 +68,7 @@ export default function Movement({
           )}
         </div>
       </div>
-      <button className="button warning" type="button" onClick={() => removeGoal(index)}>
+      <button className="button warning" type="button" onClick={() => removeGoal(uuid)}>
         X
       </button>
     </div>
@@ -77,10 +76,10 @@ export default function Movement({
 }
 
 Movement.propTypes = {
-  index: PropTypes.number.isRequired,
+  uuid: PropTypes.string.isRequired,
   movementId: PropTypes.number,
   removeGoal: PropTypes.func.isRequired,
-  updateMovement: PropTypes.func.isRequired,
+  setMovementId: PropTypes.func.isRequired,
 };
 
 Movement.defaultProps = {
