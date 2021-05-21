@@ -14,12 +14,10 @@ function useProvideAlert() {
 
   const addAlert = ({ message, alertType }) => {
     const updatedAlerts = [...messages];
-    const id = uuidv4();
-
     updatedAlerts.push({
       message,
       alertType,
-      id,
+      id: uuidv4(),
     });
     setMessages(updatedAlerts);
   };
@@ -35,13 +33,15 @@ function useProvideAlert() {
   };
 }
 
-// eslint-disable-next-line react/prop-types
 export function AlertProvider({ children }) {
   const alert = useProvideAlert();
   return (
     <alertContext.Provider value={alert}>{children}</alertContext.Provider>
   );
 }
+AlertProvider.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export const useAlert = () => useContext(alertContext);
 
