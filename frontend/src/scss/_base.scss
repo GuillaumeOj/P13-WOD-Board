@@ -47,7 +47,7 @@ a:hover {
 }
 
 #content {
-  width: 100vw;
+  max-width: 100vw;
   min-height: $content-min-height;
 
   #home,
