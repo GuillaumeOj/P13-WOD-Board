@@ -206,3 +206,50 @@ form {
     margin-top: $spacer;
   }
 }
+
+.footer {
+  margin: 0;
+  margin-top: $spacer;
+  height: $footer-height;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .signature{
+    margin-bottom: calc(#{$spacer} * 0.5);
+  }
+  .socials {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    .social {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .icon {
+        height: 2rem;
+        margin-right: calc(#{$spacer} * 0.5);
+        &.fontawesome {
+          font-size: 2rem;
+        }
+      }
+      .socialLink{
+        font-size: $default-font-size;
+      }
+    }
+    .social:first-of-type {
+      margin-left: 0;
+    }
+    .separator {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-right: calc(#{$spacer} * 0.5);
+      margin-left: calc(#{$spacer} * 0.5);
+    }
+
+  }
+}
