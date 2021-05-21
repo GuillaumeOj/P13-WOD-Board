@@ -1,8 +1,9 @@
 $header-height: 6rem;
+$footer-height: $header-height;
 $spacer: 1.5rem;
 $default-font-size: 1.2rem;
 $logo-height: calc(#{$header-height} - #{$spacer} * 2);
-$content-min-height: calc(100vh - #{$header-height});
+$content-min-height: calc(100vh - #{$header-height} - (#{$spacer} + #{$footer-height}));
 $subHeader-min-height: calc(#{$content-min-height} * 0.3);
 
 $charcoal: rgba(38, 70, 83, 1);

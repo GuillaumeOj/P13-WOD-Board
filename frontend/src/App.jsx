@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import { DisplayAlerts } from './Alert';
 import { AnonymRoute, PrivateRoute } from './CustomRoute';
 import Dashboard from './Dashboard/Dashboard';
+import Footer from './Footer';
 import Home from './Home';
 import NavBar from './Nav';
 import Register from './Register';
@@ -37,6 +38,7 @@ function App() {
           </Route>
         </Switch>
       </div>
+      <Footer />
     </div>
   );
 }
