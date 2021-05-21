@@ -16,18 +16,16 @@ async def test_register(db, client):
         "lastName": "bar",
         "password": "strong-password",
     }
-    response = await client.post(
-        "/api/user/register",
-        headers={"X-Token": "foobar"},
-        data=user_json,
-    )
-    expected_response = user_json | {
-        "id": 1,
-        "isAdmin": False,
-    }
-    del expected_response["password"]
+    foo_token = "foo-token"
+    with mock.patch("jose.jwt.encode") as mocked_encode:
+        mocked_encode.return_value = foo_token
+        response = await client.post(
+            "/api/user/register",
+            headers={"X-Token": "foobar"},
+            data=user_json,
+        )
     assert response.status_code == 200
-    assert response.json() == expected_response
+    assert response.json() == {"access_token": foo_token, "token_type": "Bearer"}
     assert db.query(user.User).count() == 1
 
     response = await client.post(
