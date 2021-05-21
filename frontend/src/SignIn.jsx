@@ -36,8 +36,6 @@ export default function SignIn() {
               detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
             }
           }
-        } else {
-          addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
   }
