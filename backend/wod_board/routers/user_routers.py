@@ -20,13 +20,13 @@ router_token = fastapi.APIRouter(prefix=f"{config.API_URL}", tags=["user"])
 router_user = fastapi.APIRouter(prefix=f"{config.API_URL}/user", tags=["user"])
 
 
-@router_user.post("/register", response_model=user_schemas.User)
+@router_user.post("/register", response_model=user_schemas.Token)
 async def register(
     user_data: user_schemas.UserCreate = fastapi.Depends(
         user_schemas.UserCreate.as_form
     ),
     db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
-) -> user.User:
+) -> user_schemas.Token:
     try:
         new_user = user_crud.create_user(db, user_data)
     except exceptions.DuplicatedEmail as error:
@@ -34,7 +34,7 @@ async def register(
     except exceptions.DuplicatedUsername as error:
         raise exceptions.RouterException(error)
 
-    return new_user
+    return user_utils.create_access_token(new_user)
 
 
 @router_token.post(f"/{config.ACCESS_TOKEN_URL}", response_model=user_schemas.Token)
