@@ -48,11 +48,6 @@ function useProvideAuth() {
                 detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
               }
             }
-          } else {
-            addAlert({
-              message: 'Impossible to retrieve user\'s id',
-              alertType: 'error',
-            });
           }
         });
     }

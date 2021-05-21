@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import {
-  Link, useHistory, useLocation,
+  Link,
 } from 'react-router-dom';
 
 import { useAlert } from './Alert';
@@ -10,8 +10,6 @@ import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function Register() {
-  const history = useHistory();
-  const location = useLocation();
   const auth = useAuth();
   const { addAlert } = useAlert();
 
@@ -21,8 +19,6 @@ export default function Register() {
   const [password2, setPassword2] = useInput('');
   const [firstName, setFirstName] = useInput('');
   const [lastName, setLastName] = useInput('');
-
-  const { from } = location.state || { from: { pathname: '/' } };
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -37,9 +33,7 @@ export default function Register() {
     axios
       .post('/api/user/register', formData)
       .then((response) => {
-        auth.signin(response.data);
-        addAlert({ message: 'You are now registered and logged!', alertType: 'success' });
-        history.replace(from);
+        auth.signIn(response.data);
       })
       .catch((error) => {
         if (error.response) {
@@ -52,8 +46,6 @@ export default function Register() {
               detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
             }
           }
-        } else {
-          addAlert({ message: 'Something went wrong', alertType: 'error' });
         }
       });
   }
