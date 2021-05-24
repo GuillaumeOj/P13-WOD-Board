@@ -1,15 +1,14 @@
-import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
-import { useAlert } from './Alert';
+import { useApi } from './Api';
 import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function SignIn() {
   const auth = useAuth();
-  const { addAlert } = useAlert();
+  const { api } = useApi();
 
   const [email, setEmail] = useInput('');
   const [password, setPassword] = useInput('');
@@ -19,25 +18,13 @@ export default function SignIn() {
 
     const formData = new FormData(event.target);
 
-    axios
-      .post('/api/user/token', formData)
-      .then((response) => {
-        auth.signIn(response.data);
-        addAlert({ message: 'You are now logged in!', alertType: 'success' });
-      })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.data) {
-            const { detail } = error.response.data;
+    const response = await api({
+      method: 'post', data: formData, url: '/api/user/token', silent: false,
+    });
 
-            if (typeof detail === 'string') {
-              addAlert({ message: detail, alertType: 'error' });
-            } else {
-              detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-            }
-          }
-        }
-      });
+    if (response) {
+      auth.signIn(response);
+    }
   }
 
   return (
