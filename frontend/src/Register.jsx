@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import {
@@ -6,11 +5,13 @@ import {
 } from 'react-router-dom';
 
 import { useAlert } from './Alert';
+import { useApi } from './Api';
 import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function Register() {
   const auth = useAuth();
+  const { api } = useApi();
   const { addAlert } = useAlert();
 
   const [email, setEmail] = useInput('');
@@ -30,24 +31,13 @@ export default function Register() {
 
     const formData = new FormData(event.target);
 
-    axios
-      .post('/api/user/register', formData)
-      .then((response) => {
-        auth.signIn(response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.data) {
-            const { detail } = error.response.data;
+    const response = await api({
+      method: 'post', data: formData, url: '/api/user/register/', silent: false,
+    });
 
-            if (typeof detail === 'string') {
-              addAlert({ message: detail, alertType: 'error' });
-            } else {
-              detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-            }
-          }
-        }
-      });
+    if (response) {
+      auth.signIn(response);
+    }
   }
 
   return (

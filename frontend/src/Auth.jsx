@@ -1,4 +1,3 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, {
   createContext, useEffect, useState, useContext,
@@ -7,11 +6,14 @@ import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router-dom';
 
 import { useAlert } from './Alert';
+import { useApi } from './Api';
 
 const authContext = createContext();
 
 function useProvideAuth() {
   const history = useHistory();
+  const { api } = useApi();
+
   const { addAlert } = useAlert();
   const [cookies, setCookies, removeCookies] = useCookies();
   const [user, setUser] = useState(null);
@@ -28,28 +30,15 @@ function useProvideAuth() {
     addAlert({ message: 'You are logged in.', alertType: 'success' });
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     if (user) {
-      const config = {
-        headers: { Authorization: `${user.token_type} ${user.access_token}` },
-      };
+      const response = await api({
+        method: 'get', url: '/api/user/current/', silent: false, user,
+      });
 
-      axios
-        .get('/api/user/current/', config)
-        .then((response) => setUserId(response.data.id))
-        .catch((error) => {
-          if (error.response) {
-            if (error.response.data) {
-              const { detail } = error.response.data;
-
-              if (typeof detail === 'string') {
-                addAlert({ message: detail, alertType: 'error' });
-              } else {
-                detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
-              }
-            }
-          }
-        });
+      if (response) {
+        setUserId(response.id);
+      }
     }
   }, [user]);
 
