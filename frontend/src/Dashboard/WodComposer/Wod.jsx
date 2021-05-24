@@ -67,7 +67,15 @@ export default function Wod() {
           .then((response) => setId(response.data.id));
       } else {
         axios.put(`/api/wod/${id}`, wod, config)
-          .then(() => (isComplete ? addAlert('WOD saved!', 'success') : ''));
+          .then(() => (isComplete ? addAlert({ message: 'WOD saved!', alertType: 'success' }) : ''))
+          .catch((error) => {
+            if (error.response.data) {
+              const { detail } = error.response.data;
+              if (typeof detail === 'string') {
+                addAlert({ message: detail, alertType: 'error' });
+              }
+            }
+          });
       }
     }
   }, [wod]);
