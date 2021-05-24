@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
 import { AlertProvider } from './Alert';
+import { ApiProvider } from './Api';
 import App from './App';
 import { ProvideAuth } from './Auth';
 
@@ -27,13 +28,15 @@ if (process.env.NODE_ENV === 'production') {
 ReactDOM.render(
   <React.StrictMode>
     <AlertProvider>
-      <BrowserRouter>
-        <CookiesProvider>
-          <ProvideAuth>
-            <App />
-          </ProvideAuth>
-        </CookiesProvider>
-      </BrowserRouter>
+      <ApiProvider>
+        <BrowserRouter>
+          <CookiesProvider>
+            <ProvideAuth>
+              <App />
+            </ProvideAuth>
+          </CookiesProvider>
+        </BrowserRouter>
+      </ApiProvider>
     </AlertProvider>
   </React.StrictMode>,
   document.getElementById('root'),
