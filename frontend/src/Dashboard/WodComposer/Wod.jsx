@@ -1,10 +1,10 @@
-import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { useAlert } from '../../Alert';
+import { useApi } from '../../Api';
 import { useAuth } from '../../Auth';
 
 import Rounds from './Rounds';
@@ -13,6 +13,7 @@ import WodType from './WodType';
 dayjs.extend(utc);
 
 export default function Wod() {
+  const { api } = useApi();
   const { user, userId } = useAuth();
   const { addAlert } = useAlert();
 
@@ -26,20 +27,17 @@ export default function Wod() {
 
   const [wod, setWod] = useState();
 
-  useEffect(() => {
-    const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
-    axios.get('/api/wod/incomplete', config)
-      .then((response) => {
-        if (response.data) {
-          const values = response.data;
-          if (values) {
-            if (values.id) { setId(values.id); }
-            if (values.title) { setTitle(values.title); }
-            if (values.description) { setDescription(values.description); }
-            if (values.wodTypeId) { setWodTypeId(values.wodTypeId); }
-          }
-        }
-      });
+  useEffect(async () => {
+    const response = await api({
+      method: 'get', url: '/api/wod/incomplete', silent: true, user,
+    });
+
+    if (response) {
+      if (response.id) { setId(response.id); }
+      if (response.title) { setTitle(response.title); }
+      if (response.description) { setDescription(response.description); }
+      if (response.wodTypeId) { setWodTypeId(response.wodTypeId); }
+    }
   }, []);
 
   useEffect(() => {
@@ -59,23 +57,24 @@ export default function Wod() {
     setWod(updatedWod);
   }, [date, id, description, title, wodTypeId, authorId, isComplete]);
 
-  useEffect(() => {
-    const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
+  useEffect(async () => {
     if (wod && wod.title && user) {
       if (!id) {
-        axios.post('/api/wod/', wod, config)
-          .then((response) => setId(response.data.id));
+        const response = await api({
+          method: 'post', url: '/api/wod/', data: wod, user, silent: true,
+        });
+
+        if (response) {
+          setId(response.id);
+        }
       } else {
-        axios.put(`/api/wod/${id}`, wod, config)
-          .then(() => (isComplete ? addAlert({ message: 'WOD saved!', alertType: 'success' }) : ''))
-          .catch((error) => {
-            if (error.response.data) {
-              const { detail } = error.response.data;
-              if (typeof detail === 'string') {
-                addAlert({ message: detail, alertType: 'error' });
-              }
-            }
-          });
+        const response = await api({
+          method: 'put', url: `/api/wod/${id}`, data: wod, user, silent: false,
+        });
+
+        if (response && isComplete) {
+          addAlert({ message: 'WOD saved!', alertType: 'success' });
+        }
       }
     }
   }, [wod]);
