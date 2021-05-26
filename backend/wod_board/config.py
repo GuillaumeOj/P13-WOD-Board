@@ -32,7 +32,7 @@ API_URL: str = os.getenv("API_URL", "/api")
 PASSWORD_CTXT = CryptContext(schemes=HASH_SCHEMES, deprecated="auto")
 OAUTH2_SCHEME = OAuth2PasswordBearer(tokenUrl=ACCESS_TOKEN_URL)
 
-if WOD_BOARD_ENV == "test":
+if WOD_BOARD_ENV in ["test", "dev"]:
     LOGGING_LEVEL = logging.INFO
 else:
     LOGGING_LEVEL = logging.WARNING
