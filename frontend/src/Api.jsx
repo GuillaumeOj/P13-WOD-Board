@@ -34,9 +34,9 @@ function useApiProvider() {
         .catch((error) => {
           if (error.response.data && !silent) {
             const { detail } = error.response.data;
-            if (typeof detail === 'string') {
+            if (detail && typeof detail === 'string') {
               addAlert({ message: detail, alertType: 'error' });
-            } else if (detail.isArray) {
+            } else if (detail && detail.isArray) {
               detail.map((item) => addAlert({ message: item.msg, alertType: 'error' }));
             }
           }
