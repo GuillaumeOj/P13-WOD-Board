@@ -58,6 +58,7 @@ def update_wod(
     db_wod.date = wod_data.date
     db_wod.author_id = wod_data.author_id
     db_wod.wod_type_id = wod_data.wod_type_id
+    db_wod.is_complete = wod_data.is_complete
 
     try:
         db.commit()

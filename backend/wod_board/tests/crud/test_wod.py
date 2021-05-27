@@ -39,7 +39,7 @@ def test_update_wod(db, db_user, db_wod):
     db.add(
         wod.Wod(
             title="Cindy",
-            is_complete=True,
+            is_complete=False,
             author_id=db_user.id,
             date=datetime.datetime.utcnow(),
         )
@@ -47,13 +47,16 @@ def test_update_wod(db, db_user, db_wod):
     db.commit()
     assert db.query(wod.Wod).count() == 2
 
-    wod_schema = wod_schemas.WodCreate(title="Karen", author_id=db_user.id)
+    wod_schema = wod_schemas.WodCreate(
+        title="Karen", author_id=db_user.id, is_complete=True
+    )
     assert db_wod.title != wod_schema.title
 
     assert wod_crud.update_wod(db, wod_schema, db_wod.id)
 
     db.refresh(db_wod)
     assert db_wod.title == wod_schema.title
+    assert db_wod.is_complete == wod_schema.is_complete
     assert db.query(wod.Wod).count() == 2
 
     with pytest.raises(exceptions.UnknownWod):
