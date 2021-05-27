@@ -33,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if config.WOD_BOARD_ENV != "test":
+if config.WOD_BOARD_ENV == "prod":
     sentry_sdk.init(
         dsn="https://9ab3f6551b3549c993c01dcb041bb41d@o453278.ingest.sentry.io/5704632",
         traces_sample_rate=1.0,
