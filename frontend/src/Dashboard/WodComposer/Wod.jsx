@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useHistory } from 'react-router-dom';
 
 import { useAlert } from '../../Alert';
 import { useApi } from '../../Api';
@@ -13,6 +14,7 @@ import WodType from './WodType';
 dayjs.extend(utc);
 
 export default function Wod() {
+  const history = useHistory();
   const { api } = useApi();
   const { user, userId } = useAuth();
   const { addAlert } = useAlert();
@@ -74,6 +76,7 @@ export default function Wod() {
 
         if (response && isComplete) {
           addAlert({ message: 'WOD saved!', alertType: 'success' });
+          history.replace('/');
         }
       }
     }
