@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
+from wod_board import exceptions
+
 
 load_dotenv(find_dotenv())
 
@@ -37,4 +39,9 @@ if WOD_BOARD_ENV in ["test", "dev"]:
 else:
     LOGGING_LEVEL = logging.WARNING
 
-ORIGINS = ["http://localhost:3000", "https://projet-13.ojardias.io"]
+ORIGIN: typing.Optional[str] = os.getenv("ORIGIN")
+
+if ORIGIN is None:
+    raise exceptions.MissingEnvVar("ORIGIN")
+
+ORIGINS = [ORIGIN]
