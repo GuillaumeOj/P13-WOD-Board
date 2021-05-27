@@ -31,6 +31,11 @@ class DuplicatedUsername(WodBoardException):
     message = "Username already used"
 
 
+class MissingEnvVar(WodBoardException):
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    message = "An environnement variable is missing"
+
+
 class NameAlreadyUsed(WodBoardException):
     status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
     message = "Name already used"
