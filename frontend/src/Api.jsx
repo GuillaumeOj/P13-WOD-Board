@@ -12,7 +12,7 @@ function useApiProvider() {
     user, method, data, url, silent,
   }) => {
     if (method && url) {
-      const headers = {};
+      const headers = { 'Content-type': 'application/json' };
 
       if (user) {
         headers.Authorization = `${user.token_type} ${user.access_token}`;
