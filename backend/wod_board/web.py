@@ -1,4 +1,3 @@
-import daiquiri
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import sentry_sdk
@@ -15,7 +14,14 @@ from wod_board.routers import user_routers
 from wod_board.routers import wod_routers
 
 
-app = FastAPI(docs_url=f"{config.API_URL}/docs", redoc_url=None)
+app = FastAPI(
+    debug=config.DEBUG,
+    title=config.TITLE,
+    version=config.VERSION,
+    openapi_url=config.OPEN_API_URL,
+    docs_url=config.DOCS_URL,
+    redoc_url=config.REDOC_URL,
+)
 app.include_router(equipment_routers.router)
 app.include_router(goal_routers.router)
 app.include_router(movement_routers.router)
@@ -29,6 +35,7 @@ app.include_router(wod_routers.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -39,5 +46,3 @@ if config.WOD_BOARD_ENV == "prod":
         traces_sample_rate=1.0,
     )
     app.add_middleware(SentryAsgiMiddleware)
-
-daiquiri.setup(level=config.LOGGING_LEVEL)
