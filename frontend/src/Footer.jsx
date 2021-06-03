@@ -1,5 +1,5 @@
 import { faGithub, faReact } from '@fortawesome/free-brands-svg-icons';
-import { faSlash, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faSlash, faHeart, faBook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
@@ -49,6 +49,21 @@ export default function Footer() {
             FastAPI
           </a>
         </li>
+        <li key="separator-2" className="separator">
+          <FontAwesomeIcon icon={faSlash} className="icon" rotation={90} />
+        </li>
+        <li key="fastapi" className="social">
+          <FontAwesomeIcon icon={faBook} className="icon fontawesome" title="API Docs" />
+          <a
+            href="/api/docs"
+            className="Documentation"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Documentation
+          </a>
+        </li>
+
       </ul>
     </footer>
   );
