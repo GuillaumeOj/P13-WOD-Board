@@ -50,6 +50,14 @@ async def get_wod_incomplete(
         return None
 
 
+@router.get("/wods", response_model=typing.List[typing.Optional[wod_schemas.Wod]])
+async def get_wods_by_user(
+    db: sqlalchemy.orm.Session = fastapi.Depends(get_db),
+    current_user: user.User = fastapi.Depends(user_utils.get_user_with_token),
+) -> typing.List[typing.Optional[wod.Wod]]:
+    return wod_crud.get_wods_by_user(db, current_user.id)
+
+
 @router.put("/{wod_id}", response_model=wod_schemas.Wod)
 async def update_wod(
     wod_data: wod_schemas.WodCreate,

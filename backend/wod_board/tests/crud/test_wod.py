@@ -98,3 +98,12 @@ def test_get_wod_incomplete(db, db_user, db_wod):
     uncomplete_wod = wod_crud.get_wod_incomplete(db, db_user.id)
     assert isinstance(uncomplete_wod, wod.Wod)
     assert uncomplete_wod.id == db_wod.id
+
+
+def test_get_wods_by_user(db, db_user, db_wod):
+    db_wod.is_complete = True
+    db.commit()
+
+    user_wods = wod_crud.get_wods_by_user(db, db_user.id)
+    assert len(user_wods) == 1
+    assert user_wods[0].id == db_wod.id
