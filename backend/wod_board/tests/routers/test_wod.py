@@ -212,3 +212,29 @@ async def test_get_wod_incomplete(db, client, db_wod, token, token_admin):
     assert response.status_code == 200
     assert response.json() is None
     assert db.query(wod.Wod).count() == 1
+    assert db.query(wod.Wod).count() == 1
+
+
+@pytest.mark.asyncio
+async def test_get_wods_by_user(db, client, token, db_wod):
+    assert db.query(wod.Wod).count() == 1
+
+    response = await client.get(
+        "/api/wod/wods/",
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
+    )
+    assert response.status_code == 200
+    assert response.json() == []
+
+    db_wod.is_complete = True
+    db.commit()
+
+    response = await client.get(
+        "/api/wod/wods/",
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
+    )
+    assert response.status_code == 200
+    assert response.json() == [
+        json.loads(wod_schemas.Wod.from_orm(db_wod).json(by_alias=True))
+    ]
+    assert db.query(wod.Wod).count() == 1

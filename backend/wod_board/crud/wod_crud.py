@@ -103,3 +103,13 @@ def get_wod_incomplete(db: sqlalchemy.orm.Session, author_id: int) -> wod.Wod:
         raise exceptions.UnknownWod("No incomplete wod found")
 
     return db_wod
+
+
+def get_wods_by_user(
+    db: sqlalchemy.orm.Session, author_id: int
+) -> typing.List[typing.Optional[wod.Wod]]:
+    db_wods: typing.List[typing.Optional[wod.Wod]] = (
+        db.query(wod.Wod).filter_by(author_id=author_id, is_complete=True).all()
+    )
+
+    return db_wods
