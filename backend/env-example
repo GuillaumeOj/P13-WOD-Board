@@ -1,2 +1,9 @@
 SECRET_KEY=foo_secret_key
-DATABASE_URL=postgresql+psycopg2://user:password@localhost/wod_board:5432
+DATABASE_URL=postgresql://user:password@localhost/wod_board:5432
+WOD_BOARD_ENV=dev
+ORIGINS=http://localhost:3000
+API_URL=/api
+OPEN_API_URL=/api/openapi.json
+DOCS_URL=/api/docs
+TITLE='WOD Board Dev'
+VERSION=0.1.0

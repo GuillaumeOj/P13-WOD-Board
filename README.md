@@ -23,7 +23,7 @@
 
 This application is for the project 13 from [OpenClassrooms'](https://openclassrooms.com/fr/paths/68/projects/162/assignment) Python course.
 
-The application is alive here => https://projet-13.ojardias.io
+The application is alive here => http://projet-13.ojardias.io
 
 The roadmap of this project is available here: [Notion](https://www.notion.so/guillaumeoj/8c4537ce16a44754b703d0885754ec1f?v=8e9d19219c2c4c91ae945ff554e63453)
 
@@ -33,35 +33,50 @@ For running this application you will need:
 - [Python 3.9](https://www.python.org/)
 - [Tox](https://tox.readthedocs.io)
 - [PostgreSQL](https://www.postgresql.org)
+- [Yarn 1.22](https://yarnpkg.com/getting-started/install)
 
 Setup PostgreSQL with those parameters:
-- User: `wod_board`
-- Password: `wod_board`
+- User: your choice
+- Password: your choice too
 - Databases:
   - `wod_board_test` (used for tests)
   - `wod_board_dev` (used for running the application)
 
+# Env
+
+Create a `.env` file in `/backend` based on `/backend/env-example`.
+
+**NOTE**: Don't forget to replace `user` and `password` in `DATABASE_URL`
+
 # Run
 
-In a shell run:
+Start the backend application:
 
 ```sh
-tox -e start
+cd /backend
+tox -e seed  # Populate the databe with user accounts and basic items
+tox -e start # Run the backend application
 ```
 
 Then visit:
-- http://127.0.0.1:8000/docs for reading the back-end documentation
+- http://localhost:8500/api/docs for reading the back-end documentation
+
+
+Start the frontend:
+```sh
+cd /frontend
+yarn install # Only the first time
+yarn start
+```
+
+Then visit:
+- http://localhost:3000/
 
 # Tests
 
-Run tests by typing:
+In `/backend` type:
 
 ```sh
-tox -e py39 [-- {optional-args}]
-```
-
-Run pep8 tests by typing:
-
-```sh
-tox -e pep8
+tox -e py39 [-- {optional-args}] # For python tests
+tox -e pep8                      # For pep8
 ```
