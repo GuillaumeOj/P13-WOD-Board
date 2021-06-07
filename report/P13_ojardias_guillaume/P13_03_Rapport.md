@@ -48,10 +48,39 @@ Ces dates ont permis d'estimer le temps nécessaire à la réalisation d'un Mini
 # II. Démarche de création
 
 
-## II.1 Choix et mise en place de la stack
+## II.1 Stack technique
 
+L'application est divisée en deux parties distinctes : back-end et front-end.
 
-## II.2. Organisation des modèles de données 
+La partie back-end repose sur l'utilisation du framework FastAPI (_[https://fastapi.tiangolo.com/](https://fastapi.tiangolo.com/)_).
+La base de données est gérée avec PostgreSQL (_[https://www.postgresql.org/](https://www.postgresql.org/)_).
+L'interface avec le langage Python se fait grâce à l'ORM SQLAlchemy (_[https://www.sqlalchemy.org/](https://www.sqlalchemy.org/)_).
+
+La partie front-end est une application ReactJS (_[https://reactjs.org/](https://reactjs.org/)_).
+Cette application utilise l'API créée grâce à FastAPI pour communiquer avec le back-end.
+
+Ce choix va à l'encontre des technologies rencontrées lors de notre parcours de formation.
+Il s'agissait de profiter de la formation pour découvrir ces frameworks avant l'entrée sur le monde du travail.
+
+\pagebreak
+
+## II.2. Modèle de données
+
+L'application minimale contient 6 grandes classes :
+
+1. **User** : pour les informations relatives à l'utilisateur de l'application;
+2. **Wod** : correspond à un exercice (Workout Of the Day);
+3. **Round** : est un tour dans un Wod, un Wod peut être composé de un ou plusieurs tours;
+4. **Movement** : décrit un mouvement de base en Crossfit®️ (pompe, traction, etc.);
+5. **Goal** : détaille un Movement avec un nombre de répétition et ou un temps imposé pour sa réalisation;
+6. **Equipment** : liste les équipements utilisable au Crossfit®️ (dumbbell, barre de traction, etc.).
+
+Les 2 autres classes sont les suivantes :
+
+1. **WodType** : définit la catégorie de Wod, nécessaire au calcul du score final;
+2. **UnitType** : est une classe générique pour lister les unités de mesures (mètres, kilogrammes, etc.).
+
+![Diagramme de classes](./P13_02_Diagramme_de_classe.png)
 
 
 ## II.3. Tests de l'application
