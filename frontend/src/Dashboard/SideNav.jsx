@@ -14,6 +14,9 @@ export default function SideNav() {
           <li>
             <Link to={`${url}/create-wod`}>Create a WOD</Link>
           </li>
+          <li>
+            <Link to={`${url}/wods`}>My WODS</Link>
+          </li>
         </ol>
       </nav>
     </div>
