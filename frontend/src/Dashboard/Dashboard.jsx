@@ -8,6 +8,7 @@ import { PrivateRoute } from '../CustomRoute';
 
 import SideNav from './SideNav';
 import Wod from './WodComposer/Wod';
+import Wods from './Wods';
 
 export default function Dashboard() {
   const { path } = useRouteMatch();
@@ -27,6 +28,9 @@ export default function Dashboard() {
           </PrivateRoute>
           <PrivateRoute path={`${path}/create-wod`}>
             <Wod />
+          </PrivateRoute>
+          <PrivateRoute path={`${path}/wods`}>
+            <Wods />
           </PrivateRoute>
         </Switch>
       </section>
