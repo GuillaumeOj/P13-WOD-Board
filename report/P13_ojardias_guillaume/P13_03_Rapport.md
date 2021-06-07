@@ -24,6 +24,27 @@ geometry: margin=2cm
 - Le site est visible en ligne à cette adresse : _[http://projet-13.ojardias.io/](http://projet-13.ojardias.io/)_.
 - La roadmap est accessible ici : _[https://www.notion.so/guillaumeoj/](https://www.notion.so/guillaumeoj/8c4537ce16a44754b703d0885754ec1f?v=45b8fc5944684d30a5fac8a3488f6547)_.
 
+## I.2. Contexte du projet
+
+Il s'agit du projet final de la formation développeur d'application Python, proposé par OpenClassrooms.
+Le but de cette application est de permettre aux pratiquants du Crossfit®️ de tenir un journal de bord de leurs séances.
+La note d'intention (voir _P13_01_Note_intention_) détail les objectifs de ce projet.
+
+## I.3 Organisation du projet
+
+Pour planifier et organiser le projet, une roadmap sous forme de Kanban à était réalisée.
+La roadmap est disponible ici : _[https://www.notion.so/guillaumeoj/](https://www.notion.so/guillaumeoj/8c4537ce16a44754b703d0885754ec1f?v=45b8fc5944684d30a5fac8a3488f6547)_.
+Elle se découpe en quatre colonnes:
+
+1. To Do : tâches à réaliser;
+2. In Progress : tâches en cours de réalisation;
+3. Done : tâches terminées;
+4. Backlog : tâches prévues.
+
+Pour la planification, chaque tâche s'est vue attribuer une date de début et de fin.
+Ces dates ont permis d'estimer le temps nécessaire à la réalisation d'un Minimum Viable Product.
+
+
 # II. Démarche de création
 
 
@@ -40,7 +61,7 @@ geometry: margin=2cm
 
 ## III.1. Prise en main de la stack
 
-## III.2. Plannification du projet
+## III.2. Planification du projet
 
 ## III.3. Priorisation des tâches
 
