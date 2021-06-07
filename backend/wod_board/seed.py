@@ -51,12 +51,17 @@ def equipments(db: sqlalchemy.orm.Session) -> None:
         db.query(unit.Unit).filter(unit.Unit.name == "Kilogram").first()
     )
 
-    if kilogram is None:
+    unit_u: typing.Optional[unit.Unit] = (
+        db.query(unit.Unit).filter(unit.Unit.name == "Unit").first()
+    )
+
+    if kilogram is None or unit_u is None:
         raise exceptions.UnknownUnit
 
     db.add(equipment.Equipment(name="Dumbbell", unit_id=kilogram.id))
     db.add(equipment.Equipment(name="Kettlebell", unit_id=kilogram.id))
     db.add(equipment.Equipment(name="Barbell", unit_id=kilogram.id))
+    db.add(equipment.Equipment(name="Pull Bar", unit_id=unit_u.id))
 
     db.commit()
 
@@ -87,6 +92,11 @@ def movements(db: sqlalchemy.orm.Session) -> None:
         .filter(equipment.Equipment.name == "Barbell")
         .first()
     )
+    pull_bar = (
+        db.query(equipment.Equipment)
+        .filter(equipment.Equipment.name == "Pull Bar")
+        .first()
+    )
 
     db.add(
         movement.Movement(
@@ -95,7 +105,6 @@ def movements(db: sqlalchemy.orm.Session) -> None:
             equipments=[dumbbell, kettlebell],
         )
     )
-
     db.add(
         movement.Movement(
             name="Dead Lift",
@@ -103,7 +112,9 @@ def movements(db: sqlalchemy.orm.Session) -> None:
             equipments=[barebell],
         )
     )
+    db.add(movement.Movement(name="Pull Up", unit_id=unit_u.id, equipments=[pull_bar]))
     db.add(movement.Movement(name="Burpees", unit_id=unit_u.id))
+    db.add(movement.Movement(name="Push Up", unit_id=unit_u.id))
     db.add(movement.Movement(name="Run", unit_id=meter.id))
 
     db.commit()
