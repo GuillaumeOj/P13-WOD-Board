@@ -92,8 +92,9 @@ Les tests back-end couvrent 98% du code. Un accent particulier à était mis sur
 - les fonctions de CRUD (Create Read Update Delete).
 
 Ces tests ont étaient réalisé dans l'esprit du TDD.
+Ils sont disponibles ici : _[https://github.com/GuillaumeOj/P13-WOD-Board/tree/main/backend/wod_board/tests](https://github.com/GuillaumeOj/P13-WOD-Board/tree/main/backend/wod_board/tests)_
 
-Le front-end a été volontairement mis de côté, par manque de temps et de connaissance du framework de test de ReactJS.
+Les tests de l'application front-end ont été mis de côté, par manque de temps et de connaissance du framework de test de ReactJS.
 
 # III. Bilan
 
