@@ -85,6 +85,15 @@ Les 2 autres classes sont les suivantes :
 
 ## II.3. Tests de l'application
 
+Les tests sont réalisé sur la partie back-end de l'application.
+Les tests back-end couvrent 98% du code. Un accent particulier à était mis sur deux points importants :
+
+- les routeurs de l'API (points d'entrée);
+- les fonctions de CRUD (Create Read Update Delete).
+
+Ces tests ont étaient réalisé dans l'esprit du TDD.
+
+Le front-end a été volontairement mis de côté, par manque de temps et de connaissance du framework de test de ReactJS.
 
 # III. Bilan
 
