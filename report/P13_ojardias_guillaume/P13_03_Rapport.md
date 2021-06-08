@@ -98,9 +98,57 @@ Les tests de l'application front-end ont été mis de côté, par manque de temp
 
 # III. Bilan
 
-## III.1. Prise en main de la stack
+## III.1. Prise en main de la stack technique
+
+### a. Front-end
+
+![ReactJS](./P13_03_Rapport_images/react.png){ width=80px }
+
+Le front-end est un point que je souhaite retravailler fortement par la suite.
+Mon plus grand regret est de ne pas avoir mener le développement de l'application en TDD.
+En effet le débugage du front-end est complexe sans ces tests, et l'application en comporte un nombre significatifs :
+
+- système de messages;
+- gestion des erreurs;
+- gestion de l'authentification;
+- etc.
+
+Pour la suite, je souhaite améliorer mes connaissances de ReactJS et revoir complètement le découpage du front-end.
+
+### b. Back-end
+
+![SQLAlchemy](./P13_03_Rapport_images/sqlalchemy.jpg){ width=250px }
+
+La mise en place du back-end à était plus complexe que je ne l'avais imaginé au début du projet.
+Le fait d'avoir utilisé SQLAlchemy lors de mon stage en entreprise, m'a aidé pour son utilisation.
+En revanche, la mise en place d'un outil demande des connaissances particulières que j'ai du apprendre et mettre en pratique :
+
+- configuration de SQLAlchemy et Alembic;
+- lien entre FastAPI et SQLAlchemy;
+
+![FastAPI](./P13_03_Rapport_images/fastapi.png){ width=80px }
+
+Pour ce qui est de FastAPI, la courbe d'apprentissage à était assez rapide.
+Mon expérience de l'utilisation du type hinting à était un vrai plus pour la compréhension de Pydantic et donc du système de données avec FastAPI.
+Le principal problème que j'ai rencontré : la gestion des utilisateurs. Django nous a habitué à une gestion native des comptes utilisateurs. Dans le cas de FastAPI, le développeur doit créer de toute pièce ce système. L'occasion pour moi de découvrir les bases de la création et de l'utilisation de token d'authentification.
+Autre point que je souhaite absolument résoudre, l'utilisation de HTTPS. Lorsque l'application front-end communique avec le back-end tout se passe bien. En revanche la réponse de ce dernier cause une erreur CORS que je n'ai pas réussi à résoudre pour le moment. M'obligeant à supprimer le certificat dans les réglages de mon serveur.
+De manière générale, ce framework est une véritable bonne découverte. J'ai hâte de continuer à utiliser cet outil.
 
 ## III.2. Planification du projet
 
-## III.3. Priorisation des tâches
+![Roadmap](./P13_03_Rapport_images/roadmap.png){ width=300px }
 
+Pour la planification de ce projet, je me suis aidé de Notion. Par défaut, l'application propose un template de roadmap bien taillé. Il permet de créer des cartes sous forme de Kanban.
+
+![Time Line](./P13_03_Rapport_images/roadmap_timeline.png){ width=300px }
+
+Ces cartes peuvent être complétées par une date de début et de fin estimé. De cette façon on peut avoir une vue globale des tâches et de la chronologie du projet.
+
+Les difficultés que j'ai rencontré au cours du projet sont les suivantes :
+
+- oublie de mise à jour du statuts des tâches;
+- aucune mise à jour de la chronologie lors de dérapage;
+
+Cette organisation demande une discipline de fer pour en tirer le meilleur partie. Point sur lequel je dois encore m'améliorer.
+
+## III.3. Choix des fonctionnalités
