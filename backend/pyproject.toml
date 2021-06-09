@@ -11,7 +11,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 alembic = "^1.6.5"
-fastapi = {extras = ["all"], version = "^0.65.1"}
+fastapi = {extras = ["all"], version = "^0.65.2"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-dotenv = "^0.17.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
