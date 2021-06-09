@@ -179,3 +179,14 @@ L'objectif est de traiter les autres fonctionnalités dans le futur.
 Je retiens de cette expérience qu'il est primordiale de définir un cap. Régulièrement au cours du projet il faut aussi faire le point sur l'avancée et éventuellement corriger le cap et ou la trajectoire.
 
 ## III.4 Bilan de projet
+
+Il s'agit du premier projet conséquent que je mène de la conception à la réalisation.
+Le chemin pour le rendre fonctionnel et stable, est encore long.
+
+Cependant j'ai pu apprendre beaucoup de choses sur la mise en place d'une stack complète (back-end et front-end).
+Et j'ai beaucoup appris sur la gestion et l'organisation d'un projet.
+
+J'ai aussi une grande satisfaction puisqu'il s'agit aussi de la conclusion de mon parcours de reconversion.
+La saveur est d'autant plus appréciable que j'ai eu la chance de trouver un travail avant même de l'avoir achevé.
+
+Un chapitre qui se termine pour laisser place à plusieurs autres !
