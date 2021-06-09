@@ -149,6 +149,33 @@ Les difficultés que j'ai rencontré au cours du projet sont les suivantes :
 - oublie de mise à jour du statuts des tâches;
 - aucune mise à jour de la chronologie lors de dérapage;
 
-Cette organisation demande une discipline de fer pour en tirer le meilleur partie. Point sur lequel je dois encore m'améliorer.
+Cette organisation demande une discipline de fer pour en tirer le meilleur partie. Point sur lequel je dois encore progresser.
 
-## III.3. Choix des fonctionnalités
+## III.3. Fonctionnalités
+
+Sur un projet comme celui-ci, nous avons le choix du sujet. Forcément ce sujet nous tient à cœur.
+La conséquence directe et que l'on imagine un nombre significatif de fonctionnalité pour avoir l'application parfaite.
+
+Puis la réalité nous rattrape assez vite. Un projet peut être analysé par un mélange de trois contraintes :
+
+![Triangle des contraintes](./P13_03_Rapport_images/triangle_projet.png){ width=150px }
+
+- temps alloué pour sa réalisation;
+- coût de développement;
+- périmètre du projet.
+
+Dans le cadre de notre parcours, et dans la mesure où je suis mon propre financeur, le coût de développement peut être comparé à celui du coût mensuel de la formation. Plus je passe de temps sur ce projet, plus celui-ci à un coût élevé.
+
+Au début du projet, j'ai défini un certain nombres de fonctionnalités qui me paraissaient être le minimum nécessaire. Soit un périmètre de projet.
+
+J'ai aussi établie les dates, estimatives, de réalisation de chacune de ces fonctionnalités. Soit la contrainte de temps.
+
+Ayant sous-estimé la difficulté de mise en place de la stack, ayant sous-évalué le temps de développement de certaines fonctionnalités, le planning à rapidement dérapé. Le temps de m'en rendre compte, le coût du projet à augmenté puisque le temps de formation s'est allongé.
+
+Pour résoudre ce problème et maîtriser la fin du projet, j'ai décidé de réduire le périmètre en plaçant une grande partie des fonctionnalités dans le backlog. L'application en est donc réduite à la création d'un compte utilisateur et la création d'un WOD.
+
+L'objectif est de traiter les autres fonctionnalités dans le futur.
+
+Je retiens de cette expérience qu'il est primordiale de définir un cap. Régulièrement au cours du projet il faut aussi faire le point sur l'avancée et éventuellement corriger le cap et ou la trajectoire.
+
+## III.4 Bilan de projet
