@@ -19,18 +19,23 @@ export default function Wods() {
       setWods(response);
     }
   });
+
   return (
     <>
       <Helmet>
         <title>WOD Board - My WODS</title>
       </Helmet>
       <div className="subContent">
-        <h2 className="title">My WODS</h2>
-        <ul className="wodsList">
-          {wods && wods.map((wod) => (
-            <li key={`wod-${wod.id}`} className="wod">{wod.title}{wod.description ? ` - ${wod.description}` : ''}</li>
-          ))}
-        </ul>
+        <h2 className="title">My Dashboard</h2>
+        {wods && wods.lenght > 0 ? (
+          <ul className="wodsList">
+            {wods && wods.map((wod) => (
+              <li key={`wod-${wod.id}`} className="wod">{wod.title}{wod.description ? ` - ${wod.description}` : ''}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>There are no wods yet!</p>
+        )}
       </div>
     </>
   );

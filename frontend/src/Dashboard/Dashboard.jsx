@@ -22,15 +22,10 @@ export default function Dashboard() {
         <SideNav />
         <Switch>
           <PrivateRoute exact path={path}>
-            <div className="subContent">
-              <h2 className="title">Welcome to your Dashboard</h2>
-            </div>
+            <Wods />
           </PrivateRoute>
           <PrivateRoute path={`${path}/create-wod`}>
             <Wod />
-          </PrivateRoute>
-          <PrivateRoute path={`${path}/wods`}>
-            <Wods />
           </PrivateRoute>
         </Switch>
       </section>
