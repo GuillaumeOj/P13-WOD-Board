@@ -21,6 +21,7 @@ function useProvideAuth() {
 
   const signOut = () => {
     setUser(null);
+    removeCookies('user');
     addAlert({ message: 'You are logged out.', alertType: 'warning' });
     history.replace('/');
   };
@@ -49,8 +50,6 @@ function useProvideAuth() {
   useEffect(() => {
     if (user) {
       setCookies('user', user, { path: '/' });
-    } else {
-      removeCookies('user');
     }
   }, [user]);
 
