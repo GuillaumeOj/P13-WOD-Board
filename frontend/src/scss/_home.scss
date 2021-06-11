@@ -1,4 +1,10 @@
 #home {
+  .subContent {
+    .column {
+      margin-left: calc(#{$spacer} / 2);
+      margin-right: calc(#{$spacer} / 2);
+    }
+  }
   .subscribe {
     display: flex;
     justify-content: space-around;
