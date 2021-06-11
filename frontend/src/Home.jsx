@@ -14,22 +14,22 @@ export default function Home() {
           <p className="lead">Train hard and log your performance!</p>
         </div>
         <div className="subContent">
-          <div>
-            <article>
+          <div className="column">
+            <article className="slogan">
               <h3>Leaderboard</h3>
               <p>Compare your level with your box&apos;s mates.</p>
             </article>
-            <article>
+            <article className="slogan">
               <h3>Progession</h3>
               <p>See your progression along the time.</p>
             </article>
           </div>
-          <div>
-            <article>
+          <div className="column">
+            <article className="slogan">
               <h3>Share</h3>
               <p>Share your performance with your friends.</p>
             </article>
-            <article>
+            <article className="slogan">
               <h3>It&apos;s free!</h3>
               <p>All the features are free!</p>
             </article>
