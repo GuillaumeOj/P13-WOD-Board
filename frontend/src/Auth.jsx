@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, {
   createContext, useEffect, useState, useContext,
 } from 'react';
-import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router-dom';
 
 import { useAlert } from './Alert';
@@ -15,24 +14,26 @@ function useProvideAuth() {
   const { api } = useApi();
 
   const { addAlert } = useAlert();
-  const [cookies, setCookies, removeCookies] = useCookies();
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState();
 
   const signOut = () => {
+    sessionStorage.removeItem('user');
     setUser(null);
-    removeCookies('user');
     addAlert({ message: 'You are logged out.', alertType: 'warning' });
     history.replace('/');
   };
 
-  const signIn = (tokenData) => {
-    setUser(tokenData);
+  const signIn = (userData) => {
+    sessionStorage.setItem('user', JSON.stringify(userData));
+
+    setUser(userData);
+
     addAlert({ message: 'You are logged in.', alertType: 'success' });
   };
 
   useEffect(async () => {
-    if (user) {
+    if (user && user.access_token && user.token_type) {
       const response = await api({
         method: 'get', url: '/api/user/current/', silent: false, user,
       });
@@ -44,14 +45,13 @@ function useProvideAuth() {
   }, [user]);
 
   useEffect(() => {
-    setUser(cookies.user);
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setCookies('user', user, { path: '/' });
+    if (user === null) {
+      const userSession = sessionStorage.getItem('user');
+      if (userSession !== null) {
+        setUser(JSON.parse(userSession));
+      }
     }
-  }, [user]);
+  }, []);
 
   return {
     user,

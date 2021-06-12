@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import React from 'react';
-import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -30,11 +29,9 @@ ReactDOM.render(
     <AlertProvider>
       <ApiProvider>
         <BrowserRouter>
-          <CookiesProvider>
-            <ProvideAuth>
-              <App />
-            </ProvideAuth>
-          </CookiesProvider>
+          <ProvideAuth>
+            <App />
+          </ProvideAuth>
         </BrowserRouter>
       </ApiProvider>
     </AlertProvider>
