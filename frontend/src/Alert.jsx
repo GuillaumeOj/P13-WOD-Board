@@ -62,7 +62,7 @@ export function DisplayAlerts() {
         && messages.map(({
           message, alertType, id, timerId,
         }) => (
-          <div key={id} className={`alert ${alertType}`}>
+          <div key={`alert-${id}`} className={`alert ${alertType}`}>
             <p>{message}</p>
             <button
               type="button"
