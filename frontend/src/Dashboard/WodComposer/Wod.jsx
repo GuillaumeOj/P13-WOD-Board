@@ -16,7 +16,7 @@ dayjs.extend(utc);
 export default function Wod() {
   const history = useHistory();
   const { api } = useApi();
-  const { csrftoken, user, userId } = useAuth();
+  const { csrftoken, user } = useAuth();
   const { addAlert } = useAlert();
 
   const [id, setId] = useState();
@@ -42,8 +42,16 @@ export default function Wod() {
     }
   }, []);
 
-  useEffect(() => {
-    setAuthorId(userId);
+  useEffect(async () => {
+    if (user) {
+      const response = await api({
+        method: 'get', url: '/api/user/current', silent: false, user,
+      });
+
+      if (response && response.id) {
+        setAuthorId(response.id);
+      }
+    }
   }, [user]);
 
   useEffect(() => {

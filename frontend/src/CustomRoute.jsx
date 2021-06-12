@@ -12,7 +12,7 @@ export function PrivateRoute({ children, ...rest }) {
       {...rest}
       render={
         ({ location }) => (
-          user && user.access_token ? (
+          user && user.access_token && user.token_type ? (
             children
           ) : (
             <Redirect to={{
