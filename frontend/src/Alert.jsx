@@ -16,10 +16,15 @@ function useProvideAlert() {
     const updatedAlerts = [...messages];
     const existingAlert = updatedAlerts.filter((item) => item.message === message);
     if (existingAlert.length === 0) {
+      const id = uuidv4();
+      const timerId = setTimeout(() => {
+        removeAlert({ id });
+      }, 5000);
       updatedAlerts.push({
         message,
         alertType,
-        id: uuidv4(),
+        id,
+        timerId,
       });
       setMessages(updatedAlerts);
     }
@@ -54,14 +59,19 @@ export function DisplayAlerts() {
   return (
     <div className="alerts">
       {messages
-        && messages.map(({ message, alertType, id }) => (
+        && messages.map(({
+          message, alertType, id, timerId,
+        }) => (
           <div key={id} className={`alert ${alertType}`}>
             <p>{message}</p>
             <button
               type="button"
               className="button-close"
               aria-label="Close"
-              onClick={() => removeAlert({ id })}
+              onClick={() => {
+                clearTimeout(timerId);
+                removeAlert({ id });
+              }}
             />
           </div>
         ))}
