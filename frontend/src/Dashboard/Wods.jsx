@@ -18,7 +18,7 @@ export default function Wods() {
     if (response) {
       setWods(response);
     }
-  });
+  }, []);
 
   return (
     <>
@@ -27,12 +27,15 @@ export default function Wods() {
       </Helmet>
       <div className="subContent">
         <h2 className="title">My Dashboard</h2>
-        {wods && wods.lenght > 0 ? (
-          <ul className="wodsList">
-            {wods && wods.map((wod) => (
-              <li key={`wod-${wod.id}`} className="wod">{wod.title}{wod.description ? ` - ${wod.description}` : ''}</li>
-            ))}
-          </ul>
+        {wods && wods.length > 0 ? (
+          <>
+            <h3 className="subTitle">My WODs</h3>
+            <ul className="wodsList">
+              {wods && wods.map((wod) => (
+                <li key={`wod-${wod.id}`} className="wod">{wod.title}{wod.description ? ` - ${wod.description}` : ''}</li>
+              ))}
+            </ul>
+          </>
         ) : (
           <p>There are no wods yet!</p>
         )}
