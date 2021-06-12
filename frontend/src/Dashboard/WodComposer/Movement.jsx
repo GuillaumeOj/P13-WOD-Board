@@ -1,24 +1,30 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+
+import { useApi } from '../../Api';
+import { useAuth } from '../../Auth';
 
 export default function Movement({
   uuid, movementId, removeGoal, setMovementId,
 }) {
+  const { api } = useApi();
+  const { user } = useAuth();
+
   const [id, setId] = useState();
   const [name, setName] = useState();
 
   const [movements, setMovements] = useState([]);
 
-  const searchMovements = (event) => {
+  const searchMovements = async (event) => {
     const currentValue = event.target.value;
     if (currentValue) {
-      axios
-        .get(`/api/movement/movements/${currentValue}`)
-        .then((response) => {
-          setMovements(response.data);
-          setName(currentValue);
-        });
+      const response = await api({
+        method: 'get', url: `/api/movement/movements/${currentValue}`, silent: true, user,
+      });
+      if (response) {
+        setMovements(response);
+        setName(currentValue);
+      }
     } else { setMovements([]); }
   };
 
@@ -27,14 +33,15 @@ export default function Movement({
     setMovementId(itemId);
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     if (movementId && movementId !== id) {
-      axios
-        .get(`/api/movement/${movementId}`)
-        .then((response) => {
-          if (response.data.name !== name) { setName(response.data.name); }
-          setId(movementId);
-        });
+      const response = await api({
+        method: 'get', url: `/api/movement/${movementId}`, silent: true, user,
+      });
+      if (response) {
+        if (response.name !== name) { setName(response.name); }
+        setId(movementId);
+      }
     }
   }, [movementId]);
 

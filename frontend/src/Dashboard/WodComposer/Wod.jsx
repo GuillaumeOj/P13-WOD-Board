@@ -16,7 +16,7 @@ dayjs.extend(utc);
 export default function Wod() {
   const history = useHistory();
   const { api } = useApi();
-  const { user, userId } = useAuth();
+  const { csrftoken, user, userId } = useAuth();
   const { addAlert } = useAlert();
 
   const [id, setId] = useState();
@@ -31,7 +31,7 @@ export default function Wod() {
 
   useEffect(async () => {
     const response = await api({
-      method: 'get', url: '/api/wod/incomplete', silent: true, user,
+      method: 'get', url: '/api/wod/incomplete', silent: true, user, csrftoken,
     });
 
     if (response) {
@@ -63,7 +63,7 @@ export default function Wod() {
     if (wod && wod.title && user) {
       if (!id) {
         const response = await api({
-          method: 'post', url: '/api/wod/', data: wod, user, silent: true,
+          method: 'post', url: '/api/wod/', data: wod, user, silent: true, csrftoken,
         });
 
         if (response) {
@@ -71,7 +71,7 @@ export default function Wod() {
         }
       } else {
         const response = await api({
-          method: 'put', url: `/api/wod/${id}`, data: wod, user, silent: false,
+          method: 'put', url: `/api/wod/${id}`, data: wod, user, silent: false, csrftoken,
         });
 
         if (response && isComplete) {

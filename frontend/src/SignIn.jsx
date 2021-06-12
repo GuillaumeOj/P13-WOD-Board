@@ -7,7 +7,7 @@ import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function SignIn() {
-  const auth = useAuth();
+  const { signIn } = useAuth();
   const { api } = useApi();
 
   const [email, setEmail] = useInput('');
@@ -23,7 +23,7 @@ export default function SignIn() {
     });
 
     if (response) {
-      auth.signIn(response);
+      signIn(response);
     }
   }
 

@@ -1,7 +1,8 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+
+import { useApi } from '../../Api';
 
 import { useAuth } from '../../Auth';
 
@@ -9,20 +10,21 @@ import Goal from './Goal';
 
 export default function Goals({ roundId }) {
   const { user } = useAuth();
+  const { api } = useApi();
 
   const [goals, setGoals] = useState([]);
 
-  const getGoals = () => {
-    axios
-      .get(`/api/goal/goals/${roundId}`)
-      .then((response) => {
-        if (response.data) {
-          setGoals(response.data.map((goal) => ({ ...goal, uuid: uuidv4() })));
-        }
-      });
+  const getGoals = async () => {
+    const response = await api({
+      method: 'get', url: `/api/goal/goals/${roundId}`, silent: true, user,
+    });
+
+    if (response) {
+      setGoals(response.map((goal) => ({ ...goal, uuid: uuidv4() })));
+    }
   };
 
-  const removeGoal = (uuid) => {
+  const removeGoal = async (uuid) => {
     const updatedGoals = [...goals];
     const goalToDelete = updatedGoals.find((goal) => goal.uuid === uuid);
 
@@ -30,12 +32,13 @@ export default function Goals({ roundId }) {
 
     if (goalToDelete && goalToDelete.id) {
       if (user) {
-        const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
-        axios
-          .delete(`/api/goal/${goalToDelete.id}`, config)
-          .then(() => {
-            setGoals(updatedGoals);
-          });
+        const response = await api({
+          method: 'delete', url: `/api/goal/${goalToDelete.id}`, silent: true, user,
+        });
+
+        if (response) {
+          setGoals(updatedGoals);
+        }
       }
     } else {
       setGoals(updatedGoals);
@@ -56,11 +59,10 @@ export default function Goals({ roundId }) {
     }
   };
 
-  const updateGoal = (goal) => {
+  const updateGoal = async (goal) => {
     if (user && goal.uuid && goal.movementId && roundId) {
       const updatedGoals = [...goals];
-      const config = { headers: { Authorization: `${user.token_type} ${user.access_token}` } };
-      const payload = {
+      const data = {
         movementId: goal.movementId,
         roundId,
         repetition: goal.repetition,
@@ -68,27 +70,31 @@ export default function Goals({ roundId }) {
       };
 
       if (goal.id) {
-        axios
-          .put(`/api/goal/${goal.id}`, payload, config)
-          .then((response) => {
-            setGoals(updatedGoals.map((item) => {
-              if (item.uuid === goal.uuid) {
-                return { ...response.data, uuid: goal.uuid };
-              }
-              return item;
-            }));
-          });
+        const response = await api({
+          method: 'put', url: `/api/goal/${goal.id}`, data, silent: true, user,
+        });
+
+        if (response) {
+          setGoals(updatedGoals.map((item) => {
+            if (item.uuid === goal.uuid) {
+              return { ...response, uuid: goal.uuid };
+            }
+            return item;
+          }));
+        }
       } else {
-        axios
-          .post('/api/goal/', payload, config)
-          .then((response) => {
-            setGoals(updatedGoals.map((item) => {
-              if (item.uuid === goal.uuid) {
-                return { ...response.data, uuid: goal.uuid };
-              }
-              return item;
-            }));
-          });
+        const response = await api({
+          method: 'post', url: '/api/goal', data, silent: true, user,
+        });
+
+        if (response) {
+          setGoals(updatedGoals.map((item) => {
+            if (item.uuid === goal.uuid) {
+              return { ...response, uuid: goal.uuid };
+            }
+            return item;
+          }));
+        }
       }
     }
   };
