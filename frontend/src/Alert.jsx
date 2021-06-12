@@ -14,12 +14,15 @@ function useProvideAlert() {
 
   const addAlert = ({ message, alertType }) => {
     const updatedAlerts = [...messages];
-    updatedAlerts.push({
-      message,
-      alertType,
-      id: uuidv4(),
-    });
-    setMessages(updatedAlerts);
+    const existingAlert = updatedAlerts.filter((item) => item.message === message);
+    if (existingAlert.length === 0) {
+      updatedAlerts.push({
+        message,
+        alertType,
+        id: uuidv4(),
+      });
+      setMessages(updatedAlerts);
+    }
   };
   addAlert.propTypes = {
     message: PropTypes.string.isRequired,
