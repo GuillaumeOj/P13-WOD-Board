@@ -49,10 +49,10 @@ export default function Footer() {
             FastAPI
           </a>
         </li>
-        <li key="separator-2" className="separator">
+        <li key="separator-3" className="separator">
           <FontAwesomeIcon icon={faSlash} className="icon" rotation={90} />
         </li>
-        <li key="fastapi" className="social">
+        <li key="wod-board-docs" className="social">
           <FontAwesomeIcon icon={faBook} className="icon fontawesome" title="API Docs" />
           <a
             href="/api/docs"
