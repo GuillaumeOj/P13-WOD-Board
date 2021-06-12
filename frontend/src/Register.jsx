@@ -10,7 +10,7 @@ import { useAuth } from './Auth';
 import { useInput } from './Utils';
 
 export default function Register() {
-  const auth = useAuth();
+  const { signIn } = useAuth();
   const { api } = useApi();
   const { addAlert } = useAlert();
 
@@ -36,7 +36,7 @@ export default function Register() {
     });
 
     if (response) {
-      auth.signIn(response);
+      signIn(response);
     }
   }
 

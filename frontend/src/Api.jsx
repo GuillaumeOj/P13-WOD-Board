@@ -1,6 +1,9 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { createContext, useContext } from 'react';
+import React, {
+  createContext, useEffect, useContext, useState,
+} from 'react';
+import { useCookies } from 'react-cookie';
 
 import { useAlert } from './Alert';
 
@@ -8,6 +11,10 @@ const apiContext = createContext();
 
 function useApiProvider() {
   const { addAlert } = useAlert();
+  const [cookies] = useCookies();
+
+  const [csrftoken, setCsrftoken] = useState(null);
+
   const api = async ({
     user, method, data, url, silent,
   }) => {
@@ -16,6 +23,10 @@ function useApiProvider() {
 
       if (user) {
         headers.Authorization = `${user.token_type} ${user.access_token}`;
+      }
+
+      if (csrftoken) {
+        headers['X-CSRFToken'] = csrftoken;
       }
 
       if (data instanceof FormData) {
@@ -44,6 +55,12 @@ function useApiProvider() {
     }
     return <></>;
   };
+
+  useEffect(() => {
+    if (cookies.csrftoken && csrftoken === null) {
+      setCsrftoken(cookies.csrftoken);
+    }
+  }, []);
 
   return { api };
 }

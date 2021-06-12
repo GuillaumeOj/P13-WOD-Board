@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import React from 'react';
+import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -27,13 +28,15 @@ if (process.env.NODE_ENV === 'production') {
 ReactDOM.render(
   <React.StrictMode>
     <AlertProvider>
-      <ApiProvider>
-        <BrowserRouter>
-          <ProvideAuth>
-            <App />
-          </ProvideAuth>
-        </BrowserRouter>
-      </ApiProvider>
+      <CookiesProvider>
+        <ApiProvider>
+          <BrowserRouter>
+            <ProvideAuth>
+              <App />
+            </ProvideAuth>
+          </BrowserRouter>
+        </ApiProvider>
+      </CookiesProvider>
     </AlertProvider>
   </React.StrictMode>,
   document.getElementById('root'),
