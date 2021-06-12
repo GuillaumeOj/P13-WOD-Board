@@ -3,6 +3,7 @@
 [![CD][cd-badge]][cd-link]
 [![Coverage Status][coverage-badge]][coverage-link]
 [![Code style: black][black-badge]][black-link]
+[![CodeFactor][codefactor-badge]][codefactor-link]
 
 [mergify-badge]: https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/GuillaumeOj/P11-AddAFeature&style=flat
 [mergify-link]: https://mergify.io
@@ -18,6 +19,9 @@
 
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [black-link]: https://github.com/psf/black
+
+[codefactor-badge]: https://www.codefactor.io/repository/github/guillaumeoj/p13-wod-board/badge
+[codefactor-link]: https://www.codefactor.io/repository/github/guillaumeoj/p13-wod-board
 
 # Presentation
 
