@@ -12,7 +12,7 @@ export function PrivateRoute({ children, ...rest }) {
       {...rest}
       render={
         ({ location }) => (
-          (user !== null) ? (
+          user && user.access_token ? (
             children
           ) : (
             <Redirect to={{
@@ -40,7 +40,7 @@ export function AnonymRoute({ children, ...rest }) {
       {... rest}
       render={
         ({ location }) => (
-          user ? (
+          user && user.access_token ? (
             <Redirect to={{
               pathname: '/dashboard',
               state: {
