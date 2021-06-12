@@ -15,7 +15,7 @@ load_dotenv(find_dotenv())
 
 WOD_BOARD_ENV: str = config_utils.get_env_or_raise("WOD_BOARD_ENV")
 
-if WOD_BOARD_ENV in ["test", "dev"]:
+if WOD_BOARD_ENV in {"test", "dev"}:
     LOGGING_LEVEL = logging.INFO
     DEBUG: bool = True
 else:
