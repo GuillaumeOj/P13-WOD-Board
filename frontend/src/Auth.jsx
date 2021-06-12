@@ -5,17 +5,15 @@ import React, {
 import { useHistory } from 'react-router-dom';
 
 import { useAlert } from './Alert';
-import { useApi } from './Api';
 
 const authContext = createContext();
 
 function useProvideAuth() {
   const history = useHistory();
-  const { api } = useApi();
 
   const { addAlert } = useAlert();
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState();
+  const [userId] = useState();
 
   const signOut = () => {
     sessionStorage.removeItem('user');
@@ -26,23 +24,10 @@ function useProvideAuth() {
 
   const signIn = (userData) => {
     sessionStorage.setItem('user', JSON.stringify(userData));
-
     setUser(userData);
 
     addAlert({ message: 'You are logged in.', alertType: 'success' });
   };
-
-  useEffect(async () => {
-    if (user && user.access_token && user.token_type) {
-      const response = await api({
-        method: 'get', url: '/api/user/current/', silent: false, user,
-      });
-
-      if (response) {
-        setUserId(response.id);
-      }
-    }
-  }, [user]);
 
   useEffect(() => {
     if (user === null) {
